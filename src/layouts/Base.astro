@@ -1,0 +1,90 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Hide the mobile floating "book" button (e.g. on /book itself) */
+  hideFab?: boolean;
+  noindex?: boolean;
+}
+
+const { title, description, hideFab = false, noindex = false } = Astro.props;
+const fullTitle = title === 'שחקים' ? title : `${title} · שחקים`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#0B0E1A" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="he_IL" />
+    <meta property="og:site_name" content="שחקים" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&display=swap"
+    />
+
+    <slot name="head" />
+    <ClientRouter fallback="animate" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">דילוג לתוכן</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    {
+      !hideFab && (
+        <a href="/book" class="fab btn" data-fab>
+          להזמין לילה
+        </a>
+      )
+    }
+  </body>
+</html>
+
+<style is:global>
+  main:focus {
+    outline: none;
+  }
+  .fab {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .fab {
+      display: inline-flex;
+      position: fixed;
+      z-index: 40;
+      inset-inline: 1rem;
+      inset-block-end: max(1rem, env(safe-area-inset-bottom));
+      box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+      transform: translateY(calc(100% + 2rem));
+      transition: transform 0.4s var(--ease-out);
+    }
+    .fab.is-visible {
+      transform: none;
+    }
+  }
+</style>

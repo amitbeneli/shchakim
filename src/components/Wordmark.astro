@@ -1,0 +1,53 @@
+---
+interface Props {
+  size?: 'sm' | 'lg';
+}
+const { size = 'sm' } = Astro.props;
+---
+
+<span class:list={['wordmark', `wordmark--${size}`]}>
+  <svg class="wordmark__star" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 1.5 13.6 10.4 22.5 12 13.6 13.6 12 22.5 10.4 13.6 1.5 12 10.4 10.4Z" fill="currentColor"></path>
+  </svg>
+  <span class="wordmark__he">שחקים</span>
+  <span class="wordmark__en" lang="en" dir="ltr" aria-hidden="true">SHCHAKIM</span>
+</span>
+
+<style>
+  .wordmark {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    column-gap: 0.45em;
+    align-items: center;
+    line-height: 1;
+    color: var(--starlight);
+  }
+  .wordmark__star {
+    grid-row: 1 / span 2;
+    inline-size: 0.9em;
+    block-size: 0.9em;
+    color: var(--sand);
+  }
+  .wordmark__he {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.5em;
+    letter-spacing: 0.01em;
+  }
+  .wordmark__en {
+    font-family: var(--font-body);
+    font-size: 0.5em;
+    font-weight: 600;
+    letter-spacing: 0.42em;
+    color: var(--sand);
+    margin-block-start: 0.35em;
+    justify-self: start;
+  }
+  .wordmark--sm {
+    font-size: 1rem;
+  }
+  .wordmark--lg {
+    font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem);
+  }
+</style>

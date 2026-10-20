@@ -1,0 +1,79 @@
+---
+import type { Suite } from '../data/pricing';
+import { formatPrice } from '../lib/format';
+
+interface Props {
+  suite: Suite;
+}
+const { suite } = Astro.props;
+---
+
+<article class="suite-card">
+  <a href={`/suites/${suite.slug}`} class="suite-card__link">
+    <div
+      class="suite-card__media sky-art"
+      transition:name={`suite-media-${suite.slug}`}
+      role="img"
+      aria-label={`${suite.name}: ${suite.highlight}`}
+    >
+    </div>
+    <div class="suite-card__body">
+      <p class="eyebrow">{suite.highlight}</p>
+      <h3>{suite.name}</h3>
+      <p class="suite-card__summary">{suite.summary}</p>
+      <p class="suite-card__meta">
+        <span>עד {suite.maxGuests} אורחים</span>
+        <span aria-hidden="true">·</span>
+        <span>מ־<bdi class="price">{formatPrice(suite.nightly)}</bdi> ללילה</span>
+      </p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .suite-card {
+    height: 100%;
+  }
+  .suite-card__link {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--night-2);
+    transition:
+      border-color 0.3s ease,
+      transform 0.4s var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .suite-card__link:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-4px);
+    }
+  }
+  .suite-card__media {
+    aspect-ratio: 4 / 3;
+  }
+  .suite-card__body {
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .suite-card h3 {
+    font-size: var(--step-2);
+  }
+  .suite-card__summary {
+    color: var(--muted);
+  }
+  .suite-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    font-size: var(--step--1);
+    color: var(--starlight);
+    margin-block-start: 0.25rem;
+  }
+</style>

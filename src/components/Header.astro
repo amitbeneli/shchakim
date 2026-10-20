@@ -1,0 +1,270 @@
+---
+import Wordmark from './Wordmark.astro';
+import { nav, site } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__bar">
+    <a href="/" class="site-header__logo" aria-label="שחקים, לדף הבית">
+      <Wordmark />
+    </a>
+
+    <nav class="site-header__nav" aria-label="ניווט ראשי">
+      <ul role="list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a href="/book" class="btn site-header__cta">להזמין לילה</a>
+      <button
+        type="button"
+        class="menu-toggle"
+        data-menu-open
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="menu-toggle__lines" aria-hidden="true"><span></span><span></span></span>
+        <span class="visually-hidden">פתיחת תפריט</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div
+  id="mobile-menu"
+  class="mobile-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-label="תפריט"
+  data-menu
+  inert
+>
+  <div class="mobile-menu__top container">
+    <a href="/" class="site-header__logo" aria-label="שחקים, לדף הבית"><Wordmark /></a>
+    <button type="button" class="menu-close" data-menu-close>
+      <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+        <path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+      </svg>
+      <span class="visually-hidden">סגירת תפריט</span>
+    </button>
+  </div>
+  <nav class="mobile-menu__nav container" aria-label="ניווט ראשי">
+    <ul role="list">
+      <li style="--i:0"><a href="/" aria-current={path === '/' ? 'page' : undefined}>דף הבית</a></li>
+      {
+        nav.map((item, i) => (
+          <li style={`--i:${i + 1}`}>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+  <div class="mobile-menu__foot container">
+    <a href="/book" class="btn">להזמין לילה</a>
+    <a href={site.phoneHref} class="mobile-menu__phone">
+      או להתקשר: <bdi dir="ltr">{site.phone}</bdi>
+    </a>
+  </div>
+</div>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: rgb(11 14 26 / 0.72);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-block-end: 1px solid var(--line);
+    transition: transform 0.35s var(--ease-out);
+  }
+  :global(.header-hidden) .site-header {
+    transform: translateY(-100%);
+  }
+  .site-header__bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .site-header__logo {
+    text-decoration: none;
+    display: inline-flex;
+    padding-block: 0.25rem;
+  }
+  .site-header__nav ul {
+    display: flex;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+  }
+  .site-header__nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-weight: 600;
+    padding-block: 0.5rem;
+    position: relative;
+    transition: color 0.2s ease;
+  }
+  .site-header__nav a[aria-current='page'],
+  .site-header__nav a:hover {
+    color: var(--starlight);
+  }
+  .site-header__nav a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    height: 1px;
+    background: var(--sand);
+  }
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .site-header__cta {
+    min-height: 40px;
+    padding-block: 0.45rem;
+    font-size: var(--step--1);
+  }
+
+  .menu-toggle,
+  .menu-close {
+    display: none;
+    place-items: center;
+    inline-size: 48px;
+    block-size: 48px;
+    margin-inline-end: -0.75rem;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .menu-toggle__lines {
+    display: grid;
+    gap: 7px;
+    inline-size: 24px;
+  }
+  .menu-toggle__lines span {
+    display: block;
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 2px;
+  }
+  .menu-toggle__lines span:last-child {
+    inline-size: 65%;
+  }
+
+  @media (max-width: 767px) {
+    .site-header__nav,
+    .site-header__cta {
+      display: none;
+    }
+    .menu-toggle,
+    .menu-close {
+      display: grid;
+    }
+  }
+
+  /* Full-screen mobile menu */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    background:
+      radial-gradient(120% 60% at 50% 110%, rgb(42 30 63 / 0.9), transparent 70%),
+      var(--night);
+    visibility: hidden;
+    opacity: 0;
+    /* Grows out of the toggle, which in RTL sits at the visual left */
+    clip-path: circle(0% at 2rem 2rem);
+    transition:
+      clip-path 0.55s var(--ease-out),
+      opacity 0.3s ease,
+      visibility 0s linear 0.55s;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .mobile-menu.is-open {
+    visibility: visible;
+    opacity: 1;
+    clip-path: circle(150% at 50% 0%);
+    transition:
+      clip-path 0.6s var(--ease-out),
+      opacity 0.2s ease,
+      visibility 0s;
+  }
+  .mobile-menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--header-h);
+  }
+  .mobile-menu__nav {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  .mobile-menu__nav ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .mobile-menu__nav li {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.5s var(--ease-out);
+  }
+  .mobile-menu.is-open .mobile-menu__nav li {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(0.12s + var(--i) * 0.06s);
+  }
+  .mobile-menu__nav a {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 10vw, 3rem);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    padding-block: 0.2rem;
+  }
+  .mobile-menu__nav a[aria-current='page'] {
+    color: var(--sand);
+  }
+  .mobile-menu__foot {
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.5rem max(2rem, env(safe-area-inset-bottom));
+  }
+  .mobile-menu__phone {
+    color: var(--muted);
+    text-align: center;
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  import { initHeader } from '../scripts/nav';
+  // ClientRouter swaps the DOM: re-init on every page load, tear down before swap.
+  document.addEventListener('astro:page-load', initHeader);
+</script>

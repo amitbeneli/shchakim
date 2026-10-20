@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+
+// ≤ 300 words total (brief requirement)
+const timeline = [
+  { year: '2019', text: 'לילה אחד על שפת המכתש, ושאלה: למה אין כאן מקום שבנוי בשביל השמיים.' },
+  { year: '2020', text: 'תכנון עם אדריכלים ואסטרונומים. כל חלון וכל מנורה נבחנו מול החושך.' },
+  { year: '2021', text: 'בנייה בחומרים מקומיים. אבן, עץ וזכוכית, ובלי אף פנס רחוב.' },
+  { year: '2022', text: 'האורחים הראשונים. מאז ביקרו כאן 4,200 אורחים.' },
+];
+---
+
+<Base
+  title="הסיפור"
+  description="איך נולד לודג׳ שבנוי סביב החושך. הסיפור של שחקים, מלילה אחד על שפת מכתש רמון ועד תשע סוויטות."
+>
+  <article class="page container">
+    <header class="page-head">
+      <p class="eyebrow">הסיפור</p>
+      <h1>התחלנו מהחושך</h1>
+    </header>
+
+    <div class="prose story">
+      <p>
+        זה התחיל בלילה של סוף קיץ, על שפת המכתש. כיבינו את הפנסים, וחיכינו שהעיניים יתרגלו. אחרי עשרים
+        דקות השמיים נפתחו. שביל החלב נמתח מקצה לקצה, וכוכבים שלא ידענו שקיימים מילאו כל פינה.
+      </p>
+      <p>
+        הבנו שרוב האנשים בארץ לא ראו שמיים כאלה אף פעם. לא בגלל שהם רחוקים, אלא בגלל שהאור של הערים
+        מסתיר אותם.
+      </p>
+      <p>
+        רצינו לבנות מקום שמחזיר את החושך. לא מלון עם נוף, אלא מקום שכל פרט בו משרת את מה שקורה למעלה.
+        תאורה נמוכה ואדומה, תקרות זכוכית, מרפסות שפונות אל השמיים, ושקט.
+      </p>
+      <p>
+        היום יש בשחקים תשע סוויטות. המדריכים שלנו מכירים כל קבוצת כוכבים בשמה, ועדיין עוצרים כל לילה
+        להסתכל למעלה. אנחנו מקווים שגם אתם תעצרו.
+      </p>
+    </div>
+
+    <section class="section" aria-labelledby="timeline-title">
+      <h2 id="timeline-title" class="timeline-title">איך זה נבנה</h2>
+      <ol role="list" class="timeline">
+        {
+          timeline.map((t) => (
+            <li>
+              <span class="timeline__year"><bdi>{t.year}</bdi></span>
+              <p>{t.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <p><a href="/book" class="btn">לבוא לראות בעצמכם</a></p>
+  </article>
+</Base>
+
+<style>
+  .story p {
+    font-size: var(--step-1);
+    line-height: 1.8;
+  }
+  .timeline-title {
+    font-size: var(--step-3);
+    margin-block-end: 2rem;
+  }
+  .timeline {
+    display: grid;
+    gap: 0;
+    border-inline-start: 1px solid var(--line-strong);
+    max-width: 40rem;
+  }
+  .timeline li {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    padding-inline-start: 1.75rem;
+    padding-block-end: 2rem;
+  }
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: -5px;
+    inset-block-start: 0.55em;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--sand);
+  }
+  .timeline__year {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--sand);
+    line-height: 1.2;
+  }
+  .timeline p {
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+import Base from '../layouts/Base.astro';
+import { addons } from '../data/pricing';
+import { formatPrice } from '../lib/format';
+---
+
+<Base
+  title="חוויות"
+  description="תצפית מודרכת עם אסטרונום, סדנת צילום כוכבים, ארוחת ערב במדבר וג׳יפ לזריחה. החוויות שאפשר להוסיף ללילה בשחקים."
+>
+  <div class="page container">
+    <header class="page-head">
+      <p class="eyebrow">מה עושים בלילה</p>
+      <h1>חוויות</h1>
+      <p>השמיים כאן הם לא רקע. הם הסיבה להגיע. אלה הדרכים שלנו להראות לכם אותם מקרוב.</p>
+    </header>
+
+    <!-- R2 sky map + R3 moon calendar land in stages 4–5 -->
+    <section class="intro-grid" aria-label="השמיים והירח">
+      <article>
+        <h2>מפת השמיים</h2>
+        <p>אוריון, העגלה הגדולה, קסיופאה, עקרב, ברבור ונבל. שש קבוצות כוכבים שרואים מכאן, ומאחורי כל אחת סיפור ישן.</p>
+      </article>
+      <article>
+        <h2>לוח הירח</h2>
+        <p>הלילות הטובים ביותר לתצפית הם סביב מולד הירח, כשהשמיים הכי כהים. כדאי לתכנן את ההגעה לפיהם.</p>
+      </article>
+    </section>
+
+    <section class="section" aria-labelledby="addons-title">
+      <div class="section-head">
+        <h2 id="addons-title">אפשר להוסיף להזמנה</h2>
+        <p>כל החוויות נבחרות בשלב התוספות באשף ההזמנה.</p>
+      </div>
+      <ul role="list" class="addons">
+        {
+          addons.map((a) => (
+            <li class="addon">
+              <div class="addon__art sky-art" aria-hidden="true" />
+              <div class="addon__body">
+                <h3>{a.name}</h3>
+                <p>{a.summary}</p>
+                <p class="addon__meta">
+                  <span>{a.duration}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>
+                    <bdi class="price">{formatPrice(a.price)}</bdi> {a.pricing === 'perPerson' ? 'לאדם' : 'להזמנה'}
+                  </span>
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="addons-cta"><a href="/book" class="btn">להזמין לילה עם חוויה</a></p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .intro-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .intro-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .intro-grid article {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--night-2);
+  }
+  .intro-grid h2 {
+    font-size: var(--step-2);
+  }
+  .intro-grid p {
+    color: var(--muted);
+  }
+
+  .addons {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .addons {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .addon {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--night-2);
+  }
+  .addon__body {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.1rem 1.25rem;
+  }
+  .addon h3 {
+    font-size: var(--step-1);
+  }
+  .addon p {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+  .addon .addon__meta {
+    color: var(--starlight);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+  }
+  .addons-cta {
+    margin-block-start: 2rem;
+  }
+</style>

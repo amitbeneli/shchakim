@@ -1,0 +1,279 @@
+---
+import Base from '../layouts/Base.astro';
+import SuiteCard from '../components/SuiteCard.astro';
+import { site } from '../data/site';
+import { suites } from '../data/pricing';
+import { faq } from '../data/faq';
+import { formatNumber } from '../lib/format';
+
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'LodgingBusiness',
+  name: 'שחקים',
+  alternateName: 'SHCHAKIM',
+  description: 'לודג׳ בוטיק לתצפית כוכבים עם 9 סוויטות על שפת מכתש רמון.',
+  url: Astro.site?.href,
+  telephone: '+972-8-0000000',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'דרך בראשית',
+    addressLocality: 'מצפה רמון',
+    addressCountry: 'IL',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: site.stats.rating,
+    reviewCount: site.stats.reviews,
+    bestRating: 5,
+  },
+  priceRange: '₪1,450–₪2,690',
+  checkinTime: '15:00',
+  checkoutTime: '11:00',
+  numberOfRooms: site.stats.suites,
+};
+
+const reasons = [
+  {
+    title: 'שמיים כהים באמת',
+    text: 'אין כאן אורות עיר. ביותר מ־300 לילות בשנה שביל החלב נראה בעין, בלי טלסקופ.',
+  },
+  {
+    title: 'חדרים שנבנו לתצפית',
+    text: 'מרפסות פתוחות, תקרות זכוכית וטלסקופים. כל סוויטה מכוונת אל השמיים, לא אל הטלוויזיה.',
+  },
+  {
+    title: 'מדבר בקצב אחר',
+    text: 'שקט עמוק, אוויר יבש ונוף של מכתש. מגיעים לסוף שבוע ויוצאים עם תחושה של שבוע.',
+  },
+];
+---
+
+<Base
+  title="שחקים"
+  description="לודג׳ בוטיק לתצפית כוכבים על שפת מכתש רמון. תשע סוויטות עם מרפסות פתוחות, תקרות זכוכית וטלסקופים, ויותר מ־300 לילות צלולים בשנה."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+
+  <!-- R1 placeholder: static night state. The scroll-scrubbed hero lands in stage 3. -->
+  <section class="hero sky-art" data-hero aria-labelledby="hero-title">
+    <div class="container hero__inner">
+      <p class="eyebrow">מצפה רמון · מכתש רמון</p>
+      <h1 id="hero-title">לילה אחד מתחת לשמיים שלמים</h1>
+      <p class="hero__lead">
+        תשע סוויטות על שפת המכתש, בנויות לדבר אחד: להסתכל למעלה.
+      </p>
+      <div class="hero__actions">
+        <a href="/book" class="btn">להזמין לילה</a>
+        <a href="/suites" class="btn btn--ghost">לראות את הסוויטות</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="why-title">
+    <div class="section-head">
+      <p class="eyebrow">למה כאן</p>
+      <h2 id="why-title">המקום שבו הלילה מתחיל באמת</h2>
+    </div>
+    <ul role="list" class="reasons">
+      {
+        reasons.map((r) => (
+          <li class="reason">
+            <h3>{r.title}</h3>
+            <p>{r.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="stats" aria-label="שחקים במספרים">
+    <ul role="list" class="container stats__list">
+      <li><strong><bdi>{formatNumber(site.stats.guests)}</bdi></strong><span>אורחים מאז {site.openedYear}</span></li>
+      <li><strong><bdi>{site.stats.clearNights}+</bdi></strong><span>לילות צלולים בשנה</span></li>
+      <li><strong><bdi>{site.stats.rating}</bdi></strong><span>דירוג מתוך {site.stats.reviews} ביקורות</span></li>
+      <li><strong><bdi>{site.stats.suites}</bdi></strong><span>סוויטות, שלושה סוגים</span></li>
+    </ul>
+  </section>
+
+  <section class="section container" aria-labelledby="suites-title">
+    <div class="section-head">
+      <p class="eyebrow">הסוויטות</p>
+      <h2 id="suites-title">שלוש דרכים לישון מתחת לכוכבים</h2>
+    </div>
+    <ul role="list" class="suites-grid">
+      {suites.map((s) => <li><SuiteCard suite={s} /></li>)}
+    </ul>
+  </section>
+
+  <section class="section container" aria-labelledby="faq-title">
+    <div class="section-head">
+      <p class="eyebrow">שאלות נפוצות</p>
+      <h2 id="faq-title">לפני שיוצאים לדרך</h2>
+    </div>
+    <div class="faq">
+      {
+        faq.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <p>{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="cta" aria-labelledby="cta-title">
+    <div class="container cta__inner">
+      <h2 id="cta-title">הלילה הבא שלכם כבר על המפה</h2>
+      <p>בוחרים תאריך, בוחרים סוויטה, ואנחנו דואגים לשאר.</p>
+      <a href="/book" class="btn">להזמין לילה</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: calc(var(--header-h) + 2rem) 8rem;
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .hero h1 {
+    font-size: var(--step-4);
+    font-weight: 900;
+    max-width: 14ch;
+  }
+  .hero__lead {
+    font-size: var(--step-1);
+    max-width: 34ch;
+    color: var(--starlight);
+    opacity: 0.85;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: 0.5rem;
+  }
+
+  .reasons {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .reasons {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .reason {
+    display: grid;
+    gap: 0.5rem;
+    padding-block-start: 1.25rem;
+    border-block-start: 1px solid var(--line-strong);
+  }
+  .reason h3 {
+    font-size: var(--step-2);
+  }
+  .reason p {
+    color: var(--muted);
+  }
+
+  .stats {
+    background: var(--dusk);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+  .stats__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 1rem;
+    text-align: center;
+  }
+  @media (min-width: 768px) {
+    .stats__list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .stats strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--sand);
+  }
+  .stats span {
+    font-size: var(--step--1);
+  }
+
+  .suites-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .suites-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .faq {
+    max-width: 48rem;
+    border-block-start: 1px solid var(--line);
+  }
+  .faq details {
+    border-block-end: 1px solid var(--line);
+  }
+  .faq summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.1rem;
+    font-weight: 700;
+    font-size: var(--step-1);
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq summary::after {
+    content: '+';
+    font-weight: 400;
+    font-size: 1.5em;
+    line-height: 1;
+    color: var(--sand);
+    flex-shrink: 0;
+  }
+  .faq details[open] summary::after {
+    content: '−';
+  }
+  .faq details p {
+    color: var(--muted);
+    padding-block-end: 1.25rem;
+    max-width: 40rem;
+  }
+
+  .cta {
+    padding-block: clamp(4rem, 10vw, 7rem);
+    background: radial-gradient(80% 120% at 50% 100%, rgb(226 104 60 / 0.22), transparent 70%), var(--night);
+    text-align: center;
+  }
+  .cta__inner {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+  }
+  .cta h2 {
+    font-size: var(--step-3);
+  }
+  .cta p {
+    color: var(--muted);
+  }
+</style>

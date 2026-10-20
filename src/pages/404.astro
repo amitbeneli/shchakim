@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="העמוד לא נמצא" description="העמוד שחיפשתם לא נמצא. אפשר לחזור לדף הבית או לראות את הסוויטות." noindex>
+  <section class="nf sky-art">
+    <div class="container nf__inner">
+      <p class="nf__code" aria-hidden="true"><bdi>404</bdi></p>
+      <h1>הכוכב הזה כבר כבה</h1>
+      <p>האור שלו עוד הגיע אליכם, אבל העמוד עצמו כבר לא כאן. אולי הקישור השתנה.</p>
+      <div class="nf__actions">
+        <a href="/" class="btn">חזרה לדף הבית</a>
+        <a href="/suites" class="btn btn--ghost">לראות את הסוויטות</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: calc(var(--header-h) + 2rem) 10rem;
+  }
+  .nf__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    text-align: center;
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+  .nf__code {
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 3rem + 10vw, 9rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--sand);
+    opacity: 0.9;
+  }
+  .nf h1 {
+    font-size: var(--step-3);
+  }
+  .nf p {
+    color: var(--muted);
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-block-start: 0.5rem;
+  }
+</style>

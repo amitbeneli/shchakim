@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import SuiteCard from '../../components/SuiteCard.astro';
+import { suites } from '../../data/pricing';
+---
+
+<Base
+  title="הסוויטות"
+  description="סוויטת מכתש, סוויטת כוכב ווילת גלקסיה. שלוש דרכים לישון מתחת לשמיים של מכתש רמון, מ־1,450 ₪ ללילה."
+>
+  <div class="page container">
+    <header class="page-head">
+      <p class="eyebrow">תשע סוויטות, שלושה סוגים</p>
+      <h1>הסוויטות</h1>
+      <p>כל סוויטה בנויה סביב השמיים. בוחרים כמה קרוב אליהם רוצים להירדם.</p>
+    </header>
+
+    <ul role="list" class="suites-grid">
+      {suites.map((s) => <li><SuiteCard suite={s} /></li>)}
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .suites-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .suites-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

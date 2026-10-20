@@ -1,0 +1,198 @@
+---
+import Base from '../../layouts/Base.astro';
+import { suites, type Suite } from '../../data/pricing';
+import { formatPrice } from '../../lib/format';
+
+export function getStaticPaths() {
+  return suites.map((suite) => ({ params: { slug: suite.slug }, props: { suite } }));
+}
+
+interface Props {
+  suite: Suite;
+}
+const { suite } = Astro.props;
+const others = suites.filter((s) => s.slug !== suite.slug);
+---
+
+<Base title={suite.name} description={`${suite.name}: ${suite.summary} עד ${suite.maxGuests} אורחים, ${formatPrice(suite.nightly)} ללילה.`}>
+  <section class="suite-hero sky-art" transition:name={`suite-media-${suite.slug}`} aria-labelledby="suite-title">
+    <div class="container suite-hero__inner">
+      <a href="/suites" class="back">
+        <svg class="icon-back" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+          <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        כל הסוויטות
+      </a>
+      <p class="eyebrow">{suite.highlight}</p>
+      <h1 id="suite-title">{suite.name}</h1>
+    </div>
+  </section>
+
+  <div class="container suite-body">
+    <div class="suite-main">
+      <div class="prose">
+        {suite.description.map((p) => <p>{p}</p>)}
+      </div>
+
+      <h2 class="suite-sub">מה יש בסוויטה</h2>
+      <ul role="list" class="amenities">
+        {suite.amenities.map((a) => <li>{a}</li>)}
+      </ul>
+    </div>
+
+    <aside class="suite-book" aria-label="הזמנה">
+      <p class="suite-book__price">
+        <bdi class="price">{formatPrice(suite.nightly)}</bdi>
+        <span>ללילה, כולל מע״מ</span>
+      </p>
+      <p class="suite-book__note">עד {suite.maxGuests} אורחים. לילות חמישי ושישי בתוספת 20%.</p>
+      <a href={`/book?suite=${suite.slug}`} class="btn">להזמין את הסוויטה הזו</a>
+    </aside>
+  </div>
+
+  <section class="container section others" aria-labelledby="others-title">
+    <h2 id="others-title" class="suite-sub">סוויטות נוספות</h2>
+    <ul role="list">
+      {
+        others.map((s) => (
+          <li>
+            <a href={`/suites/${s.slug}`}>
+              <span>{s.name}</span>
+              <span class="others__meta">{s.highlight}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .suite-hero {
+    min-height: min(70svh, 640px);
+    display: grid;
+    align-items: end;
+    padding-block: calc(var(--header-h) + 2rem) 3rem;
+  }
+  .suite-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .suite-hero h1 {
+    font-size: var(--step-4);
+    font-weight: 900;
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    justify-self: start;
+    text-decoration: none;
+    color: var(--muted);
+    padding-block: 0.5rem;
+  }
+  /* "Back" points right in RTL — the chevron path above already points right */
+  .back:hover {
+    color: var(--starlight);
+  }
+
+  .suite-body {
+    display: grid;
+    gap: 2.5rem;
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+  @media (min-width: 900px) {
+    .suite-body {
+      grid-template-columns: 1fr 22rem;
+      align-items: start;
+    }
+  }
+  .suite-sub {
+    font-size: var(--step-2);
+    margin-block: 2.5rem 1rem;
+  }
+  .amenities {
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 600px) {
+    .amenities {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .amenities li {
+    padding-inline-start: 1.25rem;
+    position: relative;
+  }
+  .amenities li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sand);
+  }
+
+  .suite-book {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--night-2);
+  }
+  @media (min-width: 900px) {
+    .suite-book {
+      position: sticky;
+      inset-block-start: calc(var(--header-h) + 1.5rem);
+    }
+  }
+  .suite-book__price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .suite-book__price .price {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 700;
+    color: var(--sand);
+  }
+  .suite-book__price span,
+  .suite-book__note {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  .others {
+    padding-block-start: 0;
+  }
+  .others ul {
+    border-block-start: 1px solid var(--line);
+  }
+  .others a {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding-block: 1.1rem;
+    border-block-end: 1px solid var(--line);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+  }
+  .others__meta {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    color: var(--muted);
+    align-self: center;
+  }
+  .others a:hover span:first-child {
+    color: var(--sand);
+  }
+</style>

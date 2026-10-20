@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+---
+
+<Base title="תודה" description="קיבלנו את בקשת ההזמנה שלכם. נחזור אליכם תוך יום עסקים לאישור." noindex>
+  <section class="thanks sky-art">
+    <div class="container thanks__inner">
+      <p class="eyebrow">ההזמנה התקבלה</p>
+      <h1>תודה. השמיים שמורים לכם</h1>
+      <p>
+        קיבלנו את הפרטים. נחזור אליכם תוך יום עסקים כדי לאשר את התאריכים ולענות על כל שאלה. לא חויבתם
+        בשום תשלום.
+      </p>
+      <p>
+        אם משהו דחוף, אפשר להתקשר:
+        <a href={site.phoneHref}><bdi dir="ltr">{site.phone}</bdi></a>
+      </p>
+      <div class="thanks__actions">
+        <a href="/experiences" class="btn">להכיר את החוויות</a>
+        <a href="/" class="btn btn--ghost">חזרה לדף הבית</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .thanks {
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: calc(var(--header-h) + 2rem) 10rem;
+  }
+  .thanks__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.1rem;
+    max-width: 40rem;
+    margin-inline: auto;
+    text-align: center;
+    justify-items: center;
+  }
+  .thanks h1 {
+    font-size: var(--step-4);
+    font-weight: 900;
+  }
+  .thanks p {
+    color: var(--muted);
+  }
+  .thanks a:not(.btn) {
+    color: var(--sand);
+  }
+  .thanks__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-block-start: 0.5rem;
+  }
+</style>
