@@ -4,6 +4,7 @@ import { addons } from '../data/pricing';
 import { formatPrice } from '../lib/format';
 import Photo from '../components/Photo.astro';
 import R3MoonCalendar from '../components/R3MoonCalendar.astro';
+import R2SkyMap from '../components/R2SkyMap.astro';
 ---
 
 <Base
@@ -17,13 +18,7 @@ import R3MoonCalendar from '../components/R3MoonCalendar.astro';
       <p>השמיים כאן הם לא רקע. הם הסיבה להגיע. אלה הדרכים שלנו להראות לכם אותם מקרוב.</p>
     </header>
 
-    <!-- R2 sky map + R3 moon calendar land in stages 4–5 -->
-    <section class="intro-grid" aria-label="השמיים והירח">
-      <article>
-        <h2>מפת השמיים</h2>
-        <p>אוריון, העגלה הגדולה, קסיופאה, עקרב, ברבור ונבל. שש קבוצות כוכבים שרואים מכאן, ומאחורי כל אחת סיפור ישן.</p>
-      </article>
-    </section>
+    <R2SkyMap />
 
     <div class="section">
       <R3MoonCalendar />
@@ -60,29 +55,6 @@ import R3MoonCalendar from '../components/R3MoonCalendar.astro';
 </Base>
 
 <style>
-  .intro-grid {
-    display: grid;
-    gap: 1.25rem;
-  }
-  @media (min-width: 768px) {
-    .intro-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  .intro-grid article {
-    display: grid;
-    gap: 0.5rem;
-    padding: 1.5rem;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--night-2);
-  }
-  .intro-grid h2 {
-    font-size: var(--step-2);
-  }
-  .intro-grid p {
-    color: var(--muted);
-  }
 
   .addons {
     display: grid;

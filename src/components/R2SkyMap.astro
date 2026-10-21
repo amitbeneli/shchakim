@@ -1,0 +1,191 @@
+---
+// R2: interactive sky map. The canvas is decorative for assistive tech; the
+// same six constellations are real buttons below it (keyboard + screen reader),
+// and the story card is a live region.
+import { constellations } from '../data/constellations';
+---
+
+<section class="r2" data-r2 aria-labelledby="r2-title">
+  <div class="r2__head" data-reveal>
+    <h2 id="r2-title">מפת השמיים</h2>
+    <p>
+      <span class="r2__fine">העבירו את הסמן מעל קבוצת כוכבים, והפנס יחשוף כוכבים חלשים יותר.</span>{' '}
+      <span class="r2__coarse">געו בקבוצת כוכבים כדי לראות את הסיפור שלה.</span>{' '}
+      גררו כדי לסובב את השמיים סביב כוכב הצפון.
+    </p>
+  </div>
+
+  <div class="r2__stage">
+    <div class="r2__frame">
+      <canvas aria-hidden="true"></canvas>
+    </div>
+    <!-- Desktop: floats beside the constellation. Phones: sits under the map so it never covers the sky -->
+    <div class="r2__card" data-r2-card role="status" aria-live="polite" hidden>
+      <p class="r2__card-name" data-r2-name></p>
+      <p class="r2__card-story" data-r2-story></p>
+    </div>
+  </div>
+
+  <ul class="r2__list" role="list" aria-label="קבוצות הכוכבים במפה">
+    {
+      constellations.map((c) => (
+        <li>
+          <button type="button" data-r2-pick={c.id} aria-pressed="false">
+            {c.name}
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .r2 {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .r2__head {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 46rem;
+  }
+  .r2__head h2 {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+  }
+  .r2__head p {
+    color: var(--muted);
+    font-size: var(--step-1);
+  }
+  .r2__coarse {
+    display: none;
+  }
+  @media (hover: none), (pointer: coarse) {
+    .r2__fine {
+      display: none;
+    }
+    .r2__coarse {
+      display: inline;
+    }
+  }
+
+  .r2__stage {
+    position: relative;
+  }
+  .r2__frame {
+    position: relative;
+    aspect-ratio: 1;
+    max-height: 82svh;
+    width: 100%;
+    margin-inline: auto;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 50%, #141a33 0%, #0b0e1a 55%, #070912 100%);
+    border: 1px solid var(--line);
+  }
+  @media (min-width: 900px) {
+    .r2__frame {
+      aspect-ratio: 16 / 10;
+    }
+  }
+  .r2__frame canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: pan-y; /* vertical scroll still works on phones; horizontal drags rotate */
+    cursor: grab;
+  }
+  :global(.r2.is-dragging) .r2__frame canvas {
+    cursor: grabbing;
+  }
+  /* Desktop flashlight: hide the arrow so the light reads as the cursor */
+  @media (hover: hover) and (pointer: fine) {
+    .r2__frame canvas {
+      cursor: none;
+    }
+    :global(.r2.is-over) .r2__frame canvas {
+      cursor: pointer;
+    }
+  }
+
+  .r2__card {
+    position: absolute;
+    width: min(320px, calc(100% - 24px));
+    display: grid;
+    gap: 0.4rem;
+    padding: 1rem 1.15rem;
+    border-radius: 12px;
+    background: rgb(11 14 26 / 0.82);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(217 168 108 / 0.45);
+    pointer-events: none;
+    animation: r2-card 0.45s var(--ease-out);
+    transition:
+      left 0.35s var(--ease-out),
+      top 0.35s var(--ease-out);
+  }
+  .r2__card:global(.is-docked) {
+    position: static;
+    width: auto;
+    margin-block-start: 0.75rem;
+    background: var(--night-2);
+  }
+  @keyframes r2-card {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .r2__card-name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--sand);
+    line-height: 1.1;
+  }
+  .r2__card-story {
+    font-size: var(--step--1);
+    line-height: 1.65;
+  }
+
+  .r2__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .r2__list button {
+    padding: 0.55rem 1.1rem;
+    min-height: 44px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .r2__list button[aria-pressed='true'] {
+    background: var(--sand);
+    border-color: var(--sand);
+    color: var(--night);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .r2__list button:hover {
+      border-color: var(--sand);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .r2__card {
+      animation: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { initSkyMap } from '../scripts/skymap';
+  document.addEventListener('astro:page-load', initSkyMap);
+</script>

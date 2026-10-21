@@ -2,7 +2,9 @@
 import Base from '../../layouts/Base.astro';
 import { suites, type Suite } from '../../data/pricing';
 import { formatPrice } from '../../lib/format';
+import { src } from '../../data/images';
 import Photo from '../../components/Photo.astro';
+import SuiteGallery from '../../components/SuiteGallery.astro';
 
 export function getStaticPaths() {
   return suites.map((suite) => ({ params: { slug: suite.slug }, props: { suite } }));
@@ -17,7 +19,11 @@ const others = suites.filter((s) => s.slug !== suite.slug);
 
 <Base title={suite.name} description={`${suite.name}: ${suite.summary} עד ${suite.maxGuests} אורחים, ${formatPrice(suite.nightly)} ללילה.`}>
   <section class="suite-hero" aria-labelledby="suite-title">
-    <div class="suite-hero__media" transition:name={`suite-media-${suite.slug}`}>
+    <div
+      class="suite-hero__media"
+      transition:name={`suite-media-${suite.slug}`}
+      style={`background-image: url(${src(suite.photo, 800)})`}
+    >
       <Photo photo={suite.photo} eager decorative sizes="100vw" />
     </div>
     <div class="suite-hero__shade" aria-hidden="true"></div>
@@ -32,6 +38,10 @@ const others = suites.filter((s) => s.slug !== suite.slug);
       <h1 id="suite-title">{suite.name}</h1>
     </div>
   </section>
+
+  <div class="container suite-gallery">
+    <SuiteGallery photos={suite.gallery} name={suite.name} />
+  </div>
 
   <div class="container suite-body">
     <div class="suite-main">
@@ -82,10 +92,13 @@ const others = suites.filter((s) => s.slug !== suite.slug);
     align-items: end;
     padding-block: calc(var(--header-h) + 2rem) 3rem;
   }
+  /* A small (often already cached) copy paints instantly while the full photo loads */
   .suite-hero__media {
     position: absolute;
     inset: 0;
     z-index: -2;
+    background-size: cover;
+    background-position: center;
   }
   .suite-hero__media :global(img) {
     width: 100%;
@@ -124,6 +137,9 @@ const others = suites.filter((s) => s.slug !== suite.slug);
     color: var(--starlight);
   }
 
+  .suite-gallery {
+    padding-block-start: clamp(2rem, 5vw, 3.5rem);
+  }
   .suite-body {
     display: grid;
     gap: 2.5rem;

@@ -1,0 +1,267 @@
+---
+// Suite gallery.
+// - Phones / touch: a native swipe strip (scroll-snap) with a position counter.
+// - Desktop: a mosaic; any photo opens a <dialog> lightbox (focus trap, Esc and
+//   backdrop close for free), with prev/next buttons and arrow keys (RTL-aware).
+import Photo from './Photo.astro';
+import { src, type Photo as P } from '../data/images';
+
+interface Props {
+  photos: P[];
+  name: string;
+}
+const { photos, name } = Astro.props;
+---
+
+<section class="gal" data-gal aria-label={`תמונות מ${name}`}>
+  <ul class="gal__strip" role="list" data-gal-strip>
+    {
+      photos.map((p, i) => (
+        <li class={`gal__item gal__item--${i}`}>
+          <button type="button" class="gal__open" data-gal-open={i} aria-label={`הגדלת תמונה ${i + 1} מתוך ${photos.length}: ${p.alt}`}>
+            <Photo photo={p} sizes="(min-width: 900px) 50vw, 88vw" width={1400} height={1000} />
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="gal__count" aria-hidden="true"><span data-gal-pos>1</span> מתוך {photos.length}</p>
+
+  <dialog class="lb" data-lb aria-label={`גלריית ${name}`}>
+    <figure class="lb__fig">
+      <img data-lb-img alt="" />
+      <figcaption data-lb-cap></figcaption>
+    </figure>
+    <button type="button" class="lb__btn lb__close" data-lb-close aria-label="סגירה">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </button>
+    <button type="button" class="lb__btn lb__prev" data-lb-prev aria-label="התמונה הקודמת">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+    </button>
+    <button type="button" class="lb__btn lb__next" data-lb-next aria-label="התמונה הבאה">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+    </button>
+  </dialog>
+
+  <script type="application/json" data-gal-data set:html={JSON.stringify(photos.map((p) => ({ src: src(p, 2000), alt: p.alt })))} />
+</section>
+
+<style>
+  .gal {
+    display: grid;
+    gap: 0.75rem;
+  }
+  /* Phones: swipe strip */
+  .gal__strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 88%;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .gal__strip::-webkit-scrollbar {
+    display: none;
+  }
+  .gal__item {
+    scroll-snap-align: center;
+  }
+  .gal__open {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+  .gal__open :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease-out);
+  }
+  .gal__count {
+    text-align: center;
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (pointer: coarse), (max-width: 899px) {
+    .gal__open {
+      cursor: default;
+    }
+  }
+  /* Desktop: mosaic, click to enlarge */
+  @media (min-width: 900px) and (pointer: fine) {
+    .gal__strip {
+      grid-auto-flow: row;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      overflow: visible;
+    }
+    .gal__item--0 {
+      grid-row: span 2;
+    }
+    .gal__item--0 .gal__open,
+    .gal__item--0 .gal__open :global(img) {
+      height: 100%;
+    }
+    .gal__open :global(img) {
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 220px;
+    }
+    .gal__open:hover :global(img) {
+      transform: scale(1.03);
+    }
+    .gal__count {
+      display: none;
+    }
+  }
+
+  /* Lightbox */
+  .lb {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(6 8 15 / 0.96);
+    color: var(--starlight);
+  }
+  .lb[open] {
+    display: grid;
+    place-items: center;
+    animation: lb-in 0.35s var(--ease-out);
+  }
+  .lb::backdrop {
+    background: transparent;
+  }
+  @keyframes lb-in {
+    from {
+      opacity: 0;
+    }
+  }
+  .lb__fig {
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+    max-width: min(1400px, 88vw);
+  }
+  .lb__fig img {
+    max-width: 100%;
+    max-height: 82dvh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .lb__fig figcaption {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+  .lb__btn {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: rgb(11 14 26 / 0.7);
+    cursor: pointer;
+  }
+  .lb__btn svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .lb__btn:hover {
+    border-color: var(--sand);
+  }
+  .lb__close {
+    top: 1.25rem;
+    left: 1.25rem;
+  }
+  /* RTL: "previous" sits on the right, "next" on the left */
+  .lb__prev {
+    right: 1.5rem;
+    top: 50%;
+    margin-top: -26px;
+  }
+  .lb__next {
+    left: 1.5rem;
+    top: 50%;
+    margin-top: -26px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lb[open] {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const gal = document.querySelector<HTMLElement>('[data-gal]');
+    if (!gal) return;
+    const data: { src: string; alt: string }[] = JSON.parse(gal.querySelector('[data-gal-data]')!.textContent!);
+    const strip = gal.querySelector<HTMLElement>('[data-gal-strip]')!;
+    const pos = gal.querySelector<HTMLElement>('[data-gal-pos]')!;
+    const lb = gal.querySelector<HTMLDialogElement>('[data-lb]')!;
+    const img = lb.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const cap = lb.querySelector<HTMLElement>('[data-lb-cap]')!;
+    const desktop = matchMedia('(min-width: 900px) and (pointer: fine)');
+    let i = 0;
+    let opener: HTMLElement | null = null;
+
+    // Swipe counter: which slide is centred
+    const items = [...strip.children] as HTMLElement[];
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => e.isIntersecting && (pos.textContent = String(items.indexOf(e.target as HTMLElement) + 1))),
+      { root: strip, threshold: 0.6 },
+    );
+    items.forEach((it) => io.observe(it));
+
+    const show = (n: number) => {
+      i = (n + data.length) % data.length;
+      img.src = data[i].src;
+      img.alt = data[i].alt;
+      cap.textContent = `${data[i].alt} · ${i + 1} מתוך ${data.length}`;
+    };
+
+    gal.querySelectorAll<HTMLButtonElement>('[data-gal-open]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (!desktop.matches) return; // phones swipe instead
+        opener = b;
+        show(Number(b.dataset.galOpen));
+        lb.showModal();
+      }),
+    );
+    lb.querySelector('[data-lb-close]')!.addEventListener('click', () => lb.close());
+    lb.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(i - 1));
+    lb.querySelector('[data-lb-next]')!.addEventListener('click', () => show(i + 1));
+    // Click on the dark area (not the photo or a button) closes
+    lb.addEventListener('click', (e) => e.target === lb && lb.close());
+    lb.addEventListener('keydown', (e) => {
+      // RTL: left arrow moves forward
+      if (e.key === 'ArrowLeft') show(i + 1);
+      if (e.key === 'ArrowRight') show(i - 1);
+    });
+    lb.addEventListener('close', () => opener?.focus());
+
+    document.addEventListener('astro:before-swap', () => {
+      io.disconnect();
+      if (lb.open) lb.close();
+    }, { once: true });
+  });
+</script>

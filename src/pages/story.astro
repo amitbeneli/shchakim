@@ -1,101 +1,266 @@
 ---
 import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import { photos } from '../data/images';
 
-// ≤ 300 words total (brief requirement)
+// The story, under 300 words. Each sentence is its own line, revealed in turn.
+const chapters = [
+  [
+    'זה התחיל בלילה של סוף קיץ, על שפת המכתש.',
+    'כיבינו את הפנסים וחיכינו שהעיניים יתרגלו.',
+    'אחרי עשרים דקות השמיים נפתחו.',
+    'שביל החלב נמתח מקצה לקצה, וכוכבים שלא ידענו שקיימים מילאו כל פינה.',
+  ],
+  [
+    'הבנו שרוב האנשים בארץ לא ראו שמיים כאלה אף פעם.',
+    'לא בגלל שהם רחוקים, אלא בגלל שאור הערים מסתיר אותם.',
+  ],
+  [
+    'רצינו לבנות מקום שמחזיר את החושך.',
+    'לא מלון עם נוף, אלא מקום שכל פרט בו משרת את מה שקורה למעלה:',
+    'תאורה נמוכה ואדומה, תקרות זכוכית, מרפסות שפונות אל השמיים, ושקט.',
+  ],
+  [
+    'היום יש בשחקים תשע סוויטות.',
+    'המדריכים שלנו מכירים כל קבוצת כוכבים בשמה, ועדיין עוצרים כל לילה להסתכל למעלה.',
+    'אנחנו מקווים שגם אתם תעצרו.',
+  ],
+];
+
 const timeline = [
   { year: '2019', text: 'לילה אחד על שפת המכתש, ושאלה: למה אין כאן מקום שבנוי בשביל השמיים.' },
   { year: '2020', text: 'תכנון עם אדריכלים ואסטרונומים. כל חלון וכל מנורה נבחנו מול החושך.' },
   { year: '2021', text: 'בנייה בחומרים מקומיים. אבן, עץ וזכוכית, ובלי אף פנס רחוב.' },
   { year: '2022', text: 'האורחים הראשונים. מאז ביקרו כאן 4,200 אורחים.' },
 ];
+const images = [photos.archDoor, photos.craterDay];
 ---
 
 <Base
   title="הסיפור"
   description="איך נולד לודג׳ שבנוי סביב החושך. הסיפור של שחקים, מלילה אחד על שפת מכתש רמון ועד תשע סוויטות."
+  overlayHeader
 >
-  <article class="page container">
-    <header class="page-head">
+  <section class="st-hero" data-hero>
+    <div class="st-hero__media" data-parallax="0.25">
+      <Photo photo={photos.craterStars} eager decorative sizes="100vw" />
+    </div>
+    <div class="st-hero__shade" aria-hidden="true"></div>
+    <div class="container st-hero__inner">
       <p class="eyebrow">הסיפור</p>
       <h1>התחלנו מהחושך</h1>
-    </header>
-
-    <div class="prose story">
-      <p>
-        זה התחיל בלילה של סוף קיץ, על שפת המכתש. כיבינו את הפנסים, וחיכינו שהעיניים יתרגלו. אחרי עשרים
-        דקות השמיים נפתחו. שביל החלב נמתח מקצה לקצה, וכוכבים שלא ידענו שקיימים מילאו כל פינה.
-      </p>
-      <p>
-        הבנו שרוב האנשים בארץ לא ראו שמיים כאלה אף פעם. לא בגלל שהם רחוקים, אלא בגלל שהאור של הערים
-        מסתיר אותם.
-      </p>
-      <p>
-        רצינו לבנות מקום שמחזיר את החושך. לא מלון עם נוף, אלא מקום שכל פרט בו משרת את מה שקורה למעלה.
-        תאורה נמוכה ואדומה, תקרות זכוכית, מרפסות שפונות אל השמיים, ושקט.
-      </p>
-      <p>
-        היום יש בשחקים תשע סוויטות. המדריכים שלנו מכירים כל קבוצת כוכבים בשמה, ועדיין עוצרים כל לילה
-        להסתכל למעלה. אנחנו מקווים שגם אתם תעצרו.
-      </p>
     </div>
+  </section>
 
-    <section class="section" aria-labelledby="timeline-title">
-      <h2 id="timeline-title" class="timeline-title">איך זה נבנה</h2>
-      <ol role="list" class="timeline">
-        {
-          timeline.map((t) => (
-            <li>
-              <span class="timeline__year"><bdi>{t.year}</bdi></span>
-              <p>{t.text}</p>
-            </li>
-          ))
-        }
-      </ol>
+  <article class="container st">
+    {
+      chapters.map((lines, ci) => (
+        <>
+          <p class="st__chapter">
+            {lines.map((l, i) => (
+              <span class="st__line" data-reveal style={`--d:${i}`}>
+                {l}
+              </span>
+            ))}
+          </p>
+          {images[ci] && (
+            <figure class={`st__img st__img--${ci}`}>
+              <div class="st__img-mask">
+                <div data-parallax="0.12">
+                  <Photo photo={images[ci]} sizes="(min-width: 900px) 60vw, 100vw" />
+                </div>
+              </div>
+            </figure>
+          )}
+        </>
+      ))
+    }
+
+    <section class="st-tl" aria-labelledby="tl-title" data-timeline>
+      <h2 id="tl-title" data-reveal>איך זה נבנה</h2>
+      <div class="st-tl__body">
+        <span class="st-tl__line" aria-hidden="true"><span data-tl-fill></span></span>
+        <ol role="list">
+          {
+            timeline.map((t, i) => (
+              <li data-reveal style={`--d:${i}`}>
+                <span class="st-tl__year">
+                  <bdi>{t.year}</bdi>
+                </span>
+                <p>{t.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
     </section>
 
-    <p><a href="/book" class="btn">לבוא לראות בעצמכם</a></p>
+    <p class="st__cta" data-reveal><a href="/book" class="btn">לבוא לראות בעצמכם</a></p>
   </article>
 </Base>
 
 <style>
-  .story p {
-    font-size: var(--step-1);
-    line-height: 1.8;
-  }
-  .timeline-title {
-    font-size: var(--step-3);
-    margin-block-end: 2rem;
-  }
-  .timeline {
+  .st-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 88svh;
     display: grid;
-    gap: 0;
-    border-inline-start: 1px solid var(--line-strong);
-    max-width: 40rem;
+    align-items: end;
   }
-  .timeline li {
+  .st-hero__media {
+    position: absolute;
+    inset: -12% 0;
+    z-index: -2;
+    will-change: transform;
+  }
+  .st-hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .st-hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to bottom, rgb(11 14 26 / 0.55) 0%, transparent 25%),
+      linear-gradient(to top, var(--night) 0%, rgb(11 14 26 / 0.4) 40%, transparent 70%);
+  }
+  .st-hero__inner {
+    display: grid;
+    gap: 0.75rem;
+    padding-block-end: clamp(3rem, 8vh, 5rem);
+  }
+  .st-hero h1 {
+    font-size: clamp(2.8rem, 1.6rem + 6vw, 6rem);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .st {
+    max-width: 52rem;
+    padding-block: clamp(4rem, 10vw, 7rem);
+    display: grid;
+    gap: clamp(3rem, 8vw, 5.5rem);
+  }
+  .st__chapter {
+    display: grid;
+    gap: 0.35rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 1.1rem + 1.4vw, 2.15rem);
+    line-height: 1.45;
+  }
+  .st__line {
+    display: block;
+  }
+  .st__img {
+    margin: 0;
+  }
+  .st__img-mask {
+    overflow: hidden;
+    border-radius: var(--radius);
+    aspect-ratio: 16 / 10;
+  }
+  .st__img-mask > div {
+    height: 124%;
+    margin-top: -12%;
+    will-change: transform;
+  }
+  .st__img-mask :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .st__img--1 {
+    width: min(100%, 38rem);
+    margin-inline-start: auto;
+  }
+
+  .st-tl h2 {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+    margin-block-end: 2.5rem;
+  }
+  .st-tl__body {
+    position: relative;
+  }
+  /* The line draws itself down as you scroll (scaleY, scrubbed) */
+  .st-tl__line {
+    position: absolute;
+    inset-block: 0.6rem 1.5rem;
+    inset-inline-start: 4px;
+    width: 1px;
+    background: var(--line);
+  }
+  .st-tl__line span {
+    position: absolute;
+    inset: 0;
+    background: var(--sand);
+    transform-origin: top;
+  }
+  .st-tl ol {
+    display: grid;
+    gap: 2.25rem;
+  }
+  .st-tl li {
     position: relative;
     display: grid;
     gap: 0.25rem;
-    padding-inline-start: 1.75rem;
-    padding-block-end: 2rem;
+    padding-inline-start: 2rem;
   }
-  .timeline li::before {
+  .st-tl li::before {
     content: '';
     position: absolute;
-    inset-inline-start: -5px;
-    inset-block-start: 0.55em;
+    inset-inline-start: 0;
+    top: 0.6em;
     width: 9px;
     height: 9px;
     border-radius: 50%;
     background: var(--sand);
+    box-shadow: 0 0 0 4px var(--night);
   }
-  .timeline__year {
+  .st-tl__year {
     font-family: var(--font-display);
-    font-size: var(--step-2);
+    font-size: var(--step-3);
     color: var(--sand);
-    line-height: 1.2;
+    line-height: 1.1;
   }
-  .timeline p {
+  .st-tl p {
     color: var(--muted);
+    font-size: var(--step-1);
+    max-width: 36rem;
   }
 </style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const tl = document.querySelector('[data-timeline]');
+    if (!tl || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = gsap.context(() => {
+      // Parallax: each layer drifts against the scroll by its own factor
+      document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {
+        const f = Number(el.dataset.parallax);
+        gsap.fromTo(
+          el,
+          { yPercent: -f * 40 },
+          {
+            yPercent: f * 40,
+            ease: 'none',
+            scrollTrigger: { trigger: el.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true },
+          },
+        );
+      });
+      gsap.fromTo(
+        '[data-tl-fill]',
+        { scaleY: 0 },
+        { scaleY: 1, ease: 'none', scrollTrigger: { trigger: tl, start: 'top 70%', end: 'bottom 60%', scrub: 0.4 } },
+      );
+    });
+    document.addEventListener('astro:before-swap', () => ctx.revert(), { once: true });
+  });
+</script>
