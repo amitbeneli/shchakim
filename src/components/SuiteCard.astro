@@ -1,7 +1,7 @@
 ---
 import type { Suite } from '../data/pricing';
 import { formatPrice } from '../lib/format';
-import Photo from './Photo.astro';
+import SuiteDrawing from './SuiteDrawing.astro';
 
 interface Props {
   suite: Suite;
@@ -11,17 +11,16 @@ const { suite } = Astro.props;
 
 <article class="suite-card">
   <a href={`/suites/${suite.slug}`} class="suite-card__link">
-    <div class="suite-card__media" transition:name={`suite-media-${suite.slug}`}>
-      <Photo photo={suite.photo} sizes="(min-width: 768px) 33vw, 100vw" width={900} height={1200} />
+    <div class="suite-card__sheet" transition:name={`suite-media-${suite.slug}`}>
+      <SuiteDrawing slug={suite.slug} />
     </div>
     <div class="suite-card__body">
-      <p class="eyebrow">{suite.highlight}</p>
       <h3>{suite.name}</h3>
+      <p class="suite-card__hl">{suite.highlight}</p>
       <p class="suite-card__summary">{suite.summary}</p>
-      <p class="suite-card__meta">
-        <span>עד {suite.maxGuests} אורחים</span>
-        <span aria-hidden="true">·</span>
-        <span>מ־<bdi class="price">{formatPrice(suite.nightly)}</bdi> ללילה</span>
+      <p class="label suite-card__meta">
+        עד {suite.maxGuests} אורחים<span aria-hidden="true"> · </span>
+        <bdi class="price">{formatPrice(suite.nightly)}</bdi> ללילה
       </p>
     </div>
   </a>
@@ -34,53 +33,43 @@ const { suite } = Astro.props;
   .suite-card__link {
     display: grid;
     grid-template-rows: auto 1fr;
+    gap: 1rem;
     height: 100%;
     text-decoration: none;
-    border: 1px solid var(--line);
+  }
+  .suite-card__sheet {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3.4;
+    padding: 1.25rem 1.25rem 2rem;
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--night-2);
-    transition:
-      border-color 0.3s ease,
-      transform 0.4s var(--ease-out);
+    background:
+      linear-gradient(rgb(16 20 42 / 0.82), rgb(16 20 42 / 0.82)),
+      url(/topo.svg) center / 220% auto,
+      var(--night-2);
+    transition: border-color 0.3s ease;
   }
   @media (hover: hover) and (pointer: fine) {
-    .suite-card__link:hover {
-      border-color: var(--line-strong);
-      transform: translateY(-4px);
-    }
-  }
-  .suite-card__media {
-    overflow: hidden;
-  }
-  .suite-card__media :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    transition: transform 0.9s var(--ease-out);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .suite-card__link:hover :global(img) {
-      transform: scale(1.04);
+    .suite-card__link:hover .suite-card__sheet {
+      border-color: var(--sand);
     }
   }
   .suite-card__body {
     display: grid;
     align-content: start;
-    gap: 0.6rem;
-    padding: 1.25rem 1.25rem 1.5rem;
+    gap: 0.45rem;
   }
   .suite-card h3 {
-    font-size: var(--step-2);
+    font-size: var(--fs-h3);
+  }
+  .suite-card__hl {
+    color: var(--sand);
   }
   .suite-card__summary {
     color: var(--muted);
   }
   .suite-card__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 0.5rem;
-    font-size: var(--step--1);
     color: var(--starlight);
     margin-block-start: 0.25rem;
   }

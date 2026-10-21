@@ -1,6 +1,6 @@
 ---
 // Preloader: first home visit per session only. Progress is REAL: it counts
-// the hero photo and each web font as they actually finish loading (the
+// each font face the first viewport uses as it actually finishes loading (the
 // on-screen number eases toward that value so it never jumps).
 // A safety cap ends it after 6s whatever happens; reduced motion just fades.
 // An inline script in <head> (see Base) adds .pl-on before first paint, so
@@ -53,7 +53,7 @@
   }
   .pl__word {
     font-family: var(--font-display);
-    font-weight: 900;
+    font-weight: 500;
     font-size: 2.2rem;
     line-height: 1;
   }
@@ -97,8 +97,7 @@
 
 <script is:inline>
   // Inline (not a deferred module) so tracking starts while the page is still
-  // parsing: fonts are requested right away and the hero photo is watched from
-  // DOMContentLoaded, before it has finished downloading.
+  // parsing, so the fonts are requested and counted while they download.
   (function () {
     var root = document.documentElement;
     var pl = document.querySelector('[data-pl]');
@@ -111,20 +110,14 @@
     var bar = pl.querySelector('[data-pl-bar]');
     var num = pl.querySelector('[data-pl-num]');
     var t0 = performance.now();
-    var total = 5; // hero photo + 4 font faces
+    var total = 3; // the 3 font faces the first viewport uses
     var done = 0;
     var bump = function () {
       done++;
     };
 
-    ['500 1em "Frank Ruhl Libre"', '900 1em "Frank Ruhl Libre"', '400 1em Assistant', '700 1em Assistant'].forEach(function (f) {
+    ['500 1em "Frank Ruhl Libre"', '400 1em Assistant', '600 1em Assistant'].forEach(function (f) {
       document.fonts.load(f).then(bump, bump);
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-      var hero = document.querySelector('.r1__photo');
-      if (!hero || hero.complete) return bump();
-      hero.addEventListener('load', bump, { once: true });
-      hero.addEventListener('error', bump, { once: true });
     });
 
     var shown = 0;

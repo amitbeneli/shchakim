@@ -17,7 +17,7 @@ const { photo, sizes = '100vw', class: cls, eager = false, decorative = false, w
 ---
 
 <img
-  class={cls}
+  class:list={['graded', cls]}
   src={src(photo, 1200)}
   srcset={srcset(photo)}
   sizes={sizes}

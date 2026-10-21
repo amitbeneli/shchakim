@@ -2,8 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { suites, type Suite } from '../../data/pricing';
 import { formatPrice } from '../../lib/format';
-import { src } from '../../data/images';
-import Photo from '../../components/Photo.astro';
+import SuiteDrawing from '../../components/SuiteDrawing.astro';
 import SuiteGallery from '../../components/SuiteGallery.astro';
 
 export function getStaticPaths() {
@@ -18,30 +17,27 @@ const others = suites.filter((s) => s.slug !== suite.slug);
 ---
 
 <Base title={suite.name} description={`${suite.name}: ${suite.summary} עד ${suite.maxGuests} אורחים, ${formatPrice(suite.nightly)} ללילה.`}>
-  <section class="suite-hero" aria-labelledby="suite-title">
-    <div
-      class="suite-hero__media"
-      transition:name={`suite-media-${suite.slug}`}
-      style={`background-image: url(${src(suite.photo, 800)})`}
-    >
-      <Photo photo={suite.photo} eager decorative sizes="100vw" />
-    </div>
-    <div class="suite-hero__shade" aria-hidden="true"></div>
-    <div class="container suite-hero__inner">
+  <section class="suite-hero container" aria-labelledby="suite-title">
+    <div class="suite-hero__text">
       <a href="/suites" class="back">
         <svg class="icon-back" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
           <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
         כל הסוויטות
       </a>
-      <p class="eyebrow">{suite.highlight}</p>
       <h1 id="suite-title">{suite.name}</h1>
+      <p class="suite-hero__hl">{suite.highlight}</p>
+      <p class="suite-hero__sum">{suite.summary}</p>
+    </div>
+    <div class="suite-hero__sheet" transition:name={`suite-media-${suite.slug}`}>
+      <SuiteDrawing slug={suite.slug} />
     </div>
   </section>
 
-  <div class="container suite-gallery">
+  <section class="container suite-gallery" aria-labelledby="view-title">
+    <h2 id="view-title" class="suite-sub">הנוף מהסוויטה</h2>
     <SuiteGallery photos={suite.gallery} name={suite.name} />
-  </div>
+  </section>
 
   <div class="container suite-body">
     <div class="suite-main">
@@ -84,44 +80,46 @@ const others = suites.filter((s) => s.slug !== suite.slug);
 
 <style>
   .suite-hero {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    min-height: min(78svh, 720px);
     display: grid;
-    align-items: end;
-    padding-block: calc(var(--header-h) + 2rem) 3rem;
+    gap: 2rem;
+    align-items: center;
+    padding-block: calc(var(--header-h) + clamp(2rem, 6vw, 4.5rem)) clamp(2rem, 5vw, 3.5rem);
   }
-  /* A small (often already cached) copy paints instantly while the full photo loads */
-  .suite-hero__media {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    background-size: cover;
-    background-position: center;
+  @media (min-width: 900px) {
+    .suite-hero {
+      grid-template-columns: 1fr 1.35fr;
+      gap: clamp(2rem, 5vw, 5rem);
+    }
   }
-  .suite-hero__media :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .suite-hero__shade {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      linear-gradient(to bottom, rgb(11 14 26 / 0.6) 0%, transparent 25%),
-      linear-gradient(to top, var(--night) 0%, rgb(11 14 26 / 0.55) 35%, transparent 70%);
-  }
-  .suite-hero__inner {
-    position: relative;
-    z-index: 1;
+  .suite-hero__text {
     display: grid;
-    gap: 0.75rem;
+    gap: 0.9rem;
+    align-content: start;
   }
   .suite-hero h1 {
-    font-size: var(--step-4);
-    font-weight: 900;
+    font-size: var(--fs-display);
+    line-height: 1.02;
+  }
+  .suite-hero__hl {
+    color: var(--sand);
+    font-size: var(--fs-lead);
+  }
+  .suite-hero__sum {
+    color: var(--muted);
+    max-width: 36ch;
+  }
+  /* The drawing sheet morphs from the card (shared-element view transition) */
+  .suite-hero__sheet {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3.2;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background:
+      linear-gradient(rgb(16 20 42 / 0.82), rgb(16 20 42 / 0.82)),
+      url(/topo.svg) center / 200% auto,
+      var(--night-2);
   }
   .back {
     display: inline-flex;
@@ -138,7 +136,10 @@ const others = suites.filter((s) => s.slug !== suite.slug);
   }
 
   .suite-gallery {
-    padding-block-start: clamp(2rem, 5vw, 3.5rem);
+    padding-block-start: clamp(1rem, 3vw, 2rem);
+  }
+  .suite-gallery .suite-sub {
+    margin-block-start: 0;
   }
   .suite-body {
     display: grid;
@@ -152,7 +153,7 @@ const others = suites.filter((s) => s.slug !== suite.slug);
     }
   }
   .suite-sub {
-    font-size: var(--step-2);
+    font-size: var(--fs-h3);
     margin-block: 2.5rem 1rem;
   }
   .amenities {
@@ -173,10 +174,10 @@ const others = suites.filter((s) => s.slug !== suite.slug);
     position: absolute;
     inset-inline-start: 0;
     inset-block-start: 0.7em;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
+    width: 7px;
+    height: 7px;
     background: var(--sand);
+    transform: rotate(45deg);
   }
 
   .suite-book {
@@ -201,8 +202,7 @@ const others = suites.filter((s) => s.slug !== suite.slug);
   }
   .suite-book__price .price {
     font-family: var(--font-display);
-    font-size: var(--step-3);
-    font-weight: 700;
+    font-size: var(--fs-h2);
     color: var(--sand);
   }
   .suite-book__price span,
@@ -226,7 +226,7 @@ const others = suites.filter((s) => s.slug !== suite.slug);
     border-block-end: 1px solid var(--line);
     text-decoration: none;
     font-family: var(--font-display);
-    font-size: var(--step-2);
+    font-size: var(--fs-h3);
   }
   .others__meta {
     font-family: var(--font-body);

@@ -3,6 +3,13 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MoonPath from '../components/MoonPath.astro';
+// Self-hosted fonts (only the faces the system uses): Frank Ruhl Libre 500, Assistant 400/600
+import '@fontsource/frank-ruhl-libre/hebrew-500.css';
+import '@fontsource/frank-ruhl-libre/latin-500.css';
+import '@fontsource/assistant/hebrew-400.css';
+import '@fontsource/assistant/latin-400.css';
+import '@fontsource/assistant/hebrew-600.css';
+import '@fontsource/assistant/latin-600.css';
 import '../styles/global.css';
 
 interface Props {
@@ -49,13 +56,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image:alt" content="שחקים: לילה אחד מתחת לשמיים שלמים. לודג׳ תצפית כוכבים במכתש רמון" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap"
-    />
-
     {
       preloader && (
         <script is:inline>
@@ -71,6 +71,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <ClientRouter fallback="animate" />
   </head>
   <body>
+    <!-- One grade for every photo: luminance mapped night → dusk → sand → starlight, so the real Ramon photos read as one archive -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <filter id="ramon-grade" color-interpolation-filters="sRGB">
+        <feColorMatrix type="saturate" values="0" />
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.043 0.165 0.851 0.957" />
+          <feFuncG type="table" tableValues="0.055 0.118 0.659 0.945" />
+          <feFuncB type="table" tableValues="0.102 0.247 0.424 0.910" />
+        </feComponentTransfer>
+      </filter>
+    </svg>
     <a href="#main" class="skip-link">דילוג לתוכן</a>
     <Header />
     <main id="main" tabindex="-1">

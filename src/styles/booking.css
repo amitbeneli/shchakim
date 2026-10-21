@@ -48,7 +48,7 @@
   border-radius: 50%;
   border: 1px solid var(--line-strong);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 .bk-progress .is-current .bk-progress__n {
   background: var(--sand);
@@ -57,7 +57,7 @@
 }
 .bk-progress .is-current > * {
   color: var(--starlight);
-  font-weight: 700;
+  font-weight: 600;
 }
 .bk-progress .is-done .bk-progress__n {
   border-color: var(--sand);
@@ -135,7 +135,7 @@
 .bk-msg {
   font-size: var(--step--1);
   padding: 0.7rem 1rem;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: var(--night-3);
 }
 .bk-msg--ok {
@@ -276,7 +276,7 @@
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius);
   background: transparent;
   font-variant-numeric: tabular-nums;
   font-size: 0.95rem;
@@ -322,7 +322,7 @@
 .cal__day.is-end {
   background: var(--sand);
   color: var(--night);
-  font-weight: 700;
+  font-weight: 600;
 }
 .cal__day.is-start.is-dark::after,
 .cal__day.is-end.is-dark::after {
@@ -429,7 +429,7 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 .bk-suite__text {
   display: grid;
@@ -491,7 +491,7 @@
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 .bk-addon__text {
   display: grid;
@@ -522,7 +522,7 @@
   gap: 0.5rem;
   padding: 0.55rem 1rem;
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--radius);
   cursor: pointer;
   font-weight: 600;
 }
@@ -556,7 +556,7 @@
   color: var(--starlight);
   background: var(--night-3);
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 0.8rem 1rem;
   transition: border-color 0.2s ease;
 }
@@ -693,7 +693,7 @@
 .bk-sum__total {
   padding-block-start: 0.9rem;
   border-block-start: 1px solid var(--line-strong);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--step-1);
 }
 .bk-sum__total .bk-money {
@@ -738,7 +738,7 @@
   background: none;
   border: 0;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
 }
 .bk-bar__toggle .bk-money {
   font-family: var(--font-display);

@@ -85,7 +85,8 @@ import { RULE_TEXT } from '../lib/conditions';
     border: 1px solid var(--line-strong);
     border-radius: var(--radius);
     background:
-      radial-gradient(120% 90% at 0% 0%, rgb(42 30 63 / 0.7), transparent 60%),
+      linear-gradient(rgb(16 20 42 / 0.88), rgb(16 20 42 / 0.88)),
+      url(/topo.svg) 30% 40% / 260% auto,
       var(--night-2);
     min-height: 20rem;
   }
@@ -102,6 +103,7 @@ import { RULE_TEXT } from '../lib/conditions';
   .r6__rating {
     font-family: var(--font-display);
     font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
+    font-weight: 500;
     line-height: 1;
   }
   .r6__rating[data-rating='excellent'] {
@@ -134,7 +136,7 @@ import { RULE_TEXT } from '../lib/conditions';
   .r6__cta {
     justify-self: start;
     color: var(--sand);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
     padding-block: 0.4rem;
     border-block-end: 1px solid rgb(217 168 108 / 0.4);
@@ -146,10 +148,10 @@ import { RULE_TEXT } from '../lib/conditions';
   .r6__retry {
     justify-self: start;
     padding: 0.6rem 1.2rem;
-    border-radius: 999px;
+    border-radius: var(--radius);
     border: 1px solid var(--line-strong);
     background: none;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
   }
   .r6__rule {

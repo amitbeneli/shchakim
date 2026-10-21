@@ -40,8 +40,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 4,
-    photo: photos.archDoor,
-    gallery: [photos.archDoor, photos.craterDay, photos.craterStars],
+    photo: photos.rimDeck,
+    gallery: [photos.rimDeck, photos.craterDusk, photos.craterDay],
   },
   {
     slug: 'kochav',
@@ -63,8 +63,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 3,
-    photo: photos.domeNight,
-    gallery: [photos.domeNight, photos.duneMilkyWay, photos.lodgeNight],
+    photo: photos.craterStars,
+    gallery: [photos.craterStars, photos.starTrailsMesa, photos.heroNight],
   },
   {
     slug: 'galaxia',
@@ -86,8 +86,8 @@ export const suites: Suite[] = [
       'מרפסת מול המכתש',
     ],
     units: 2,
-    photo: photos.villaPool,
-    gallery: [photos.villaPool, photos.villaCourt, photos.heroSky],
+    photo: photos.rimCliff,
+    gallery: [photos.rimCliff, photos.heroNight, photos.ibex],
   },
 ];
 
@@ -111,7 +111,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשעתיים',
     summary: 'טלסקופים גדולים, לייזר שמצביע על הכוכבים, והסיפורים שמאחוריהם.',
-    photo: photos.stargazers,
+    photo: photos.starTrailsMesa,
   },
   {
     id: 'photo',
@@ -120,7 +120,7 @@ export const addons: Addon[] = [
     pricing: 'perBooking',
     duration: 'כשלוש שעות',
     summary: 'חצובה, חשיפה ארוכה ושביל החלב. יוצאים עם תמונה אחת שתרצו לתלות.',
-    photo: photos.craterStars,
+    photo: photos.heroNight,
   },
   {
     id: 'dinner',
@@ -129,7 +129,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשעתיים וחצי',
     summary: 'שולחן נמוך על החול, אש פתוחה ותפריט עונתי מחומרי גלם של הנגב.',
-    photo: photos.dinnerLanterns,
+    photo: photos.craterDusk,
   },
   {
     id: 'jeep',
@@ -138,7 +138,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשלוש שעות',
     summary: 'יוצאים בחושך, מגיעים לנקודה גבוהה, ורואים את המכתש מתמלא אור.',
-    photo: photos.sunriseDunes,
+    photo: photos.craterRed,
   },
 ];
 

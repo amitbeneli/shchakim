@@ -1,12 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import { photos } from '../data/images';
 import { site } from '../data/site';
 ---
 
 <Base title="תודה" description="קיבלנו את בקשת ההזמנה שלכם. נחזור אליכם תוך יום עסקים לאישור." noindex>
-  <section class="thanks sky-art">
+  <section class="thanks">
+    <figure class="plate thanks__plate"><Photo photo={photos.rimDeck} decorative eager sizes="100vw" /></figure>
+    <div class="thanks__shade" aria-hidden="true"></div>
     <div class="container thanks__inner">
-      <p class="eyebrow">ההזמנה התקבלה</p>
       <h1 data-thanks-title>תודה. השמיים שמורים לכם</h1>
       <p class="thanks__stay" data-thanks-stay hidden></p>
       <p>
@@ -26,7 +29,22 @@ import { site } from '../data/site';
 </Base>
 
 <style>
+  .thanks__plate {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: 0;
+  }
+  .thanks__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to bottom, rgb(11 14 26 / 0.7), rgb(11 14 26 / 0.55) 40%, var(--night));
+  }
   .thanks {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     min-height: 100svh;
     display: grid;
     align-items: center;
@@ -44,7 +62,7 @@ import { site } from '../data/site';
   }
   .thanks h1 {
     font-size: var(--step-4);
-    font-weight: 900;
+    font-weight: 500;
   }
   .thanks p {
     color: var(--muted);

@@ -1,9 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import { photos } from '../data/images';
 ---
 
 <Base title="העמוד לא נמצא" description="העמוד שחיפשתם לא נמצא. אפשר לחזור לדף הבית או לראות את הסוויטות." noindex>
-  <section class="nf sky-art">
+  <section class="nf">
+    <figure class="plate nf__plate"><Photo photo={photos.starTrailsMesa} decorative eager sizes="100vw" /></figure>
+    <div class="nf__shade" aria-hidden="true"></div>
     <div class="container nf__inner">
       <p class="nf__code" aria-hidden="true"><bdi>404</bdi></p>
       <h1>הכוכב הזה כבר כבה</h1>
@@ -17,7 +21,22 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <style>
+  .nf__plate {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: 0;
+  }
+  .nf__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(to bottom, rgb(11 14 26 / 0.7), rgb(11 14 26 / 0.55) 40%, var(--night));
+  }
   .nf {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     min-height: 100svh;
     display: grid;
     align-items: center;
@@ -36,7 +55,7 @@ import Base from '../layouts/Base.astro';
   .nf__code {
     font-family: var(--font-display);
     font-size: clamp(5rem, 3rem + 10vw, 9rem);
-    font-weight: 900;
+    font-weight: 500;
     line-height: 1;
     color: var(--sand);
     opacity: 0.9;

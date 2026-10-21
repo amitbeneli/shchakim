@@ -4,7 +4,7 @@
 //   RTL means the first card sits at the right and the finger swipes leftward.
 // - Desktop with a fine pointer: JS adds .is-pinned, the section pins to the
 //   screen and vertical scroll slides the cards horizontally, right → left.
-import Photo from './Photo.astro';
+import SuiteDrawing from './SuiteDrawing.astro';
 import { suites } from '../data/pricing';
 import { formatPrice } from '../lib/format';
 ---
@@ -15,14 +15,14 @@ import { formatPrice } from '../lib/format';
       <li class="r4__intro">
         <h2 id="suites-title">שלוש דרכים להירדם מתחת לכוכבים</h2>
         <p>תשע סוויטות בשלושה סוגים. בוחרים כמה קרוב לשמיים רוצים להירדם.</p>
-        <a href="/suites" class="r4__all">כל הסוויטות</a>
+        <a href="/suites" class="text-link">כל הסוויטות</a>
       </li>
       {
         suites.map((s, i) => (
           <li class="r4__card" style={`--d:${i}`}>
             <a href={`/suites/${s.slug}`}>
               <div class="r4__media" transition:name={`suite-media-${s.slug}`}>
-                <Photo photo={s.photo} sizes="(min-width: 768px) 56vw, 80vw" width={1400} height={900} />
+                <SuiteDrawing slug={s.slug} />
               </div>
               <div class="r4__text">
                 <h3>{s.name}</h3>
@@ -86,36 +86,32 @@ import { formatPrice } from '../lib/format';
     color: var(--muted);
     max-width: 30ch;
   }
-  .r4__all {
-    justify-self: start;
-    color: var(--sand);
-    font-weight: 700;
-    text-decoration: none;
-    padding-block: 0.4rem;
-    border-block-end: 1px solid rgb(217 168 108 / 0.4);
-  }
   .r4__card a {
     display: grid;
     gap: 0.9rem;
     text-decoration: none;
   }
+  /* A drawing sheet: contour texture, hairline frame, the suite drawn in sand ink */
   .r4__media {
-    overflow: hidden;
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3.4;
+    padding: 1.25rem 1.25rem 2rem;
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius);
-  }
-  .r4__media :global(img) {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    transition: transform 0.9s var(--ease-out);
+    background:
+      linear-gradient(rgb(16 20 42 / 0.82), rgb(16 20 42 / 0.82)),
+      url(/topo.svg) center / 220% auto,
+      var(--night-2);
+    transition: border-color 0.3s ease;
   }
   .r4__text {
     display: grid;
     gap: 0.35rem;
   }
   .r4__card h3 {
-    font-size: var(--step-2);
-    font-weight: 500;
+    font-size: var(--fs-h3);
   }
   .r4__hl {
     color: var(--sand);
@@ -126,8 +122,8 @@ import { formatPrice } from '../lib/format';
     font-size: var(--step--1);
   }
   @media (hover: hover) and (pointer: fine) {
-    .r4__card a:hover :global(img) {
-      transform: scale(1.04);
+    .r4__card a:hover .r4__media {
+      border-color: var(--sand);
     }
   }
 
@@ -155,10 +151,15 @@ import { formatPrice } from '../lib/format';
     align-content: center;
   }
   .r4.is-pinned .r4__card {
-    width: min(56vw, 92svh);
+    width: min(52vw, 78svh);
   }
-  .r4.is-pinned .r4__media :global(img) {
+  .r4.is-pinned .r4__media {
     aspect-ratio: 16 / 10;
+    max-height: 60svh;
+  }
+  .r4.is-pinned .r4__media :global(.sdraw) {
+    max-height: 100%;
+    width: auto;
   }
 </style>
 

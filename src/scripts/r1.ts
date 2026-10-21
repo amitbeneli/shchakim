@@ -18,10 +18,10 @@ function starField(canvas: HTMLCanvasElement, animate: boolean) {
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     // Density scales with area; stars stay in the sky, above the ridges
-    const count = Math.round((w * h) / 9000);
+    const count = Math.round((w * h) / 7000);
     stars = Array.from({ length: count }, () => ({
       x: Math.random() * w,
-      y: Math.random() * h * 0.62,
+      y: Math.random() * h * 0.66,
       r: Math.random() < 0.08 ? 1.4 + Math.random() * 0.8 : 0.4 + Math.random() * 0.8,
       base: 0.35 + Math.random() * 0.6,
       speed: 0.6 + Math.random() * 1.8,
@@ -94,29 +94,26 @@ export function initR1() {
 
     // Drop the sun until its bright core is hidden behind the back ridge. Measured
     // from layout (offsetTop ignores transforms) so a refresh mid-scroll stays correct.
-    // The back ridge covers the bottom 24% of the stage; its crest sits ~40% down the SVG.
+    // The ridges cover the bottom 42% of the stage; the back crest sits ~25% down the SVG.
     const sun = q('[data-r1-sun]');
     const stage = q('.r1__stage');
     const sunDrop = () => {
-      const ridgeLine = stage.clientHeight * (0.76 + 0.24 * 0.4);
-      const core = sun.offsetHeight * 0.16; // radius of the bright core
-      return ridgeLine - (sun.offsetTop + sun.offsetHeight / 2) + core;
+      const ridgeLine = stage.clientHeight * (0.58 + 0.42 * 0.3);
+      return ridgeLine - sun.offsetTop + 6; // sun's top edge just below the crest
     };
 
-    // Night arrives by ~55% of the scroll and then holds, so the photo gets the stage
+    // Night arrives by ~55% of the scroll and then holds
     tl.to(sun, { y: sunDrop, duration: 0.45, ease: 'power1.in' }, 0)
       .to(sun, { autoAlpha: 0, duration: 0.12 }, 0.4)
       .to('[data-r1-gold]', { autoAlpha: 0, duration: 0.3 }, 0)
       .to('[data-r1-dusk]', { autoAlpha: 0, duration: 0.35 }, 0.15)
       .to('[data-r1-stars]', { autoAlpha: 1, duration: 0.3 }, 0.25)
-      .fromTo('[data-r1-night]', { scale: 1.12 }, { scale: 1, duration: 1 }, 0)
+      .fromTo('[data-r1-night]', { yPercent: 0 }, { yPercent: -4, duration: 1 }, 0)
       // Parallax: the closer the ridge, the further it travels
       .to('[data-r1-ridge="back"]', { yPercent: 6, duration: 1 }, 0)
       .to('[data-r1-ridge="mid"]', { yPercent: 14, duration: 1 }, 0)
       .to('[data-r1-ridge="front"]', { yPercent: 22, duration: 1 }, 0)
-      // Ridges lose their sunset colour as night falls
-      .to('[data-r1-ridge="back"] path', { fill: 'rgba(20,18,36,0.9)', duration: 0.4 }, 0.1)
-      .to('[data-r1-ridge="mid"] path', { fill: 'rgba(14,14,28,0.95)', duration: 0.4 }, 0.1);
+      ;
   }, hero);
 
   document.addEventListener(

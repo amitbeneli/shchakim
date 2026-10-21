@@ -43,15 +43,12 @@
     position: absolute;
     inset-block: 0;
     inset-inline-start: 50%;
-    width: 1px;
+    width: 2px;
     translate: -50% 0;
-    background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(244 241 232 / 0.18) 12%,
-      rgb(244 241 232 / 0.18) 88%,
-      transparent
-    );
+    /* A marked trail: ember dashes, fading at both ends */
+    background: repeating-linear-gradient(to bottom, rgb(226 104 60 / 0.55) 0 7px, transparent 7px 13px);
+    mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
   }
   .moonpath__stops {
     position: absolute;
@@ -60,12 +57,13 @@
   .moonpath__stops :global(i) {
     position: absolute;
     inset-inline-start: 50%;
-    width: 5px;
-    height: 5px;
-    margin: -2.5px 0 0 -2.5px;
-    border-radius: 50%;
-    background: var(--starlight);
-    opacity: 0.18;
+    /* Each stop is a trail blaze: starlight, ember, starlight */
+    width: 6px;
+    height: 10px;
+    margin: -5px 0 0 -3px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, var(--starlight) 0 30%, var(--ember) 30% 70%, var(--starlight) 70%);
+    opacity: 0.25;
     transform: scale(0.6);
     transition:
       opacity 0.5s ease,
@@ -75,7 +73,7 @@
   .moonpath__stops :global(i.is-lit) {
     opacity: 1;
     transform: scale(1);
-    box-shadow: 0 0 10px 2px rgb(244 241 232 / 0.55);
+    box-shadow: 0 0 10px 1px rgb(226 104 60 / 0.6);
   }
   .moonpath__moon {
     position: absolute;
@@ -93,7 +91,7 @@
   }
   .moonpath__dark {
     fill: #1b2034;
-    stroke: rgb(244 241 232 / 0.22);
+    stroke: rgb(217 168 108 / 0.4);
     stroke-width: 0.6;
   }
   .moonpath__lit {

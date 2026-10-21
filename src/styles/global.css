@@ -1,4 +1,9 @@
-/* ───────────── Tokens ───────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   SHCHAKIM · night map of Makhtesh Ramon
+   One world: night ground, sand contour ink, Israeli trail blazes.
+   Two inks: sand lines + starlight text on night; ember only for trails / "now".
+   Type: Frank Ruhl Libre 500 for every heading, Assistant 400/600 for text and labels.
+   ═══════════════════════════════════════════════════════════════════════ */
 :root {
   /* Brand palette (fixed by the brief) */
   --night: #0b0e1a;
@@ -7,31 +12,42 @@
   --ember: #e2683c;
   --starlight: #f4f1e8;
 
-  /* In-between shades */
-  --night-2: #121626;
-  --night-3: #1a1f33;
-  --dusk-2: #3a2a55;
-  --muted: #b4b0a6; /* on --night ≈ 9:1 */
-  --line: rgb(244 241 232 / 0.14);
-  --line-strong: rgb(244 241 232 / 0.28);
+  /* In-between shades, all derived from the five */
+  --night-2: #10142a; /* raised surface */
+  --night-3: #181c33; /* field / input */
+  --muted: #b9b2a4; /* starlight dimmed toward sand, about 9:1 on night */
+  --line: rgb(217 168 108 / 0.2);
+  --line-strong: rgb(217 168 108 / 0.42);
 
   --font-display: 'Frank Ruhl Libre', 'Times New Roman', serif;
   --font-body: 'Assistant', 'Segoe UI', Arial, sans-serif;
 
-  --step--1: clamp(0.875rem, 0.85rem + 0.1vw, 0.95rem);
-  --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
-  --step-1: clamp(1.2rem, 1.12rem + 0.4vw, 1.4rem);
-  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
-  --step-3: clamp(1.9rem, 1.5rem + 1.9vw, 3rem);
-  --step-4: clamp(2.4rem, 1.7rem + 3.4vw, 4.5rem);
+  /* One type scale for the whole site */
+  --fs-label: 0.8125rem;
+  --fs-small: 0.9375rem;
+  --fs-body: 1.0625rem;
+  --fs-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.3rem);
+  --fs-h3: clamp(1.35rem, 1.2rem + 0.6vw, 1.65rem);
+  --fs-h2: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+  --fs-display: clamp(2.75rem, 1.5rem + 5.2vw, 5.5rem);
+  /* Aliases so every component reads from the same scale */
+  --step--1: var(--fs-small);
+  --step-0: var(--fs-body);
+  --step-1: var(--fs-lead);
+  --step-2: var(--fs-h3);
+  --step-3: var(--fs-h2);
+  --step-4: var(--fs-display);
 
+  /* The map grid: one module for spacing and the faint graticule */
+  --grid: 96px;
   --gutter: clamp(1rem, 0.6rem + 2vw, 2.5rem);
   --max: 1200px;
   --header-h: 64px;
-  --radius: 14px;
+  --radius: 2px; /* square, printed-map corners everywhere */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: dark;
+  accent-color: var(--sand);
 }
 
 /* ───────────── Reset ───────────── */
@@ -44,18 +60,36 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   overflow-x: clip;
+  scrollbar-color: rgb(217 168 108 / 0.35) var(--night);
 }
 body {
   margin: 0;
   min-height: 100svh;
-  background: var(--night);
   color: var(--starlight);
   font-family: var(--font-body);
-  font-size: var(--step-0);
+  font-size: var(--fs-body);
+  font-weight: 400;
   line-height: 1.7;
   overflow-x: clip;
+  caret-color: var(--sand);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+  /* The faint 1-km map grid under everything */
+  background:
+    linear-gradient(to left, rgb(217 168 108 / 0.035) 1px, transparent 1px) 0 0 / var(--grid) var(--grid),
+    linear-gradient(to bottom, rgb(217 168 108 / 0.035) 1px, transparent 1px) 0 0 / var(--grid) var(--grid),
+    var(--night);
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--night);
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(217 168 108 / 0.3);
+  border: 2px solid var(--night);
 }
 img,
 svg,
@@ -77,8 +111,8 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.15;
+  font-weight: 500;
+  line-height: 1.12;
   margin: 0;
   text-wrap: balance;
 }
@@ -86,8 +120,14 @@ p {
   margin: 0;
   text-wrap: pretty;
 }
+strong,
+b {
+  font-weight: 600;
+}
 a {
   color: inherit;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 1px;
 }
 button {
   font: inherit;
@@ -99,13 +139,11 @@ button {
   margin: 0;
   padding: 0;
 }
-
 :focus-visible {
   outline: 2px solid var(--sand);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
-
 ::selection {
   background: var(--sand);
   color: var(--night);
@@ -137,19 +175,31 @@ button {
   padding: 0.6rem 1rem;
   background: var(--sand);
   color: var(--night);
-  font-weight: 700;
-  border-radius: 8px;
+  font-weight: 600;
+  border-radius: var(--radius);
   transform: translateY(-200%);
 }
 .skip-link:focus {
   transform: none;
 }
 
-.eyebrow {
-  font-size: var(--step--1);
-  letter-spacing: 0.08em;
-  color: var(--sand);
+/* Map label: coordinates, heights, legend text. Never used as a kicker above a heading. */
+.label {
+  font-size: var(--fs-label);
   font-weight: 600;
+  line-height: 1.4;
+  color: var(--sand);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Israeli trail blaze: starlight, ember, starlight. Marks actions, stops and active states. */
+.blaze {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.5em;
+  height: 0.85em;
+  background: linear-gradient(to bottom, var(--starlight) 0 30%, var(--ember) 30% 70%, var(--starlight) 70%);
+  border-radius: 1px;
 }
 
 .page {
@@ -162,11 +212,10 @@ button {
   margin-block-end: clamp(2rem, 5vw, 3.5rem);
 }
 .page-head h1 {
-  font-size: var(--step-4);
-  font-weight: 900;
+  font-size: var(--fs-display);
 }
 .page-head p {
-  font-size: var(--step-1);
+  font-size: var(--fs-lead);
   color: var(--muted);
 }
 
@@ -180,7 +229,7 @@ button {
   margin-block-end: clamp(1.75rem, 4vw, 3rem);
 }
 .section-head h2 {
-  font-size: var(--step-3);
+  font-size: var(--fs-h2);
 }
 .section-head p {
   color: var(--muted);
@@ -192,39 +241,52 @@ button {
   gap: 1.1rem;
 }
 .prose h2 {
-  font-size: var(--step-2);
+  font-size: var(--fs-h3);
   margin-block-start: 1.5rem;
 }
 .prose ul {
   margin: 0;
   padding-inline-start: 1.25rem;
 }
+.prose a {
+  color: var(--sand);
+}
 
-/* Buttons */
+/* Buttons: square legend plates; the primary one carries a trail blaze */
 .btn {
   --btn-bg: var(--sand);
   --btn-fg: var(--night);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 48px;
-  padding: 0.7rem 1.5rem;
+  gap: 0.65rem;
+  min-height: 50px;
+  padding: 0.7rem 1.6rem;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--btn-bg);
   color: var(--btn-fg);
-  font-weight: 700;
-  font-size: var(--step-0);
+  font-weight: 600;
+  font-size: var(--fs-body);
+  line-height: 1.2;
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background-color 0.25s ease,
     color 0.25s ease,
+    border-color 0.25s ease,
     transform 0.25s var(--ease-out);
 }
+.btn:not(.btn--ghost)::before {
+  content: '';
+  width: 0.45em;
+  height: 0.85em;
+  background: linear-gradient(to bottom, var(--night) 0 30%, var(--ember) 30% 70%, var(--night) 70%);
+  border-radius: 1px;
+}
 .btn:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 .btn--ghost {
   --btn-bg: transparent;
@@ -236,9 +298,24 @@ button {
     --btn-bg: var(--starlight);
   }
   .btn--ghost:hover {
-    --btn-bg: rgb(244 241 232 / 0.08);
-    --btn-fg: var(--starlight);
+    --btn-bg: transparent;
+    border-color: var(--sand);
   }
+}
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--sand);
+  font-weight: 600;
+  text-decoration: none;
+  padding-block: 0.35rem;
+  background: linear-gradient(var(--sand), var(--sand)) 0 100% / 100% 1px no-repeat;
+  justify-self: start;
+  transition: background-size 0.4s var(--ease-out);
+}
+.text-link:hover {
+  background-size: 30% 1px;
 }
 
 /* Arrow icons point "forward" = left in RTL */
@@ -251,42 +328,37 @@ button {
 }
 
 .price {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
   white-space: nowrap;
 }
 
-/* Decorative night-sky placeholder art (replaced by real photos in stage 5) */
-.sky-art {
+/* Field plate: every photo is a real Ramon photo under one night-to-sand duotone grade.
+   The SVG filter (#ramon-grade) lives once in the layout. */
+.plate {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(120% 80% at 50% 120%, rgb(226 104 60 / 0.35), transparent 60%),
-    linear-gradient(to bottom, var(--night) 0%, var(--dusk) 70%, #5a3550 100%);
+  margin: 0;
+  background: var(--dusk);
+  border-radius: var(--radius);
 }
-.sky-art::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.85;
-  background-image:
-    radial-gradient(1.2px 1.2px at 12% 18%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1px 1px at 28% 42%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1.6px 1.6px at 44% 12%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1px 1px at 61% 33%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1.3px 1.3px at 74% 15%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1px 1px at 86% 38%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1.4px 1.4px at 92% 8%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1px 1px at 6% 52%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1px 1px at 52% 55%, var(--starlight) 50%, transparent 51%),
-    radial-gradient(1.2px 1.2px at 35% 25%, var(--starlight) 50%, transparent 51%);
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.sky-art::after {
-  content: '';
+/* Every <Photo> carries the shared grade */
+.graded {
+  filter: url(#ramon-grade);
+}
+.plate figcaption {
   position: absolute;
-  inset: auto 0 0 0;
-  height: 32%;
-  background: var(--night);
-  clip-path: polygon(0 55%, 14% 40%, 26% 52%, 40% 30%, 55% 46%, 68% 34%, 82% 50%, 100% 38%, 100% 100%, 0 100%);
+  inset-inline-start: 0.75rem;
+  inset-block-end: 0.6rem;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--starlight);
+  text-shadow: 0 1px 10px rgb(11 14 26 / 0.85);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {
