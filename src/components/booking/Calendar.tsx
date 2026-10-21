@@ -15,6 +15,10 @@ interface Props {
   max: ISODate;
   isBlocked: (d: ISODate) => boolean;
   isDark: (d: ISODate) => boolean;
+  /** nightly price shown under the date (hotel-engine style); null hides it */
+  price?: (d: ISODate) => string | null;
+  /** what the prices refer to, for the legend */
+  priceNote?: string;
   onChange: (start: ISODate | null, end: ISODate | null, note?: string) => void;
 }
 
@@ -33,7 +37,7 @@ const daysInMonth = (m: ISODate) => {
   return new Date(Date.UTC(y, mo, 0)).getUTCDate();
 };
 
-export default function Calendar({ start, end, min, max, isBlocked, isDark, onChange }: Props) {
+export default function Calendar({ start, end, min, max, isBlocked, isDark, price, priceNote, onChange }: Props) {
   const [view, setView] = useState<ISODate>(monthStart(start ?? min));
   const [focus, setFocus] = useState<ISODate>(start ?? min);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -169,6 +173,10 @@ export default function Calendar({ start, end, min, max, isBlocked, isDark, onCh
                             onKeyDown={(e) => onKey(e as KeyboardEvent, d)}
                           >
                             <span>{dayNum}</span>
+                            {price && !off && !blocked && (() => {
+                              const pr = price(d);
+                              return pr ? <small class="cal__price" aria-hidden="true">{pr}</small> : null;
+                            })()}
                           </button>
                         </span>
                       );
@@ -184,6 +192,7 @@ export default function Calendar({ start, end, min, max, isBlocked, isDark, onCh
       <p class="cal__legend">
         <span class="cal__key cal__key--dark" aria-hidden="true" /> לילה מומלץ לתצפית (סביב מולד הירח)
         <span class="cal__key cal__key--blocked" aria-hidden="true" /> תפוס
+        {priceNote && <span class="cal__pnote">{priceNote}</span>}
       </p>
     </div>
   );

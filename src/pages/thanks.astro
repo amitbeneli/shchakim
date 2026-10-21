@@ -5,13 +5,28 @@ import { photos } from '../data/images';
 import { site } from '../data/site';
 ---
 
-<Base title="תודה" description="קיבלנו את בקשת ההזמנה שלכם. נחזור אליכם תוך יום עסקים לאישור." noindex>
+<Base title="תודה" description="קיבלנו את בקשת ההזמנה שלכם. נחזור אליכם תוך יום עסקים לאישור." noindex hideFab>
   <section class="thanks">
-    <figure class="plate thanks__plate"><Photo photo={photos.rimDeck} decorative eager sizes="100vw" /></figure>
+    <figure class="plate thanks__plate"><Photo photo={photos.coupleNight} decorative eager sizes="100vw" /></figure>
     <div class="thanks__shade" aria-hidden="true"></div>
     <div class="container thanks__inner">
       <h1 data-thanks-title>תודה. השמיים שמורים לכם</h1>
       <p class="thanks__stay" data-thanks-stay hidden></p>
+
+      <!-- The booking just sent, the way a hotel confirmation shows it (filled from the wizard) -->
+      <article class="tcard" data-thanks-card hidden>
+        <img class="tcard__img" data-tc-img alt="" width="800" height="533" />
+        <div class="tcard__body">
+          <h2 class="tcard__suite" data-tc-suite></h2>
+          <div class="tcard__stay">
+            <div><span>צ׳ק־אין</span><strong data-tc-in></strong><small>מ־15:00</small></div>
+            <em data-tc-nights></em>
+            <div><span>צ׳ק־אאוט</span><strong data-tc-out></strong><small>עד 11:00</small></div>
+          </div>
+          <p class="tcard__total"><span data-tc-guests></span><bdi data-tc-total></bdi></p>
+          <p class="tcard__mail" data-tc-mail hidden></p>
+        </div>
+      </article>
       <p>
         קיבלנו את הפרטים. נחזור אליכם תוך יום עסקים כדי לאשר את התאריכים ולענות על כל שאלה. לא חויבתם
         בשום תשלום.
@@ -81,10 +96,95 @@ import { site } from '../data/site';
     color: var(--sand) !important;
     font-size: var(--step-1);
   }
+  .tcard {
+    width: min(100%, 30rem);
+    margin-block: 0.5rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: rgb(16 20 42 / 0.88);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    text-align: start;
+  }
+  .tcard__img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 8;
+    object-fit: cover;
+  }
+  .tcard__body {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1.1rem 1.2rem 1.25rem;
+  }
+  .tcard__suite {
+    font-size: var(--fs-h3);
+  }
+  .tcard__stay {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .tcard__stay div {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .tcard__stay div:last-child {
+    text-align: end;
+  }
+  .tcard__stay span {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    color: var(--sand);
+  }
+  .tcard__stay small {
+    font-size: var(--fs-label);
+    color: var(--muted);
+  }
+  .tcard__stay em {
+    font-style: normal;
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius);
+    background: rgb(217 168 108 / 0.12);
+    color: var(--sand);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tcard__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: var(--muted) !important;
+  }
+  .tcard__total bdi {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--sand);
+  }
+  .tcard__mail {
+    font-size: var(--fs-small);
+    padding-block-start: 0.75rem;
+    border-block-start: 1px solid var(--line);
+  }
 </style>
 
 <script>
   import { formatDateHe } from '../lib/dates';
+  import { suites } from '../data/pricing';
+  import { src } from '../data/images';
+  const DAY_SHORT = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+  const short = (d: string) => {
+    const [, m, day] = d.split('-').map(Number);
+    return `יום ${DAY_SHORT[new Date(`${d}T00:00:00Z`).getUTCDay()]}, ${day}.${m}`;
+  };
+  const money = (agorot: number) =>
+    `${new Intl.NumberFormat('he-IL', { minimumFractionDigits: agorot % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(agorot / 100)} ₪`;
   // Personalise with the booking just sent (stored by the wizard; storage may be unavailable)
   document.addEventListener('astro:page-load', () => {
     const stay = document.querySelector<HTMLElement>('[data-thanks-stay]');
@@ -94,8 +194,26 @@ import { site } from '../data/site';
       if (!b?.name) return;
       const first = String(b.name).split(' ')[0];
       document.querySelector('[data-thanks-title]')!.textContent = `תודה, ${first}. השמיים שמורים לכם`;
-      stay.textContent = `${b.suite}, ${formatDateHe(b.checkIn)} עד ${formatDateHe(b.checkOut)}`;
-      stay.hidden = false;
+      const card = document.querySelector<HTMLElement>('[data-thanks-card]');
+      const suite = suites.find((x) => x.slug === b.slug);
+      if (card && suite && b.nights) {
+        const $ = (k: string) => card.querySelector<HTMLElement>(`[data-tc-${k}]`)!;
+        (card.querySelector('[data-tc-img]') as HTMLImageElement).src = src(suite.photo, 800);
+        $('suite').textContent = suite.name;
+        $('in').textContent = short(b.checkIn);
+        $('out').textContent = short(b.checkOut);
+        $('nights').textContent = b.nights === 1 ? 'לילה אחד' : `${b.nights} לילות`;
+        $('guests').textContent = `${b.guests} אורחים · סה״כ`;
+        $('total').textContent = money(b.total);
+        if (b.email) {
+          $('mail').textContent = `שלחנו אישור עם כל הפרטים ל־${b.email}`;
+          $('mail').hidden = false;
+        }
+        card.hidden = false;
+      } else {
+        stay.textContent = `${b.suite}, ${formatDateHe(b.checkIn)} עד ${formatDateHe(b.checkOut)}`;
+        stay.hidden = false;
+      }
     } catch {
       /* keep the generic message */
     }

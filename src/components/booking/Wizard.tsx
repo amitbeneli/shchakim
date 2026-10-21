@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from 'astro:transitions/client';
 import Calendar from './Calendar';
-import { addons as ADDONS, suites as SUITES, getSuite, type SuiteSlug } from '../../data/pricing';
+import { addons as ADDONS, suites as SUITES, getSuite, pricingConfig as PRICING, type SuiteSlug } from '../../data/pricing';
 import { isBooked, isStayFree } from '../../data/booked';
 import { addDays, diffDays, formatDateHe, isISODate, todayInIsrael, type ISODate } from '../../lib/dates';
 import { checkCoupon, couponError, findCoupon, normalizeCoupon, quote, shekels, stayError, type Quote } from '../../lib/pricing';
@@ -164,6 +164,16 @@ export default function Wizard() {
   }, [s.guests]);
 
   /* ── Availability ── */
+  // Nightly price in the calendar: the chosen suite, or "from" the most affordable one.
+  // Thursday and Friday nights carry the weekend surcharge, so the calendar shows it.
+  const priceSuite = s.suite ? getSuite(s.suite)! : SUITES.reduce((a, b) => (a.nightly <= b.nightly ? a : b));
+  const nightPrice = (d: ISODate) => {
+    const base = priceSuite.nightly;
+    const wd = new Date(`${d}T00:00:00Z`).getUTCDay();
+    const v = PRICING.surchargeWeekdays.includes(wd) ? Math.round(base * (1 + PRICING.surchargeRate)) : base;
+    return ils.format(v);
+  };
+  const priceNote = s.suite ? `מחיר ללילה ב־₪, ${priceSuite.name}` : `מחיר ללילה ב־₪, החל מ־${priceSuite.name}`;
   const suiteFree = (slug: SuiteSlug) => (s.checkIn && nights ? isStayFree(slug, s.checkIn, nights) : true);
   // Before a suite is chosen a night is only blocked if every suite is taken
   const blocked = useMemo(
@@ -266,7 +276,10 @@ export default function Wizard() {
       });
       await sendLead(payload);
       try {
-        sessionStorage.setItem('shchakim-last-booking', JSON.stringify({ name: payload.name, suite: payload.suite, checkIn: payload.checkIn, checkOut: payload.checkOut }));
+        sessionStorage.setItem(
+          'shchakim-last-booking',
+          JSON.stringify({ name: payload.name, suite: payload.suite, slug: s.suite, checkIn: payload.checkIn, checkOut: payload.checkOut, nights: payload.nights, guests: payload.guests, total: q.total, email: payload.email }),
+        );
         sessionStorage.removeItem(KEY);
       } catch {
         /* ignore */
@@ -375,6 +388,8 @@ export default function Wizard() {
         max={maxDate}
         isBlocked={blocked}
         isDark={darkNight}
+        price={nightPrice}
+        priceNote={priceNote}
         onChange={(a, b, note) => {
           set({ checkIn: a, checkOut: b });
           setCalNote(note ?? '');

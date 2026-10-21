@@ -211,8 +211,8 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   }
   /* The photo, cut to the ridge outline. The outline keeps its proportions (cover,
      anchored to the bottom), so on a phone it is cropped at the sides, never squeezed. */
-  .r1__rock,
-  .r1__shade {
+  /* one mask per plane: the rock and its night shade share it */
+  .r1__ridge {
     -webkit-mask: var(--mask) 50% 100% / cover no-repeat;
     mask: var(--mask) 50% 100% / cover no-repeat;
   }

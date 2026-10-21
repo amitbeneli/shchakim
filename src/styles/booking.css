@@ -272,9 +272,12 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1;
-  min-height: 40px;
+  min-height: 44px;
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
+  gap: 1px;
+  line-height: 1.1;
   border: 0;
   border-radius: var(--radius);
   background: transparent;
@@ -302,15 +305,31 @@
   text-decoration: line-through;
   text-decoration-color: rgb(244 241 232 / 0.35);
 }
-/* Recommended dark night: a small crescent dot under the number */
+/* Nightly price under the date */
+.cal__price {
+  font-size: 0.62rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+}
+.cal__day.is-start .cal__price,
+.cal__day.is-end .cal__price {
+  color: var(--night);
+}
+.cal__day.is-range .cal__price {
+  color: var(--starlight);
+}
+.cal__pnote {
+  flex-basis: 100%;
+}
+/* Recommended dark night: a small dot in the corner */
 .cal__day.is-dark::after {
   content: '';
   position: absolute;
-  bottom: 5px;
-  inset-inline-start: 50%;
+  top: 5px;
+  inset-inline-end: 5px;
   width: 5px;
   height: 5px;
-  margin-inline-start: -2.5px;
   border-radius: 50%;
   background: var(--sand);
 }
