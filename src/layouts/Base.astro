@@ -10,15 +10,17 @@ interface Props {
   /** Hide the mobile floating "book" button (e.g. on /book itself) */
   hideFab?: boolean;
   noindex?: boolean;
+  /** Transparent header over a full-bleed hero until the user scrolls */
+  overlayHeader?: boolean;
 }
 
-const { title, description, hideFab = false, noindex = false } = Astro.props;
+const { title, description, hideFab = false, noindex = false, overlayHeader = false } = Astro.props;
 const fullTitle = title === 'שחקים' ? title : `${title} · שחקים`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" class:list={[{ 'overlay-header at-top': overlayHeader }]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

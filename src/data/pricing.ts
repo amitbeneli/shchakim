@@ -1,4 +1,6 @@
 // Single source of truth for suites, add-ons and pricing config (CLAUDE.md §5).
+import { photos, type Photo } from './images';
+
 // Prices are whole shekels incl. VAT; src/lib/pricing.ts converts to agorot for math.
 
 export type SuiteSlug = 'makhtesh' | 'kochav' | 'galaxia';
@@ -13,6 +15,8 @@ export interface Suite {
   description: string[];
   amenities: string[];
   units: number;
+  photo: Photo;
+  gallery: Photo[];
 }
 
 export const suites: Suite[] = [
@@ -36,6 +40,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 4,
+    photo: photos.archDoor,
+    gallery: [photos.archDoor, photos.craterDay, photos.craterStars],
   },
   {
     slug: 'kochav',
@@ -57,6 +63,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 3,
+    photo: photos.domeNight,
+    gallery: [photos.domeNight, photos.duneMilkyWay, photos.lodgeNight],
   },
   {
     slug: 'galaxia',
@@ -78,6 +86,8 @@ export const suites: Suite[] = [
       'מרפסת מול המכתש',
     ],
     units: 2,
+    photo: photos.villaPool,
+    gallery: [photos.villaPool, photos.villaCourt, photos.heroSky],
   },
 ];
 
@@ -90,6 +100,7 @@ export interface Addon {
   pricing: AddonPricing;
   duration: string;
   summary: string;
+  photo: Photo;
 }
 
 export const addons: Addon[] = [
@@ -100,6 +111,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשעתיים',
     summary: 'טלסקופים גדולים, לייזר שמצביע על הכוכבים, והסיפורים שמאחוריהם.',
+    photo: photos.stargazers,
   },
   {
     id: 'photo',
@@ -108,6 +120,7 @@ export const addons: Addon[] = [
     pricing: 'perBooking',
     duration: 'כשלוש שעות',
     summary: 'חצובה, חשיפה ארוכה ושביל החלב. יוצאים עם תמונה אחת שתרצו לתלות.',
+    photo: photos.craterStars,
   },
   {
     id: 'dinner',
@@ -116,6 +129,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשעתיים וחצי',
     summary: 'שולחן נמוך על החול, אש פתוחה ותפריט עונתי מחומרי גלם של הנגב.',
+    photo: photos.dinnerLanterns,
   },
   {
     id: 'jeep',
@@ -124,6 +138,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשלוש שעות',
     summary: 'יוצאים בחושך, מגיעים לנקודה גבוהה, ורואים את המכתש מתמלא אור.',
+    photo: photos.sunriseDunes,
   },
 ];
 

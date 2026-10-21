@@ -1,6 +1,7 @@
 ---
 import type { Suite } from '../data/pricing';
 import { formatPrice } from '../lib/format';
+import Photo from './Photo.astro';
 
 interface Props {
   suite: Suite;
@@ -10,12 +11,8 @@ const { suite } = Astro.props;
 
 <article class="suite-card">
   <a href={`/suites/${suite.slug}`} class="suite-card__link">
-    <div
-      class="suite-card__media sky-art"
-      transition:name={`suite-media-${suite.slug}`}
-      role="img"
-      aria-label={`${suite.name}: ${suite.highlight}`}
-    >
+    <div class="suite-card__media" transition:name={`suite-media-${suite.slug}`}>
+      <Photo photo={suite.photo} sizes="(min-width: 768px) 33vw, 100vw" width={900} height={1200} />
     </div>
     <div class="suite-card__body">
       <p class="eyebrow">{suite.highlight}</p>
@@ -54,7 +51,18 @@ const { suite } = Astro.props;
     }
   }
   .suite-card__media {
-    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .suite-card__media :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .suite-card__link:hover :global(img) {
+      transform: scale(1.04);
+    }
   }
   .suite-card__body {
     display: grid;

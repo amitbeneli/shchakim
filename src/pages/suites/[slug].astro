@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { suites, type Suite } from '../../data/pricing';
 import { formatPrice } from '../../lib/format';
+import Photo from '../../components/Photo.astro';
 
 export function getStaticPaths() {
   return suites.map((suite) => ({ params: { slug: suite.slug }, props: { suite } }));
@@ -15,7 +16,11 @@ const others = suites.filter((s) => s.slug !== suite.slug);
 ---
 
 <Base title={suite.name} description={`${suite.name}: ${suite.summary} עד ${suite.maxGuests} אורחים, ${formatPrice(suite.nightly)} ללילה.`}>
-  <section class="suite-hero sky-art" transition:name={`suite-media-${suite.slug}`} aria-labelledby="suite-title">
+  <section class="suite-hero" aria-labelledby="suite-title">
+    <div class="suite-hero__media" transition:name={`suite-media-${suite.slug}`}>
+      <Photo photo={suite.photo} eager decorative sizes="100vw" />
+    </div>
+    <div class="suite-hero__shade" aria-hidden="true"></div>
     <div class="container suite-hero__inner">
       <a href="/suites" class="back">
         <svg class="icon-back" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
@@ -69,10 +74,31 @@ const others = suites.filter((s) => s.slug !== suite.slug);
 
 <style>
   .suite-hero {
-    min-height: min(70svh, 640px);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: min(78svh, 720px);
     display: grid;
     align-items: end;
     padding-block: calc(var(--header-h) + 2rem) 3rem;
+  }
+  .suite-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .suite-hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .suite-hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to bottom, rgb(11 14 26 / 0.6) 0%, transparent 25%),
+      linear-gradient(to top, var(--night) 0%, rgb(11 14 26 / 0.55) 35%, transparent 70%);
   }
   .suite-hero__inner {
     position: relative;

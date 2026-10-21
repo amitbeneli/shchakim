@@ -5,3 +5,9 @@ dist/
 .env
 .env.*
 !.env.example
+
+# design scratch (mockups, screenshots)
+design/
+_s.mjs
+test-results/
+playwright-report/

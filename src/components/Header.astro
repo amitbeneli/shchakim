@@ -95,6 +95,19 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
     border-block-end: 1px solid var(--line);
     transition: transform 0.35s var(--ease-out);
   }
+  /* Over a full-bleed hero: transparent until the page scrolls */
+  :global(.overlay-header.at-top) .site-header {
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: transparent;
+  }
+  .site-header {
+    transition:
+      transform 0.35s var(--ease-out),
+      background-color 0.35s ease,
+      border-color 0.35s ease;
+  }
   :global(.header-hidden) .site-header {
     transform: translateY(-100%);
   }

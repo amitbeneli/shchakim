@@ -34,12 +34,14 @@ export function initHeader() {
   let lastY = window.scrollY;
   let ticking = false;
   root.classList.remove('header-hidden');
+  root.classList.toggle('at-top', window.scrollY < 40);
   const onScroll = () => {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
       const y = window.scrollY;
       const delta = y - lastY;
+      root.classList.toggle('at-top', y < 40);
       if (y < 80 || delta < -4) root.classList.remove('header-hidden');
       else if (delta > 4 && !menuOpen) root.classList.add('header-hidden');
       lastY = y;

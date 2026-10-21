@@ -1,0 +1,30 @@
+---
+import { src, srcset, type Photo } from '../data/images';
+
+interface Props {
+  photo: Photo;
+  sizes?: string;
+  class?: string;
+  eager?: boolean;
+  /** Decorative images get alt="" so screen readers skip them */
+  decorative?: boolean;
+  width?: number;
+  height?: number;
+}
+
+const { photo, sizes = '100vw', class: cls, eager = false, decorative = false, width = 1600, height = 1067 } =
+  Astro.props;
+---
+
+<img
+  class={cls}
+  src={src(photo, 1200)}
+  srcset={srcset(photo)}
+  sizes={sizes}
+  alt={decorative ? '' : photo.alt}
+  width={width}
+  height={height}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding={eager ? 'sync' : 'async'}
+  fetchpriority={eager ? 'high' : undefined}
+/>

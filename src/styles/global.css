@@ -64,6 +64,10 @@ canvas {
   display: block;
   max-width: 100%;
 }
+/* width/height attributes reserve space (no CLS); CSS aspect-ratio decides the final shape */
+img {
+  height: auto;
+}
 h1,
 h2,
 h3,
@@ -85,8 +89,8 @@ button {
   font: inherit;
   color: inherit;
 }
-ul[role='list'],
-ol[role='list'] {
+/* :where() keeps specificity at 0 so .container margins still win */
+:where(ul[role='list'], ol[role='list']) {
   list-style: none;
   margin: 0;
   padding: 0;
