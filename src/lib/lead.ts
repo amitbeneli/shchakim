@@ -49,7 +49,7 @@ export function buildPayload(
 
 const ENDPOINT = import.meta.env.PUBLIC_LEAD_ENDPOINT as string | undefined;
 
-export async function sendLead(payload: LeadPayload, timeoutMs = 15000): Promise<void> {
+export async function sendLead(payload: LeadPayload, timeoutMs = 25000): Promise<void> {
   if (!ENDPOINT) {
     // Local development without an endpoint: simulate success so the flow can be tested.
     if (import.meta.env.DEV) {
