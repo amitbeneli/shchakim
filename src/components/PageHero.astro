@@ -1,0 +1,114 @@
+---
+// Inner-page opening: a full-bleed photograph with the title low on the frame,
+// the way hotel sites open a room or experience page. The photo settles from a
+// slight zoom on load (CSS only, off under reduced motion).
+import Photo from './Photo.astro';
+import type { Photo as P } from '../data/images';
+
+interface Props {
+  photo: P;
+  title: string;
+  lead?: string;
+  id?: string;
+  /** shared-element view transition name for the photo (suite card → suite page) */
+  transitionName?: string;
+  /** object-position for the crop */
+  focus?: string;
+  /** shorter frame, for pages whose content should start sooner */
+  compact?: boolean;
+}
+const { photo, title, lead, id = 'page-title', transitionName, focus, compact = false } = Astro.props;
+---
+
+<section class:list={['ph', { 'ph--compact': compact }]} aria-labelledby={id}>
+  {
+    transitionName ? (
+      <figure class="plate ph__plate" transition:name={transitionName}>
+        <Photo photo={photo} eager sizes="100vw" width={1800} height={1200} />
+      </figure>
+    ) : (
+      <figure class="plate ph__plate">
+        <Photo photo={photo} eager sizes="100vw" width={1800} height={1200} />
+      </figure>
+    )
+  }
+  <div class="ph__shade" aria-hidden="true"></div>
+  <div class="container ph__copy">
+    <slot name="top" />
+    <h1 id={id}>{title}</h1>
+    {lead && <p class="ph__lead">{lead}</p>}
+    <slot />
+  </div>
+  <p class="label ph__cap">{photo.caption}</p>
+</section>
+
+<style define:vars={{ focus: focus ?? photo.focus ?? '50% 50%' }}>
+  .ph {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: min(88svh, 820px);
+    display: grid;
+    align-items: end;
+  }
+  .ph--compact {
+    min-height: min(66svh, 620px);
+  }
+  .ph__plate {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: 0;
+  }
+  .ph__plate :global(img) {
+    object-position: var(--focus);
+    animation: ph-settle 2.4s var(--ease-out) both;
+  }
+  @keyframes ph-settle {
+    from {
+      transform: scale(1.08);
+    }
+  }
+  .ph__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to bottom, rgb(11 14 26 / 0.6) 0%, rgb(11 14 26 / 0) 26%),
+      linear-gradient(to top, var(--night) 0%, rgb(11 14 26 / 0.82) 22%, rgb(11 14 26 / 0) 62%);
+  }
+  .ph__copy {
+    display: grid;
+    justify-items: start;
+    gap: 0.9rem;
+    padding-block: calc(var(--header-h) + 6rem) clamp(2.5rem, 7vw, 4.5rem);
+  }
+  .ph h1 {
+    font-size: var(--fs-display);
+    line-height: 1.02;
+    max-width: 14ch;
+    text-shadow: 0 2px 24px rgb(11 14 26 / 0.45);
+  }
+  .ph__lead {
+    font-size: var(--fs-lead);
+    max-width: 40ch;
+    color: rgb(244 241 232 / 0.92);
+  }
+  .ph__cap {
+    position: absolute;
+    inset-block-start: calc(var(--header-h) + 1rem);
+    inset-inline-end: var(--gutter);
+    color: rgb(244 241 232 / 0.8);
+    text-shadow: 0 1px 6px rgb(11 14 26 / 0.8);
+  }
+  @media (max-width: 767px) {
+    .ph__cap {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ph__plate :global(img) {
+      animation: none;
+    }
+  }
+</style>

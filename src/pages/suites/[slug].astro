@@ -4,7 +4,8 @@ import { suites, type Suite } from '../../data/pricing';
 import { formatPrice } from '../../lib/format';
 import SuiteDrawing from '../../components/SuiteDrawing.astro';
 import SuiteGallery from '../../components/SuiteGallery.astro';
-import Photo from '../../components/Photo.astro';
+import PageHero from '../../components/PageHero.astro';
+import SuiteCard from '../../components/SuiteCard.astro';
 
 export function getStaticPaths() {
   return suites.map((suite) => ({ params: { slug: suite.slug }, props: { suite } }));
@@ -17,23 +18,40 @@ const { suite } = Astro.props;
 const others = suites.filter((s) => s.slug !== suite.slug);
 ---
 
-<Base title={suite.name} description={`${suite.name}: ${suite.summary} עד ${suite.maxGuests} אורחים, ${formatPrice(suite.nightly)} ללילה.`}>
-  <section class="suite-hero container" aria-labelledby="suite-title">
-    <div class="suite-hero__text">
-      <a href="/suites" class="back">
-        <svg class="icon-back" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
-          <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-        כל הסוויטות
-      </a>
-      <h1 id="suite-title">{suite.name}</h1>
-      <p class="suite-hero__hl">{suite.highlight}</p>
-      <p class="suite-hero__sum">{suite.summary}</p>
-    </div>
-    <div class="suite-hero__media" transition:name={`suite-media-${suite.slug}`}>
-      <Photo photo={suite.photo} eager sizes="(min-width: 900px) 58vw, 92vw" width={1500} height={1000} />
-    </div>
-  </section>
+<Base title={suite.name} description={`${suite.name}: ${suite.summary} עד ${suite.maxGuests} אורחים, ${formatPrice(suite.nightly)} ללילה.`} overlayHeader>
+  <PageHero photo={suite.photo} title={suite.name} lead={suite.summary} id="suite-title" transitionName={`suite-media-${suite.slug}`}>
+    <a href="/suites" class="back" slot="top">
+      <svg class="icon-back" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+        <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      כל הסוויטות
+    </a>
+  </PageHero>
+
+  <!-- The facts a guest checks before anything else, in one line -->
+  <div class="container facts-wrap">
+    <dl class="facts">
+      <div>
+        <dt>מה מיוחד</dt>
+        <dd>{suite.highlight}</dd>
+      </div>
+      <div>
+        <dt>אורחים</dt>
+        <dd>עד {suite.maxGuests}</dd>
+      </div>
+      <div>
+        <dt>צ׳ק־אין / אאוט</dt>
+        <dd><bdi dir="ltr">15:00</bdi> / <bdi dir="ltr">11:00</bdi></dd>
+      </div>
+      <div>
+        <dt>החל מ־</dt>
+        <dd><bdi class="facts__price">{formatPrice(suite.nightly)}</bdi> ללילה</dd>
+      </div>
+    </dl>
+    <p class="facts__cta">
+      <a href={`/book?suite=${suite.slug}`} class="btn">להזמין את הסוויטה</a>
+    </p>
+  </div>
 
   <section class="container suite-gallery" aria-labelledby="view-title">
     <h2 id="view-title" class="suite-sub">הסוויטה בתמונות</h2>
@@ -70,79 +88,54 @@ const others = suites.filter((s) => s.slug !== suite.slug);
 
   <section class="container section others" aria-labelledby="others-title">
     <h2 id="others-title" class="suite-sub">סוויטות נוספות</h2>
-    <ul role="list">
-      {
-        others.map((s) => (
-          <li>
-            <a href={`/suites/${s.slug}`}>
-              <span>{s.name}</span>
-              <span class="others__meta">{s.highlight}</span>
-            </a>
-          </li>
-        ))
-      }
+    <ul role="list" class="others__grid">
+      {others.map((s) => <li><SuiteCard suite={s} /></li>)}
     </ul>
   </section>
 </Base>
 
 <style>
-  .suite-hero {
+  .facts-wrap {
     display: grid;
-    gap: 2rem;
-    align-items: center;
-    padding-block: calc(var(--header-h) + clamp(2rem, 6vw, 4.5rem)) clamp(2rem, 5vw, 3.5rem);
+    gap: 1.1rem 2rem;
+    padding-block: clamp(1.5rem, 3vw, 2rem);
+    border-block-end: 1px solid var(--line);
   }
   @media (min-width: 900px) {
-    .suite-hero {
-      grid-template-columns: 1fr 1.35fr;
-      gap: clamp(2rem, 5vw, 5rem);
+    .facts-wrap {
+      grid-template-columns: 1fr auto;
+      align-items: end;
     }
   }
-  .suite-hero__text {
+  .facts {
     display: grid;
-    gap: 0.9rem;
-    align-content: start;
-  }
-  .suite-hero h1 {
-    font-size: var(--fs-display);
-    line-height: 1.02;
-  }
-  .suite-hero__hl {
-    color: var(--sand);
-    font-size: var(--fs-lead);
-  }
-  .suite-hero__sum {
-    color: var(--muted);
-    max-width: 36ch;
-  }
-  /* The suite photo morphs from the card (shared-element view transition) */
-  .suite-hero__media {
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--night-2);
-  }
-  .suite-hero__media :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  /* The section drawing, on a contour sheet */
-  .suite-plan {
-    display: grid;
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem 1.5rem;
     margin: 0;
   }
-  .suite-plan :global(.sdraw) {
-    padding: clamp(1.25rem, 3vw, 2.5rem);
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background:
-      linear-gradient(rgb(16 20 42 / 0.82), rgb(16 20 42 / 0.82)),
-      url(/topo.svg) center / 200% auto,
-      var(--night-2);
+  @media (min-width: 900px) {
+    .facts {
+      grid-template-columns: 1.6fr repeat(3, auto);
+      align-items: end;
+    }
+  }
+  .facts dt {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    color: var(--sand);
+  }
+  .facts dd {
+    margin: 0.2rem 0 0;
+  }
+  .facts__price {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+  }
+  .facts__cta {
+    margin: 0;
+  }
+  .facts__cta .btn {
+    white-space: nowrap;
   }
   .back {
     display: inline-flex;
@@ -237,27 +230,13 @@ const others = suites.filter((s) => s.slug !== suite.slug);
   .others {
     padding-block-start: 0;
   }
-  .others ul {
-    border-block-start: 1px solid var(--line);
+  .others__grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 2.5rem);
   }
-  .others a {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0.25rem 1rem;
-    padding-block: 1.1rem;
-    border-block-end: 1px solid var(--line);
-    text-decoration: none;
-    font-family: var(--font-display);
-    font-size: var(--fs-h3);
-  }
-  .others__meta {
-    font-family: var(--font-body);
-    font-size: var(--step--1);
-    color: var(--muted);
-    align-self: center;
-  }
-  .others a:hover span:first-child {
-    color: var(--sand);
+  @media (min-width: 768px) {
+    .others__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 </style>

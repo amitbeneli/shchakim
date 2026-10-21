@@ -5,19 +5,26 @@ import { formatPrice } from '../lib/format';
 import Photo from '../components/Photo.astro';
 import R3MoonCalendar from '../components/R3MoonCalendar.astro';
 import R2SkyMap from '../components/R2SkyMap.astro';
+import PageHero from '../components/PageHero.astro';
+import { photos } from '../data/images';
 ---
 
 <Base
   title="חוויות"
   description="תצפית מודרכת עם אסטרונום, סדנת צילום כוכבים, ארוחת ערב במדבר וג׳יפ לזריחה. החוויות שאפשר להוסיף ללילה בשחקים."
+  overlayHeader
 >
-  <div class="page container">
-    <header class="page-head">
-      <h1>חוויות</h1>
-      <p>השמיים כאן הם לא רקע. הם הסיבה להגיע. אלה הדרכים שלנו להראות לכם אותם מקרוב.</p>
-    </header>
+  <PageHero
+    photo={photos.galaxiaRoof}
+    title="חוויות"
+    lead="השמיים כאן הם לא רקע. הם הסיבה להגיע. אלה הדרכים שלנו להראות לכם אותם מקרוב."
+    focus="50% 40%"
+  />
 
-    <R2SkyMap />
+  <div class="container">
+    <div class="section">
+      <R2SkyMap />
+    </div>
 
     <div class="section">
       <R3MoonCalendar />
@@ -30,9 +37,11 @@ import R2SkyMap from '../components/R2SkyMap.astro';
       </div>
       <ul role="list" class="addons">
         {
-          addons.map((a) => (
-            <li class="addon">
-              <Photo photo={a.photo} class="addon__art" sizes="(min-width: 768px) 15vw, 35vw" width={600} height={750} />
+          addons.map((a, i) => (
+            <li class:list={['addon', { 'addon--flip': i % 2 === 1 }]}>
+              <figure class="plate addon__art" data-media>
+                <Photo photo={a.photo} sizes="(min-width: 900px) 55vw, 100vw" width={1500} height={1000} />
+              </figure>
               <div class="addon__body">
                 <h3>{a.name}</h3>
                 <p>{a.summary}</p>
@@ -53,49 +62,63 @@ import R2SkyMap from '../components/R2SkyMap.astro';
   </div>
 </Base>
 
-<style>
+<script>
+  import { initMedia } from '../scripts/media';
+  document.addEventListener('astro:page-load', () => {
+    if (!document.querySelector('.addons')) return;
+    const stop = initMedia();
+    document.addEventListener('astro:before-swap', stop, { once: true });
+  });
+</script>
 
+<style>
+  /* Each experience is an editorial row: a large photograph, then what it is,
+     how long, and what it costs. Sides alternate down the page. */
   .addons {
     display: grid;
-    gap: 1.25rem;
-  }
-  @media (min-width: 768px) {
-    .addons {
-      grid-template-columns: 1fr 1fr;
-    }
+    gap: clamp(3rem, 8vw, 5.5rem);
+    margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
   }
   .addon {
     display: grid;
-    grid-template-columns: 8.5rem 1fr;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--night-2);
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .addon {
+      grid-template-columns: 1.4fr 1fr;
+    }
+    .addon--flip .addon__art {
+      order: 2;
+    }
   }
   .addon__art {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    aspect-ratio: 3 / 2;
   }
   .addon__body {
     display: grid;
-    gap: 0.4rem;
-    padding: 1.1rem 1.25rem;
+    gap: 0.75rem;
+    align-content: start;
   }
   .addon h3 {
-    font-size: var(--step-1);
+    font-size: var(--fs-h2);
+    line-height: 1.08;
   }
   .addon p {
     color: var(--muted);
-    font-size: var(--step--1);
+    font-size: var(--fs-lead);
+    max-width: 34ch;
   }
   .addon .addon__meta {
     color: var(--starlight);
+    font-size: var(--fs-body);
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 0.5rem;
+    gap: 0.25rem 0.6rem;
+    padding-block-start: 0.75rem;
+    border-block-start: 1px solid var(--line);
   }
   .addons-cta {
-    margin-block-start: 2rem;
+    margin-block-start: clamp(2.5rem, 6vw, 4rem);
   }
 </style>

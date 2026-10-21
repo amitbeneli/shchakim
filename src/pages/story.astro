@@ -33,7 +33,8 @@ const timeline = [
   { year: '2021', text: 'בנייה בחומרים מקומיים. אבן, עץ וזכוכית, ובלי אף פנס רחוב.' },
   { year: '2022', text: 'האורחים הראשונים. מאז ביקרו כאן 4,200 אורחים.' },
 ];
-const images = [photos.rimDeck, photos.craterDay];
+// the place before, then the place we built
+const images = [photos.rimDeck, photos.makhteshRoom];
 ---
 
 <Base
@@ -153,8 +154,11 @@ const images = [photos.rimDeck, photos.craterDay];
   .st__line {
     display: block;
   }
+  /* Photos break out of the reading column to the full page width */
   .st__img {
     margin: 0;
+    width: min(100vw - 2 * var(--gutter), var(--max, 1240px));
+    margin-inline: calc((100% - min(100vw - 2 * var(--gutter), var(--max, 1240px))) / 2);
   }
   .st__img-mask {
     overflow: hidden;
@@ -171,9 +175,13 @@ const images = [photos.rimDeck, photos.craterDay];
     height: 100%;
     object-fit: cover;
   }
-  .st__img--1 {
-    width: min(100%, 38rem);
-    margin-inline-start: auto;
+  .st__img-mask {
+    aspect-ratio: 21 / 10;
+  }
+  @media (max-width: 700px) {
+    .st__img-mask {
+      aspect-ratio: 4 / 3;
+    }
   }
 
   .st-tl h2 {
