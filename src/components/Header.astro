@@ -124,7 +124,8 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
   }
   /* Over a full-bleed hero: transparent until the page scrolls */
   :global(.overlay-header.at-top) .site-header {
-    background: transparent;
+    /* a soft scrim under the menu only, so it stays legible on the sunset */
+    background: linear-gradient(to bottom, rgb(11 14 26 / 0.55), rgb(11 14 26 / 0));
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     border-color: transparent;
@@ -153,6 +154,9 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
   .site-header__nav ul {
     display: flex;
     gap: clamp(1.25rem, 3vw, 2.5rem);
+  }
+  :global(.overlay-header.at-top) .site-header__nav a {
+    text-shadow: 0 1px 3px rgb(11 14 26 / 0.6);
   }
   .site-header__nav a {
     text-decoration: none;

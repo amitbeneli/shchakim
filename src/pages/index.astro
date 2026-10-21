@@ -13,7 +13,7 @@ import BookingBar from '../components/BookingBar.astro';
 import SuiteGallery from '../components/SuiteGallery.astro';
 import { site } from '../data/site';
 import { addons } from '../data/pricing';
-import { photos } from '../data/images';
+import { photos, src } from '../data/images';
 import { formatPrice } from '../lib/format';
 
 const ld = {
@@ -74,6 +74,17 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   preloader
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  {/* The hero's rock layers are CSS backgrounds (masked); tell the browser about them early */}
+  {
+    ([['craterDusk', 800], ['craterRed', 480], ['rimCliff', 480]] as const).map(([k, w]) => (
+      <link slot="head" rel="preload" as="image" href={src(photos[k], w)} media="(max-width: 899px)" fetchpriority="high" />
+    ))
+  }
+  {
+    (['craterDusk', 'craterRed', 'rimCliff'] as const).map((k) => (
+      <link slot="head" rel="preload" as="image" href={src(photos[k], 1800)} media="(min-width: 900px)" />
+    ))
+  }
 
   <Preloader />
   <R1Hero />
@@ -197,14 +208,14 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <!-- CLOSE: the real crater at sunset -->
   <section class="close" aria-labelledby="close-title">
     <figure class="plate close__plate">
-      <Photo photo={photos.craterDusk} decorative sizes="100vw" />
+      <Photo photo={photos.lodgeExterior} decorative sizes="100vw" width={1800} height={1012} />
     </figure>
     <div class="close__shade" aria-hidden="true"></div>
     <div class="container close__inner">
       <h2 id="close-title">הלילה הבא שלכם כבר על המפה</h2>
       <p>בוחרים תאריך, בוחרים סוויטה, ואנחנו דואגים לשאר.</p>
       <a href="/book" class="btn">להזמין לילה</a>
-      <p class="label close__cap">{photos.craterDusk.caption}, מכתש רמון</p>
+      <p class="label close__cap">{photos.lodgeExterior.caption}</p>
     </div>
   </section>
 </Base>
@@ -490,9 +501,10 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: min(84svh, 760px);
+    min-height: min(100svh, 920px);
     display: grid;
-    align-items: end;
+    /* the copy sits in the starry sky above the lodge; the suites hold the lower frame */
+    align-items: start;
   }
   .close__plate {
     position: absolute;
@@ -501,19 +513,26 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     border-radius: 0;
   }
   .close__plate :global(img) {
-    object-position: 50% 60%;
+    object-position: 72% 60%;
+  }
+  @media (min-width: 900px) {
+    .close__plate :global(img) {
+      object-position: 50% 62%;
+    }
   }
   .close__shade {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(to bottom, var(--night) 0%, rgb(11 14 26 / 0.2) 30%, rgb(11 14 26 / 0.35) 60%, var(--night) 100%);
+    background:
+      radial-gradient(70% 45% at 75% 22%, rgb(11 14 26 / 0.55), transparent 70%),
+      linear-gradient(to bottom, var(--night) 0%, rgb(11 14 26 / 0.5) 24%, rgb(11 14 26 / 0) 52%, rgb(11 14 26 / 0) 80%, var(--night) 100%);
   }
   .close__inner {
     display: grid;
     justify-items: start;
     gap: 1.1rem;
-    padding-block: 6rem clamp(3rem, 8vw, 5rem);
+    padding-block: clamp(6rem, 14vh, 9rem) 3rem;
   }
   .close h2 {
     font-size: var(--fs-h2);
@@ -523,9 +542,16 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     font-size: var(--fs-lead);
     color: rgb(244 241 232 / 0.9);
   }
+  .close__inner h2,
+  .close__inner p {
+    text-shadow: 0 1px 3px rgb(11 14 26 / 0.7), 0 0 24px rgb(11 14 26 / 0.5);
+  }
+  /* the photo credit sits low, on the dark rock, away from the sunset band */
   .close__cap {
-    margin-block-start: 1rem;
-    color: rgb(244 241 232 / 0.7);
+    position: absolute;
+    inset-block-end: 1.25rem;
+    inset-inline-start: var(--gutter);
+    color: rgb(244 241 232 / 0.85);
   }
 </style>
 

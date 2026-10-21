@@ -350,8 +350,19 @@ button {
 .graded {
   filter: url(#ramon-grade);
 }
+/* A low scrim under the caption only (not a full-frame overlay) */
+.plate::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 38%;
+  max-height: 9rem;
+  background: linear-gradient(to bottom, transparent, rgb(11 14 26 / 0.7));
+  pointer-events: none;
+}
 .plate figcaption {
   position: absolute;
+  z-index: 1;
   inset-inline-start: 0.75rem;
   inset-block-end: 0.6rem;
   font-size: var(--fs-label);
@@ -382,7 +393,8 @@ button {
     transition:
       opacity 0.9s var(--ease-out),
       transform 1.1s var(--ease-out);
-    transition-delay: calc(var(--d, 0) * 90ms);
+    /* stagger, capped so long lists never keep fading in after the scroll has stopped */
+    transition-delay: calc(min(var(--d, 0), 4) * 70ms);
   }
   [data-reveal='clip'] {
     transform: none;

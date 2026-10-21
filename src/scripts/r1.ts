@@ -110,9 +110,11 @@ export function initR1() {
       .to('[data-r1-stars]', { autoAlpha: 1, duration: 0.3 }, 0.25)
       .fromTo('[data-r1-night]', { yPercent: 0 }, { yPercent: -4, duration: 1 }, 0)
       // Parallax: the closer the ridge, the further it travels
-      .to('[data-r1-ridge="back"]', { yPercent: 6, duration: 1 }, 0)
-      .to('[data-r1-ridge="mid"]', { yPercent: 14, duration: 1 }, 0)
-      .to('[data-r1-ridge="front"]', { yPercent: 22, duration: 1 }, 0)
+      .to('[data-r1-ridge="back"]', { yPercent: 2, duration: 1 }, 0)
+      .to('[data-r1-ridge="mid"]', { yPercent: 6, duration: 1 }, 0)
+      .to('[data-r1-ridge="front"]', { yPercent: 11, duration: 1 }, 0)
+      // the rock darkens with the sky
+      .to('[data-r1-shade]', { opacity: 0.55, duration: 0.45 }, 0.2)
       ;
   }, hero);
 

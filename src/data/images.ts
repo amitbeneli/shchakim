@@ -33,6 +33,7 @@ export const photos = {
   kochavRoom: { id: 'gen-kochav-room', alt: 'חדר עם תקרת זכוכית ומיטה מתחת לשביל החלב', caption: 'סוויטת כוכב, תקרת הזכוכית' },
   kochavBath: { id: 'gen-kochav-bath', alt: 'אמבטיה עומדת מאבן מול חלון אל המכתש', caption: 'האמבטיה מול המכתש' },
   galaxiaRoof: { id: 'gen-galaxia-roof', alt: 'גג עם טלסקופ וג׳קוזי חם תחת שביל החלב', caption: 'וילת גלקסיה, הגג' },
+  lodgeExterior: { id: 'gen-lodge-exterior', alt: 'שורת הסוויטות של שחקים על שפת המצוק, חלונות מוארים ושביל החלב מעל', caption: 'שחקים על שפת המצוק, שעה כחולה' },
   galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם אח אבן וחלון רחב אל המכתש', caption: 'הסלון בווילה' },
   ibex: { id: '1604080566273-928a568303fc', alt: 'יעל על סלע בשפת המכתש', caption: 'יעל על השפה' },
 } satisfies Record<string, Photo>;

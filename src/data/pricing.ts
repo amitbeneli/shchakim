@@ -111,7 +111,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשעתיים',
     summary: 'טלסקופים גדולים, לייזר שמצביע על הכוכבים, והסיפורים שמאחוריהם.',
-    photo: photos.starTrailsMesa,
+    photo: photos.galaxiaRoof,
   },
   {
     id: 'photo',

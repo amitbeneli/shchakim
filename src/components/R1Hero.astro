@@ -6,6 +6,7 @@
 // state), the sun, and three ridge profiles hatched like map contours.
 
 import BookingBar from './BookingBar.astro';
+import { photos, src } from '../data/images';
 
 const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
 
@@ -15,6 +16,9 @@ const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
 const back = 'M0 64 L300 62 L330 67 L620 62 L660 69 L1010 63 L1050 67 L1440 64 V300 H0Z';
 const mid = 'M0 190 L170 188 C 220 188 245 150 285 147 C 318 145 338 186 378 188 L820 191 C 868 191 890 160 928 157 C 960 155 985 190 1022 191 L1440 193 V300 H0Z';
 const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L748 282 L0 285 V300 H1440Z';
+const paths = { back, mid, front };
+// Far wall hazy and wide, crater floor in between, the near cliff face closest
+const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.rimCliff };
 ---
 
 <section class="r1" data-hero data-r1 aria-labelledby="hero-title">
@@ -25,28 +29,20 @@ const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L
     <div class="r1__gold" data-r1-gold></div>
     <div class="r1__sun" data-r1-sun><span></span></div>
 
-    <svg class="r1__ridges" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <!-- Contour hatching: the engraved lines of a printed profile -->
-        <pattern id="r1-hatch" width="12" height="9" patternUnits="userSpaceOnUse">
-          <path d="M0 8.5 H12" stroke="#d9a86c" stroke-opacity="0.22" stroke-width="1"></path>
-        </pattern>
-      </defs>
-      <g data-r1-ridge="back">
-        <path d={back} class="r1__fill r1__fill--back"></path>
-        <path d={back} fill="url(#r1-hatch)"></path>
-        <path d={back} class="r1__crest"></path>
-      </g>
-      <g data-r1-ridge="mid">
-        <path d={mid} class="r1__fill r1__fill--mid"></path>
-        <path d={mid} fill="url(#r1-hatch)"></path>
-        <path d={mid} class="r1__crest"></path>
-      </g>
-      <g data-r1-ridge="front">
-        <path d={front} class="r1__fill r1__fill--front"></path>
-        <path d={front} class="r1__crest r1__crest--front"></path>
-      </g>
-    </svg>
+    <!-- Three ridge planes, each a real Ramon photo cut to the crater-section outline
+         (CSS mask), tinted for depth, with a shade that deepens into night and the sand
+         crest line on top. Each plane is its own layer, so parallax stays transform-only. -->
+    {
+      (['back', 'mid', 'front'] as const).map((k) => (
+        <div class={`r1__ridge r1__ridge--${k}`} data-r1-ridge={k} aria-hidden="true">
+          <div class="r1__rock"><span style={`--rs:url(${src(rocks[k], k === 'back' ? 800 : 480)});--rl:url(${src(rocks[k], 1800)})`}></span></div>
+          <div class="r1__shade" data-r1-shade></div>
+          <svg class="r1__line" viewBox="0 0 1440 300" preserveAspectRatio="none">
+            <path d={paths[k]} class:list={['r1__crest', k === 'front' && 'r1__crest--front']}></path>
+          </svg>
+        </div>
+      ))
+    }
 
     <!-- Map furniture: north arrow, scale bar, elevation axis -->
     <svg class="r1__north" viewBox="0 0 24 40" aria-hidden="true">
@@ -156,20 +152,93 @@ const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L
     box-shadow: 0 0 70px 24px rgb(243 154 82 / 0.4);
   }
 
-  .r1__ridges {
+  .r1__ridge {
     inset-inline: 0;
     bottom: -1px;
-    width: 100%;
     height: 42%;
+    will-change: transform;
   }
-  .r1__fill--back {
-    fill: #2c1f36;
+  .r1__ridge > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
-  .r1__fill--mid {
-    fill: #181429;
+  /* The photo, cut to the ridge outline. The mask stretches with the layer;
+     the photo keeps its proportions underneath. */
+  .r1__rock,
+  .r1__shade {
+    -webkit-mask: var(--mask) 0 0 / 100% 100% no-repeat;
+    mask: var(--mask) 0 0 / 100% 100% no-repeat;
   }
-  .r1__fill--front {
-    fill: var(--night);
+  .r1__ridge--back {
+    --mask: url(/r1/back.svg);
+  }
+  .r1__ridge--mid {
+    --mask: url(/r1/mid.svg);
+  }
+  .r1__ridge--front {
+    --mask: url(/r1/front.svg);
+  }
+  /* Each photo is placed so its own horizon (--h, fraction of the photo's height) lands on
+     the ridge crest (--crest, fraction of the layer), at any screen width. --ar is the
+     photo's aspect ratio; --minw keeps enough photo below the crest on tall phones. */
+  .r1__rock > span {
+    position: absolute;
+    left: 50%;
+    --w: max(100vw, var(--minw, 0px));
+    width: var(--w);
+    height: calc(var(--w) / var(--ar));
+    top: calc(var(--crest) * 100% - var(--h) * var(--w) / var(--ar));
+    translate: -50% 0;
+    background: var(--rs) center / cover no-repeat;
+  }
+  @media (min-width: 900px) {
+    .r1__rock > span {
+      background-image: var(--rl);
+    }
+  }
+  .r1__ridge--back .r1__rock > span {
+    --ar: 1.5;
+    --h: 0.54;
+    --crest: 0.2;
+    --minw: 125svh;
+    filter: saturate(0.85) brightness(0.8);
+  }
+  .r1__ridge--mid .r1__rock > span {
+    --ar: 0.667;
+    --h: 0.42;
+    --crest: 0.48;
+    filter: saturate(0.8) brightness(0.62);
+  }
+  .r1__ridge--front .r1__rock > span {
+    --ar: 0.751;
+    --h: 0.68;
+    --crest: 0.7;
+    filter: saturate(0.6) brightness(0.45);
+  }
+  .r1__rock::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  /* Depth: the far wall sits in dusk haze, the near rim is nearly black */
+  .r1__ridge--back .r1__rock::after {
+    background: linear-gradient(to bottom, rgb(199 90 60 / 0.18) 15%, rgb(42 30 63 / 0.55) 45%, rgb(24 20 41 / 0.8));
+  }
+  .r1__ridge--mid .r1__rock::after {
+    background: linear-gradient(to bottom, rgb(42 30 63 / 0.35) 45%, rgb(16 17 34 / 0.85) 85%);
+  }
+  .r1__ridge--front .r1__rock::after {
+    background: linear-gradient(to bottom, rgb(11 14 26 / 0.4) 65%, rgb(11 14 26 / 0.9) 90%);
+  }
+  /* Night falls on the rock too (GSAP fades this in with the sky) */
+  .r1__shade {
+    background: var(--night);
+    opacity: 0;
+  }
+  .r1__line {
+    overflow: visible;
   }
   .r1__crest {
     fill: none;
@@ -316,7 +385,11 @@ const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L
   }
   .r1__coords {
     margin-block-start: 0.25rem;
-    color: rgb(244 241 232 / 0.75);
+    color: var(--starlight);
+    font-size: var(--fs-small);
+    /* it sits on a moving sky: an offset shadow keeps it legible on the brightest frame */
+    text-shadow: 0 1px 2px rgb(11 14 26 / 0.9), 0 0 10px rgb(11 14 26 / 0.7), 0 0 22px rgb(11 14 26 / 0.5);
+    font-weight: 600;
   }
   .r1__actions .btn {
     white-space: nowrap;
@@ -334,6 +407,9 @@ const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L
     }
     .r1__stars {
       opacity: 1;
+    }
+    .r1__shade {
+      opacity: 0.55;
     }
   }
 </style>
