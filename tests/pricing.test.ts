@@ -100,6 +100,13 @@ describe('coupon', () => {
     expect(q.discount).toBe(14500);
     expect(q.addonsTotal).toBe(58000);
   });
+  it('TEST100 zeroes the lodging (add-ons still charged)', () => {
+    const q = ok(
+      quote({ suite: 'makhtesh', checkIn: SUN, nights: 1, guests: 2, addons: [{ id: 'dinner', qty: 2 }], coupon: ' test100 ' }),
+    );
+    expect(q.discount).toBe(q.lodging);
+    expect(q.total).toBe(58000);
+  });
 });
 
 describe('guests and add-ons', () => {

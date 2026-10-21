@@ -150,7 +150,11 @@ export const pricingConfig = {
   weekendNights: [4, 5] as number[],
   minWeekendNights: 2,
   maxNights: 7,
-  coupon: { code: 'STARS10', rate: 0.1 },
+  // STARS10 is the brief's coupon. TEST100 is a 100% code for trying the flow end to end.
+  coupons: [
+    { code: 'STARS10', rate: 0.1 },
+    { code: 'TEST100', rate: 1 },
+  ],
   vatRate: 0.18,
 };
 

@@ -54,11 +54,14 @@ const ag = (shekels: number) => Math.round(shekels * 100);
 
 export const normalizeCoupon = (c?: string) => (c ?? '').trim().toUpperCase();
 
+/** The coupon definition for a code, if it exists */
+export const findCoupon = (c?: string) => CFG.coupons.find((x) => x.code === normalizeCoupon(c));
+
 /** '' → no coupon; valid → true; anything else → false */
 export function checkCoupon(c?: string): 'none' | 'valid' | 'invalid' {
   const n = normalizeCoupon(c);
   if (!n) return 'none';
-  return n === CFG.coupon.code ? 'valid' : 'invalid';
+  return findCoupon(n) ? 'valid' : 'invalid';
 }
 
 export const couponError = 'הקוד שהוזן לא תקף. אפשר לנסות שוב או להמשיך בלי קוד.';
@@ -102,9 +105,9 @@ export function quote(input: QuoteInput): QuoteResult {
   });
   const lodging = nights.reduce((s, n) => s + n.total, 0);
 
-  // STARS10: on lodging only (after the weekend surcharge), never on add-ons
+  // Coupons: on lodging only (after the weekend surcharge), never on add-ons
   const couponApplied = coupon === 'valid';
-  const discount = couponApplied ? Math.round(lodging * CFG.coupon.rate) : 0;
+  const discount = couponApplied ? Math.round(lodging * findCoupon(input.coupon)!.rate) : 0;
 
   const addonLines: AddonLine[] = [];
   for (const pick of input.addons ?? []) {

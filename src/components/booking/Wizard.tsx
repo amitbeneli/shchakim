@@ -4,7 +4,7 @@ import Calendar from './Calendar';
 import { addons as ADDONS, suites as SUITES, getSuite, type SuiteSlug } from '../../data/pricing';
 import { isBooked, isStayFree } from '../../data/booked';
 import { addDays, diffDays, formatDateHe, isISODate, todayInIsrael, type ISODate } from '../../lib/dates';
-import { checkCoupon, couponError, quote, shekels, stayError, type Quote } from '../../lib/pricing';
+import { checkCoupon, couponError, findCoupon, normalizeCoupon, quote, shekels, stayError, type Quote } from '../../lib/pricing';
 import { isDarkNight, moonAge } from '../../lib/moon';
 import { normalizeIsraeliMobile, validateEmail, validateName, validatePhone } from '../../lib/validate';
 import { buildPayload, sendLead } from '../../lib/lead';
@@ -242,7 +242,7 @@ export default function Wizard() {
       setCouponMsg(null);
     } else if (c === 'valid') {
       set({ coupon: value });
-      setCouponMsg({ ok: true, text: 'הקוד הופעל: 10% הנחה על הלינה.' });
+      setCouponMsg({ ok: true, text: `הקוד הופעל: ${Math.round((findCoupon(value)?.rate ?? 0) * 100)}% הנחה על הלינה.` });
     } else {
       set({ coupon: '' });
       setCouponMsg({ ok: false, text: couponError });
@@ -324,7 +324,7 @@ export default function Wizard() {
             ))}
             {q.discount > 0 && (
               <li class="bk-sum__disc">
-                <span>הנחת STARS10 על הלינה</span>
+                <span>הנחת {normalizeCoupon(s.coupon)} על הלינה</span>
                 <Money v={q.discount} neg />
               </li>
             )}
