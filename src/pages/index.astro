@@ -9,6 +9,8 @@ import R6Conditions from '../components/R6Conditions.astro';
 import R7Compare from '../components/R7Compare.astro';
 import R8Reviews from '../components/R8Reviews.astro';
 import R10Faq from '../components/R10Faq.astro';
+import BookingBar from '../components/BookingBar.astro';
+import SuiteGallery from '../components/SuiteGallery.astro';
 import { site } from '../data/site';
 import { addons } from '../data/pricing';
 import { photos } from '../data/images';
@@ -76,6 +78,12 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <Preloader />
   <R1Hero />
 
+  <!-- Phones: the availability search, right under the hero (desktop has it inside the hero) -->
+  <section class="quick container" aria-labelledby="quick-title">
+    <h2 id="quick-title" class="quick__title">מתי מגיעים?</h2>
+    <BookingBar id="bb-quick" />
+  </section>
+
   <!-- THE PLACE: the crater as a trail map, with the facts as its legend -->
   <section class="place container" aria-labelledby="place-title">
     <div class="place__map" data-reveal>
@@ -110,6 +118,15 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   </section>
 
   <R4Suites />
+
+  <!-- THE PLACE IN PHOTOS: the suites and the crater around them -->
+  <section class="album container section" aria-labelledby="album-title">
+    <div class="album__head" data-reveal>
+      <h2 id="album-title">המקום בתמונות</h2>
+      <p>הסוויטות, הגג, והמכתש שמתחיל ממש מעבר לזכוכית.</p>
+    </div>
+    <SuiteGallery photos={[photos.makhteshRoom, photos.kochavRoom, photos.galaxiaRoof, photos.kochavBath, photos.makhteshDeck, photos.galaxiaLiving, photos.rimCouple, photos.craterDusk]} name="שחקים" variant="wide" label="תמונות מהמקום" />
+  </section>
 
   <R6Conditions />
 
@@ -193,6 +210,32 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 </Base>
 
 <style>
+  /* Phones only: the quick availability search under the hero */
+  .quick {
+    display: grid;
+    gap: 0.9rem;
+    padding-block: 2.5rem 0.5rem;
+  }
+  .quick__title {
+    font-size: var(--fs-h3);
+  }
+  @media (min-width: 900px) {
+    .quick {
+      display: none;
+    }
+  }
+  .album__head {
+    display: grid;
+    gap: 0.6rem;
+    margin-block-end: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .album__head h2 {
+    font-size: var(--fs-h2);
+  }
+  .album__head p {
+    color: var(--muted);
+    max-width: 44ch;
+  }
   /* ── The place ── */
   .place {
     display: grid;

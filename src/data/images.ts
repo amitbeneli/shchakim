@@ -3,8 +3,8 @@
 // so photos from different photographers read as one archive of one place.
 // Two night photos (starTrailsMesa, craterStars) have a camp at their base: they are only
 // used as square plates cropped to sky and rock (focus), never in a gallery or lightbox.
-// The suites themselves are drawn (src/components/SuiteDrawing.astro), never borrowed
-// from other hotels.
+// The suite interiors (gen-*) are generated images of our own fictional suites, never
+// borrowed from other hotels; their section drawings live in SuiteDrawing.astro.
 
 export interface Photo {
   id: string;
@@ -27,6 +27,13 @@ export const photos = {
   craterRed: { id: '1624946905412-8e325fb66e6d', alt: 'קרקעית המכתש באור הזריחה הראשון', caption: 'קרקעית המכתש, זריחה' },
   craterDusk: { id: '1624946903416-42a91871c222', alt: 'מכתש רמון לרוחבו בשעת השקיעה', caption: 'המכתש לרוחבו, שקיעה' },
   rimCliff: { id: '1579281703543-934686016e99', alt: 'צוקי השפה הדרומית של המכתש', caption: 'צוקי השפה' },
+  // Suite interiors: generated (no real lodge exists), same blue hour and the same grade as the rest
+  makhteshRoom: { id: 'gen-makhtesh-room', alt: 'מיטה זוגית מול קיר זכוכית אל המכתש בשעת דמדומים', caption: 'סוויטת מכתש, דמדומים' },
+  makhteshDeck: { id: 'gen-makhtesh-deck', alt: 'מרפסת אבן עם מיטת יום על שפת המצוק', caption: 'המרפסת מעל המצוק' },
+  kochavRoom: { id: 'gen-kochav-room', alt: 'חדר עם תקרת זכוכית ומיטה מתחת לשביל החלב', caption: 'סוויטת כוכב, תקרת הזכוכית' },
+  kochavBath: { id: 'gen-kochav-bath', alt: 'אמבטיה עומדת מאבן מול חלון אל המכתש', caption: 'האמבטיה מול המכתש' },
+  galaxiaRoof: { id: 'gen-galaxia-roof', alt: 'גג עם טלסקופ וג׳קוזי חם תחת שביל החלב', caption: 'וילת גלקסיה, הגג' },
+  galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם אח אבן וחלון רחב אל המכתש', caption: 'הסלון בווילה' },
   ibex: { id: '1604080566273-928a568303fc', alt: 'יעל על סלע בשפת המכתש', caption: 'יעל על השפה' },
 } satisfies Record<string, Photo>;
 

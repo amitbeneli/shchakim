@@ -73,13 +73,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <body>
     <!-- One grade for every photo: luminance mapped night → dusk → sand → starlight, so the real Ramon photos read as one archive -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <!-- One grade for every photo: a night/dusk/sand duotone, mixed back over the photo
+           (55/45) so blue hour and lamplight survive but every source reads as one place. -->
       <filter id="ramon-grade" color-interpolation-filters="sRGB">
-        <feColorMatrix type="saturate" values="0" />
-        <feComponentTransfer>
+        <feColorMatrix in="SourceGraphic" type="saturate" values="0.7" result="src" />
+        <feColorMatrix in="SourceGraphic" type="saturate" values="0" />
+        <feComponentTransfer result="duo">
           <feFuncR type="table" tableValues="0.043 0.165 0.851 0.957" />
           <feFuncG type="table" tableValues="0.055 0.118 0.659 0.945" />
           <feFuncB type="table" tableValues="0.102 0.247 0.424 0.910" />
         </feComponentTransfer>
+        <feComposite in="duo" in2="src" operator="arithmetic" k1="0" k2="0.55" k3="0.45" k4="0" />
       </filter>
     </svg>
     <a href="#main" class="skip-link">דילוג לתוכן</a>

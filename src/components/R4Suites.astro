@@ -4,7 +4,7 @@
 //   RTL means the first card sits at the right and the finger swipes leftward.
 // - Desktop with a fine pointer: JS adds .is-pinned, the section pins to the
 //   screen and vertical scroll slides the cards horizontally, right → left.
-import SuiteDrawing from './SuiteDrawing.astro';
+import Photo from './Photo.astro';
 import { suites } from '../data/pricing';
 import { formatPrice } from '../lib/format';
 ---
@@ -20,19 +20,30 @@ import { formatPrice } from '../lib/format';
       {
         suites.map((s, i) => (
           <li class="r4__card" style={`--d:${i}`}>
-            <a href={`/suites/${s.slug}`}>
+            <article class="r4__inner">
               <div class="r4__media" transition:name={`suite-media-${s.slug}`}>
-                <SuiteDrawing slug={s.slug} />
+                <Photo photo={s.photo} sizes="(min-width: 768px) 52vw, 80vw" width={1500} height={1000} />
+                <p class="r4__tag">{s.highlight}</p>
               </div>
               <div class="r4__text">
-                <h3>{s.name}</h3>
-                <p class="r4__hl">{s.highlight}</p>
+                <h3>
+                  <a href={`/suites/${s.slug}`} class="r4__link">{s.name}</a>
+                </h3>
                 <p class="r4__meta">
-                  עד {s.maxGuests} אורחים<span aria-hidden="true"> · </span>
-                  <bdi class="price">{formatPrice(s.nightly)}</bdi> ללילה
+                  עד {s.maxGuests} אורחים<span aria-hidden="true"> · </span>{s.units} {s.slug === 'galaxia' ? 'וילות' : 'סוויטות'} כאלה
                 </p>
+                <div class="r4__foot">
+                  <p class="r4__price">
+                    <span>החל מ־</span>
+                    <bdi>{formatPrice(s.nightly)}</bdi>
+                    <span>ללילה, כולל מע״מ</span>
+                  </p>
+                  <a href={`/book?suite=${s.slug}`} class="btn r4__book">
+                    להזמין<span class="visually-hidden"> את {s.name}</span>
+                  </a>
+                </div>
               </div>
-            </a>
+            </article>
           </li>
         ))
       }
@@ -86,45 +97,95 @@ import { formatPrice } from '../lib/format';
     color: var(--muted);
     max-width: 30ch;
   }
-  .r4__card a {
-    display: grid;
-    gap: 0.9rem;
-    text-decoration: none;
-  }
-  /* A drawing sheet: contour texture, hairline frame, the suite drawn in sand ink */
-  .r4__media {
+  .r4__inner {
     position: relative;
     display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3.4;
-    padding: 1.25rem 1.25rem 2rem;
-    border: 1px solid var(--line-strong);
+    gap: 1rem;
+  }
+  /* The photo of the suite itself, under the site-wide grade */
+  .r4__media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
     border-radius: var(--radius);
-    background:
-      linear-gradient(rgb(16 20 42 / 0.82), rgb(16 20 42 / 0.82)),
-      url(/topo.svg) center / 220% auto,
-      var(--night-2);
-    transition: border-color 0.3s ease;
+    background: var(--night-2);
+  }
+  .r4__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
+  }
+  .r4__tag {
+    position: absolute;
+    inset-block-end: 0.75rem;
+    inset-inline-start: 0.75rem;
+    padding: 0.3rem 0.65rem;
+    border-radius: var(--radius);
+    background: rgb(11 14 26 / 0.78);
+    color: var(--starlight);
+    font-size: var(--fs-label);
+    font-weight: 600;
   }
   .r4__text {
     display: grid;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
   .r4__card h3 {
     font-size: var(--fs-h3);
   }
-  .r4__hl {
-    color: var(--sand);
-    font-size: var(--step--1);
+  .r4__link {
+    text-decoration: none;
+  }
+  /* The whole card opens the suite page; the book button sits above this layer */
+  .r4__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
   .r4__meta {
     color: var(--muted);
-    font-size: var(--step--1);
+    font-size: var(--fs-small);
+  }
+  .r4__foot {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-start: 0.6rem;
+    padding-block-start: 0.9rem;
+    border-block-start: 1px solid var(--line);
+  }
+  .r4__price {
+    display: grid;
+    line-height: 1.25;
+    font-size: var(--fs-label);
+    color: var(--muted);
+  }
+  .r4__price bdi {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--starlight);
+  }
+  .r4__book {
+    position: relative;
+    z-index: 1;
   }
   @media (hover: hover) and (pointer: fine) {
-    .r4__card a:hover .r4__media {
-      border-color: var(--sand);
+    .r4__inner:hover .r4__media :global(img) {
+      transform: scale(1.035);
     }
+    .r4__inner:hover h3 {
+      color: var(--sand);
+    }
+  }
+  .r4__link:focus-visible {
+    outline: none;
+  }
+  .r4__inner:has(.r4__link:focus-visible) .r4__media {
+    outline: 2px solid var(--sand);
+    outline-offset: 3px;
   }
 
   /* ── Pinned horizontal mode (desktop, set by JS) ── */
@@ -155,11 +216,7 @@ import { formatPrice } from '../lib/format';
   }
   .r4.is-pinned .r4__media {
     aspect-ratio: 16 / 10;
-    max-height: 60svh;
-  }
-  .r4.is-pinned .r4__media :global(.sdraw) {
-    max-height: 100%;
-    width: auto;
+    max-height: 56svh;
   }
 </style>
 

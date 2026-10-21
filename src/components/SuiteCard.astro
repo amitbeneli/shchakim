@@ -1,7 +1,7 @@
 ---
 import type { Suite } from '../data/pricing';
 import { formatPrice } from '../lib/format';
-import SuiteDrawing from './SuiteDrawing.astro';
+import Photo from './Photo.astro';
 
 interface Props {
   suite: Suite;
@@ -10,58 +10,73 @@ const { suite } = Astro.props;
 ---
 
 <article class="suite-card">
-  <a href={`/suites/${suite.slug}`} class="suite-card__link">
-    <div class="suite-card__sheet" transition:name={`suite-media-${suite.slug}`}>
-      <SuiteDrawing slug={suite.slug} />
-    </div>
-    <div class="suite-card__body">
-      <h3>{suite.name}</h3>
-      <p class="suite-card__hl">{suite.highlight}</p>
-      <p class="suite-card__summary">{suite.summary}</p>
-      <p class="label suite-card__meta">
-        עד {suite.maxGuests} אורחים<span aria-hidden="true"> · </span>
-        <bdi class="price">{formatPrice(suite.nightly)}</bdi> ללילה
+  <div class="suite-card__media" transition:name={`suite-media-${suite.slug}`}>
+    <Photo photo={suite.photo} sizes="(min-width: 900px) 33vw, 92vw" width={1500} height={1000} />
+  </div>
+  <div class="suite-card__body">
+    <h3><a href={`/suites/${suite.slug}`} class="suite-card__link">{suite.name}</a></h3>
+    <p class="suite-card__hl">{suite.highlight}</p>
+    <p class="suite-card__summary">{suite.summary}</p>
+    <p class="suite-card__meta">
+      עד {suite.maxGuests} אורחים<span aria-hidden="true"> · </span>{suite.units}
+      {suite.slug === 'galaxia' ? ' וילות' : ' סוויטות'} כאלה
+    </p>
+    <div class="suite-card__foot">
+      <p class="suite-card__price">
+        <span>החל מ־</span>
+        <bdi>{formatPrice(suite.nightly)}</bdi>
+        <span>ללילה, כולל מע״מ</span>
       </p>
+      <a href={`/book?suite=${suite.slug}`} class="btn suite-card__book">
+        להזמין<span class="visually-hidden"> את {suite.name}</span>
+      </a>
     </div>
-  </a>
+  </div>
 </article>
 
 <style>
   .suite-card {
-    height: 100%;
-  }
-  .suite-card__link {
+    position: relative;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 1rem;
     height: 100%;
-    text-decoration: none;
   }
-  .suite-card__sheet {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3.4;
-    padding: 1.25rem 1.25rem 2rem;
-    border: 1px solid var(--line-strong);
+  .suite-card__media {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
     border-radius: var(--radius);
-    background:
-      linear-gradient(rgb(16 20 42 / 0.82), rgb(16 20 42 / 0.82)),
-      url(/topo.svg) center / 220% auto,
-      var(--night-2);
-    transition: border-color 0.3s ease;
+    background: var(--night-2);
   }
-  @media (hover: hover) and (pointer: fine) {
-    .suite-card__link:hover .suite-card__sheet {
-      border-color: var(--sand);
-    }
+  .suite-card__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
   }
   .suite-card__body {
     display: grid;
-    align-content: start;
+    grid-template-rows: auto auto 1fr auto auto;
     gap: 0.45rem;
   }
   .suite-card h3 {
     font-size: var(--fs-h3);
+  }
+  .suite-card__link {
+    text-decoration: none;
+  }
+  /* Whole card opens the suite; the book button sits above this layer */
+  .suite-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .suite-card__link:focus-visible {
+    outline: none;
+  }
+  .suite-card:has(.suite-card__link:focus-visible) .suite-card__media {
+    outline: 2px solid var(--sand);
+    outline-offset: 3px;
   }
   .suite-card__hl {
     color: var(--sand);
@@ -70,7 +85,40 @@ const { suite } = Astro.props;
     color: var(--muted);
   }
   .suite-card__meta {
+    color: var(--muted);
+    font-size: var(--fs-small);
+  }
+  .suite-card__foot {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-start: 0.5rem;
+    padding-block-start: 0.9rem;
+    border-block-start: 1px solid var(--line);
+  }
+  .suite-card__price {
+    display: grid;
+    line-height: 1.25;
+    font-size: var(--fs-label);
+    color: var(--muted);
+  }
+  .suite-card__price bdi {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 500;
     color: var(--starlight);
-    margin-block-start: 0.25rem;
+  }
+  .suite-card__book {
+    position: relative;
+    z-index: 1;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .suite-card:hover .suite-card__media :global(img) {
+      transform: scale(1.035);
+    }
+    .suite-card:hover h3 {
+      color: var(--sand);
+    }
   }
 </style>

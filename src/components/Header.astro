@@ -27,6 +27,12 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
     </nav>
 
     <div class="site-header__actions">
+      <a href={site.phoneHref} class="site-header__phone">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M6.6 3.5h2.6l1.4 4-2 1.4a11 11 0 0 0 6.5 6.5l1.4-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+        </svg>
+        <span class="visually-hidden">טלפון: </span><bdi dir="ltr">{site.phone}</bdi>
+      </a>
       <a href="/book" class="btn site-header__cta">להזמין לילה</a>
       <button
         type="button"
@@ -83,6 +89,27 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
 </div>
 
 <style>
+  .site-header__phone {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    margin-inline-end: 0.5rem;
+    color: var(--starlight);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+  }
+  .site-header__phone svg {
+    color: var(--sand);
+  }
+  .site-header__phone:hover {
+    color: var(--sand);
+  }
+  @media (min-width: 1100px) {
+    .site-header__phone {
+      display: inline-flex;
+    }
+  }
   .site-header {
     position: fixed;
     inset-block-start: 0;

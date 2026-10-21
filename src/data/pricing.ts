@@ -40,8 +40,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 4,
-    photo: photos.rimDeck,
-    gallery: [photos.rimDeck, photos.craterDusk, photos.craterDay],
+    photo: photos.makhteshRoom,
+    gallery: [photos.makhteshRoom, photos.makhteshDeck, photos.craterDusk, photos.rimDeck],
   },
   {
     slug: 'kochav',
@@ -63,8 +63,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 3,
-    photo: photos.heroNight,
-    gallery: [photos.heroNight, photos.craterDusk, photos.craterRed],
+    photo: photos.kochavRoom,
+    gallery: [photos.kochavRoom, photos.kochavBath, photos.heroNight, photos.craterRed],
   },
   {
     slug: 'galaxia',
@@ -86,8 +86,8 @@ export const suites: Suite[] = [
       'מרפסת מול המכתש',
     ],
     units: 2,
-    photo: photos.rimCliff,
-    gallery: [photos.rimCliff, photos.canyon, photos.ibex],
+    photo: photos.galaxiaRoof,
+    gallery: [photos.galaxiaRoof, photos.galaxiaLiving, photos.rimCliff, photos.canyon],
   },
 ];
 

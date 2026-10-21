@@ -9,11 +9,14 @@ import { src, type Photo as P } from '../data/images';
 interface Props {
   photos: P[];
   name: string;
+  /** 'wide': the eight-photo home mosaic; default: a suite's four photos */
+  variant?: 'suite' | 'wide';
+  label?: string;
 }
-const { photos, name } = Astro.props;
+const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = Astro.props;
 ---
 
-<section class="gal" data-gal aria-label={`תמונות מ${name}`}>
+<div class:list={['gal', `gal--${variant}`]} data-gal role="group" aria-label={label}>
   <ul class="gal__strip" role="list" data-gal-strip>
     {
       photos.map((p, i) => (
@@ -44,7 +47,7 @@ const { photos, name } = Astro.props;
   </dialog>
 
   <script type="application/json" data-gal-data set:html={JSON.stringify(photos.map((p) => ({ src: src(p, 2000), alt: p.alt })))} />
-</section>
+</div>
 
 <style>
   .gal {
@@ -99,12 +102,33 @@ const { photos, name } = Astro.props;
   @media (min-width: 900px) and (pointer: fine) {
     .gal__strip {
       grid-auto-flow: row;
-      grid-template-columns: 2fr 1fr;
-      grid-template-rows: 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: repeat(2, clamp(200px, 17vw, 280px));
       overflow: visible;
     }
     .gal__item--0 {
       grid-row: span 2;
+    }
+    .gal--suite .gal__item--1 {
+      grid-column: span 2;
+    }
+    /* Home: eight photos on four columns, the first large, the last wide */
+    .gal--wide .gal__strip {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: none;
+      grid-auto-rows: clamp(180px, 15vw, 250px);
+    }
+    .gal--wide .gal__item--0 {
+      grid-column: span 2;
+    }
+    .gal--wide .gal__item--7 {
+      grid-column: span 2;
+    }
+    .gal__item {
+      min-height: 0;
+    }
+    .gal__open {
+      height: 100%;
     }
     .gal__item--0 .gal__open,
     .gal__item--0 .gal__open :global(img) {

@@ -4,6 +4,7 @@ import { suites, type Suite } from '../../data/pricing';
 import { formatPrice } from '../../lib/format';
 import SuiteDrawing from '../../components/SuiteDrawing.astro';
 import SuiteGallery from '../../components/SuiteGallery.astro';
+import Photo from '../../components/Photo.astro';
 
 export function getStaticPaths() {
   return suites.map((suite) => ({ params: { slug: suite.slug }, props: { suite } }));
@@ -29,13 +30,13 @@ const others = suites.filter((s) => s.slug !== suite.slug);
       <p class="suite-hero__hl">{suite.highlight}</p>
       <p class="suite-hero__sum">{suite.summary}</p>
     </div>
-    <div class="suite-hero__sheet" transition:name={`suite-media-${suite.slug}`}>
-      <SuiteDrawing slug={suite.slug} />
+    <div class="suite-hero__media" transition:name={`suite-media-${suite.slug}`}>
+      <Photo photo={suite.photo} eager sizes="(min-width: 900px) 58vw, 92vw" width={1500} height={1000} />
     </div>
   </section>
 
   <section class="container suite-gallery" aria-labelledby="view-title">
-    <h2 id="view-title" class="suite-sub">הנוף מהסוויטה</h2>
+    <h2 id="view-title" class="suite-sub">הסוויטה בתמונות</h2>
     <SuiteGallery photos={suite.gallery} name={suite.name} />
   </section>
 
@@ -49,6 +50,12 @@ const others = suites.filter((s) => s.slug !== suite.slug);
       <ul role="list" class="amenities">
         {suite.amenities.map((a) => <li>{a}</li>)}
       </ul>
+
+      <h2 class="suite-sub">חתך הסוויטה</h2>
+      <figure class="suite-plan">
+        <SuiteDrawing slug={suite.slug} />
+        <figcaption>חתך דרך הסוויטה ושפת המצוק. כך היא יושבת מול המכתש.</figcaption>
+      </figure>
     </div>
 
     <aside class="suite-book" aria-label="הזמנה">
@@ -108,12 +115,28 @@ const others = suites.filter((s) => s.slug !== suite.slug);
     color: var(--muted);
     max-width: 36ch;
   }
-  /* The drawing sheet morphs from the card (shared-element view transition) */
-  .suite-hero__sheet {
+  /* The suite photo morphs from the card (shared-element view transition) */
+  .suite-hero__media {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--night-2);
+  }
+  .suite-hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* The section drawing, on a contour sheet */
+  .suite-plan {
     display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3.2;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .suite-plan :global(.sdraw) {
     padding: clamp(1.25rem, 3vw, 2.5rem);
+    width: 100%;
+    height: auto;
     border: 1px solid var(--line-strong);
     border-radius: var(--radius);
     background:

@@ -1,0 +1,113 @@
+---
+// Quick availability search, the way hotel sites lead (date · nights · guests).
+// A plain GET form to /book, so it works before (and without) JavaScript; the wizard
+// reads ?date=&nights=&guests= as a one-time pre-fill. The script only sets today's
+// date as the minimum (the page is static, so it can't be baked in at build time).
+
+interface Props {
+  /** unique prefix: the bar renders twice on the home page (in the hero / under it) */
+  id: string;
+  class?: string;
+}
+const { id, class: cls } = Astro.props;
+---
+
+<form class:list={['bbar', cls]} action="/book" method="get" data-bbar aria-label="בדיקת זמינות">
+  <div class="bbar__field bbar__field--date">
+    <label for={`${id}-date`}>תאריך הגעה</label>
+    <input id={`${id}-date`} name="date" type="date" required data-bbar-date />
+  </div>
+  <div class="bbar__field">
+    <label for={`${id}-nights`}>לילות</label>
+    <select id={`${id}-nights`} name="nights">
+      {[1, 2, 3, 4, 5, 6, 7].map((n) => <option value={n} selected={n === 2}>{n === 1 ? 'לילה אחד' : `${n} לילות`}</option>)}
+    </select>
+  </div>
+  <div class="bbar__field">
+    <label for={`${id}-guests`}>אורחים</label>
+    <select id={`${id}-guests`} name="guests">
+      {[1, 2, 3, 4].map((n) => <option value={n} selected={n === 2}>{n === 1 ? 'אורח אחד' : `${n} אורחים`}</option>)}
+    </select>
+  </div>
+  <button type="submit" class="btn bbar__go">לבדוק זמינות</button>
+</form>
+
+<style>
+  .bbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--line);
+    overflow: hidden;
+  }
+  .bbar__field {
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.6rem 0.9rem 0.55rem;
+    background: rgb(11 14 26 / 0.92);
+    transition: background-color 0.2s ease;
+  }
+  .bbar__field--date {
+    grid-column: 1 / -1;
+  }
+  .bbar__field:focus-within {
+    background: var(--night-3);
+  }
+  .bbar label {
+    font-size: var(--fs-label);
+    font-weight: 600;
+    color: var(--sand);
+  }
+  .bbar input,
+  .bbar select {
+    width: 100%;
+    min-height: 2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--starlight);
+    font: inherit;
+    font-size: var(--fs-body);
+    color-scheme: dark;
+    cursor: pointer;
+  }
+  .bbar select option {
+    background: var(--night-2);
+  }
+  .bbar input:focus,
+  .bbar select:focus {
+    outline: none;
+  }
+  .bbar__go {
+    grid-column: 1 / -1;
+    justify-content: center;
+    border-radius: 0;
+    min-height: 3.25rem;
+  }
+  @media (min-width: 720px) {
+    .bbar {
+      grid-template-columns: 1.3fr 1fr 1fr auto;
+    }
+    .bbar__field--date,
+    .bbar__go {
+      grid-column: auto;
+    }
+    .bbar__go {
+      padding-inline: 1.75rem;
+    }
+  }
+</style>
+
+<script>
+  import { todayInIsrael } from '../lib/dates';
+
+  document.addEventListener('astro:page-load', () => {
+    const today = todayInIsrael();
+    document.querySelectorAll<HTMLInputElement>('[data-bbar-date]').forEach((el) => {
+      el.min = today;
+      if (!el.value) el.value = today;
+    });
+  });
+</script>

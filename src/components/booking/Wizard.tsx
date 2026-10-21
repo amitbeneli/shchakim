@@ -61,16 +61,21 @@ const save = (s: State) => {
   }
 };
 
-/** ?suite=…&date=YYYY-MM-DD pre-fill (from suite pages and the moon calendar) */
+/** ?suite=…&date=YYYY-MM-DD&nights=N&guests=N pre-fill (from suite pages and the moon calendar) */
 function fromQuery(today: ISODate): Partial<State> {
   const p = new URLSearchParams(location.search);
   const out: Partial<State> = {};
   const s = p.get('suite');
   if (s && getSuite(s)) out.suite = s as SuiteSlug;
   const d = p.get('date');
+  const g = Number(p.get('guests'));
+  if (Number.isInteger(g) && g >= 1 && g <= 4) out.guests = g;
   if (isISODate(d) && d >= today) {
+    // ?nights=N from the home booking bar; otherwise pick the shortest valid stay
+    const n = Number(p.get('nights'));
+    const nights = Number.isInteger(n) && n >= 1 && !stayError(d, n) ? n : stayError(d, 1) ? 2 : 1;
     out.checkIn = d;
-    out.checkOut = addDays(d, stayError(d, 1) ? 2 : 1); // pick the shortest valid stay
+    out.checkOut = addDays(d, nights);
     out.step = 0;
   }
   return out;
