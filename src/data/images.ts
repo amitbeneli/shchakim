@@ -4,13 +4,15 @@
 export interface Photo {
   id: string;
   alt: string;
+  /** Focal point for object-fit crops, e.g. '50% 80%' */
+  focus?: string;
 }
 
 export const photos = {
   heroSky: { id: '1620029288530-4ff6a684e33d', alt: 'שביל החלב מעל צוק סלע במדבר' },
   lodgeNight: { id: '1706438229836-98f3720dbfc6', alt: 'שורת סוויטות מוארות בחושך המדבר' },
   archDoor: { id: '1775809679529-a8440bf14f52', alt: 'פתח מקושת שנפתח אל נוף המדבר' },
-  domeNight: { id: '1762255107395-bcb83548e83f', alt: 'כיפת זכוכית מוארת תחת שמי לילה' },
+  domeNight: { id: '1762255107395-bcb83548e83f', alt: 'כיפת זכוכית מוארת תחת שמי לילה', focus: '60% 82%' },
   villaPool: { id: '1760261799672-2469a6c4c6f3', alt: 'וילה מאבן חול עם בריכה ועצי דקל' },
   villaCourt: { id: '1760261307890-62de1b42b666', alt: 'חצר פנימית עם בריכה ועצי דקל' },
   stargazers: { id: '1608408908478-fe36acb430ef', alt: 'שני אנשים על סלע מצביעים בפנס אל שביל החלב' },

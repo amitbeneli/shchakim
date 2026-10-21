@@ -1,0 +1,151 @@
+---
+// R8: infinite review band. The list is rendered twice and the track slides by
+// exactly one copy's width, so the loop seam is invisible. Pure CSS animation
+// (compositor-only transform); pauses on hover, on touch, and on keyboard focus.
+// Reduced motion: no animation, a normal horizontally scrollable list.
+import { reviews } from '../data/reviews';
+import { site } from '../data/site';
+---
+
+<section class="r8" aria-labelledby="r8-title">
+  <div class="container r8__head" data-reveal>
+    <h2 id="r8-title">מה אומרים האורחים</h2>
+    <p><bdi>{site.stats.rating}</bdi> מתוך 5, לפי <bdi>{site.stats.reviews}</bdi> ביקורות</p>
+  </div>
+
+  <div class="r8__viewport" data-r8>
+    <div class="r8__track">
+      {
+        [0, 1].map((copy) => (
+          <ul role="list" class="r8__list" aria-hidden={copy === 1 ? 'true' : undefined}>
+            {reviews.map((r) => (
+              <li class="r8__card">
+                <svg class="r8__stars" viewBox="0 0 100 18" role="img" aria-label="5 כוכבים">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <path
+                      transform={`translate(${i * 20} 0)`}
+                      d="M9 1.2l2.3 4.8 5.2.7-3.8 3.7.9 5.2L9 13.1 4.4 15.6l.9-5.2L1.5 6.7l5.2-.7z"
+                    />
+                  ))}
+                </svg>
+                <blockquote>
+                  <p>{r.text}</p>
+                </blockquote>
+                <p class="r8__by">
+                  {r.name}, {r.from}
+                  <span>{r.suite}</span>
+                </p>
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .r8 {
+    padding-block: clamp(5rem, 12vw, 9rem);
+    overflow: hidden;
+  }
+  .r8__head {
+    display: grid;
+    gap: 0.5rem;
+    margin-block-end: clamp(2rem, 5vw, 3rem);
+  }
+  .r8__head h2 {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+  }
+  .r8__head p {
+    color: var(--muted);
+  }
+
+  .r8__viewport {
+    /* soft fade at both edges */
+    mask-image: linear-gradient(to left, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 8%, #000 92%, transparent);
+  }
+  .r8__track {
+    display: flex;
+    width: max-content;
+    animation: r8-loop 70s linear infinite;
+  }
+  /* RTL: the list overflows to the left, so the track moves right (+50% = one copy) */
+  @keyframes r8-loop {
+    to {
+      transform: translateX(50%);
+    }
+  }
+  .r8__viewport:hover .r8__track,
+  .r8__viewport:focus-within .r8__track,
+  .r8__viewport.is-held .r8__track {
+    animation-play-state: paused;
+  }
+  .r8__list {
+    display: flex;
+    gap: 1.25rem;
+    padding-inline-end: 1.25rem; /* same as gap, so copy 2 starts exactly one gap after copy 1 */
+  }
+  .r8__card {
+    width: clamp(280px, 78vw, 400px);
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    padding: 1.6rem 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--night-2);
+  }
+  .r8__stars {
+    width: 84px;
+    height: 15px;
+    fill: var(--sand);
+  }
+  .r8__card blockquote {
+    margin: 0;
+  }
+  .r8__card blockquote p {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  .r8__by {
+    display: grid;
+    font-weight: 700;
+    font-size: var(--step--1);
+  }
+  .r8__by span {
+    font-weight: 400;
+    color: var(--sand);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .r8__viewport {
+      overflow-x: auto;
+      mask-image: none;
+      -webkit-mask-image: none;
+      padding-inline: var(--gutter);
+    }
+    .r8__track {
+      animation: none;
+    }
+    .r8__list[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Touch: hold the band while a finger is on it (hover doesn't exist on phones)
+  document.addEventListener('astro:page-load', () => {
+    const vp = document.querySelector<HTMLElement>('[data-r8]');
+    if (!vp) return;
+    const hold = () => vp.classList.add('is-held');
+    const release = () => vp.classList.remove('is-held');
+    vp.addEventListener('touchstart', hold, { passive: true });
+    vp.addEventListener('touchend', release);
+    vp.addEventListener('touchcancel', release);
+  });
+</script>

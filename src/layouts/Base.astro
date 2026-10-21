@@ -66,6 +66,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         </a>
       )
     }
+    <script>
+      import { initReveal } from '../scripts/reveal';
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
   </body>
 </html>
 

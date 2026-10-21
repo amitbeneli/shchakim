@@ -1,0 +1,198 @@
+---
+// R4: suites gallery.
+// - Default (touch / narrow / reduced motion): a native scroll-snap carousel.
+//   RTL means the first card sits at the right and the finger swipes leftward.
+// - Desktop with a fine pointer: JS adds .is-pinned, the section pins to the
+//   screen and vertical scroll slides the cards horizontally, right → left.
+import Photo from './Photo.astro';
+import { suites } from '../data/pricing';
+import { formatPrice } from '../lib/format';
+---
+
+<section class="r4" data-r4 aria-labelledby="suites-title">
+  <div class="r4__pin">
+    <ul role="list" class="r4__track" data-r4-track>
+      <li class="r4__intro">
+        <h2 id="suites-title">שלוש דרכים להירדם מתחת לכוכבים</h2>
+        <p>תשע סוויטות בשלושה סוגים. בוחרים כמה קרוב לשמיים רוצים להירדם.</p>
+        <a href="/suites" class="r4__all">כל הסוויטות</a>
+      </li>
+      {
+        suites.map((s, i) => (
+          <li class="r4__card" style={`--d:${i}`}>
+            <a href={`/suites/${s.slug}`}>
+              <div class="r4__media" transition:name={`suite-media-${s.slug}`}>
+                <Photo photo={s.photo} sizes="(min-width: 768px) 56vw, 80vw" width={1400} height={900} />
+              </div>
+              <div class="r4__text">
+                <h3>{s.name}</h3>
+                <p class="r4__hl">{s.highlight}</p>
+                <p class="r4__meta">
+                  עד {s.maxGuests} אורחים<span aria-hidden="true"> · </span>
+                  <bdi class="price">{formatPrice(s.nightly)}</bdi> ללילה
+                </p>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .r4 {
+    padding-block: clamp(4rem, 10vw, 7rem);
+  }
+
+  /* ── Carousel (default) ── */
+  .r4__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 80%;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    padding-inline: var(--gutter);
+    padding-block-end: 0.5rem;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .r4__track::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .r4__track {
+      grid-auto-columns: 42%;
+      gap: 1.5rem;
+    }
+  }
+  .r4__track > li {
+    scroll-snap-align: start;
+  }
+  .r4__intro {
+    display: grid;
+    align-content: end;
+    gap: 1rem;
+    padding-block-end: 1rem;
+  }
+  .r4__intro h2 {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.12;
+  }
+  .r4__intro p {
+    color: var(--muted);
+    max-width: 30ch;
+  }
+  .r4__all {
+    justify-self: start;
+    color: var(--sand);
+    font-weight: 700;
+    text-decoration: none;
+    padding-block: 0.4rem;
+    border-block-end: 1px solid rgb(217 168 108 / 0.4);
+  }
+  .r4__card a {
+    display: grid;
+    gap: 0.9rem;
+    text-decoration: none;
+  }
+  .r4__media {
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+  .r4__media :global(img) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease-out);
+  }
+  .r4__text {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .r4__card h3 {
+    font-size: var(--step-2);
+    font-weight: 500;
+  }
+  .r4__hl {
+    color: var(--sand);
+    font-size: var(--step--1);
+  }
+  .r4__meta {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .r4__card a:hover :global(img) {
+      transform: scale(1.04);
+    }
+  }
+
+  /* ── Pinned horizontal mode (desktop, set by JS) ── */
+  .r4.is-pinned {
+    padding-block: 0;
+  }
+  .r4.is-pinned .r4__pin {
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .r4.is-pinned .r4__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: clamp(2rem, 4vw, 4.5rem);
+    overflow: visible;
+    padding-inline: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter)));
+    will-change: transform;
+  }
+  .r4.is-pinned .r4__intro {
+    width: clamp(300px, 28vw, 440px);
+    align-content: center;
+  }
+  .r4.is-pinned .r4__card {
+    width: min(56vw, 92svh);
+  }
+  .r4.is-pinned .r4__media :global(img) {
+    aspect-ratio: 16 / 10;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', () => {
+    const section = document.querySelector<HTMLElement>('[data-r4]');
+    if (!section) return;
+    const track = section.querySelector<HTMLElement>('[data-r4-track]')!;
+
+    const mm = gsap.matchMedia();
+    // Pinning only where it feels good: a real mouse/trackpad, wide screen, motion allowed
+    mm.add('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
+      section.classList.add('is-pinned');
+      // RTL: the track overflows to the LEFT, so we move it RIGHT (positive x)
+      const distance = () => Math.max(0, track.scrollWidth - innerWidth);
+      gsap.to(track, {
+        x: distance,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${distance()}`,
+          pin: true,
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        },
+      });
+      return () => section.classList.remove('is-pinned');
+    });
+
+    document.addEventListener('astro:before-swap', () => mm.revert(), { once: true });
+  });
+</script>

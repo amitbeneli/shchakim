@@ -27,4 +27,5 @@ const { photo, sizes = '100vw', class: cls, eager = false, decorative = false, w
   loading={eager ? 'eager' : 'lazy'}
   decoding={eager ? 'sync' : 'async'}
   fetchpriority={eager ? 'high' : undefined}
+  style={photo.focus ? `object-position: ${photo.focus}` : undefined}
 />

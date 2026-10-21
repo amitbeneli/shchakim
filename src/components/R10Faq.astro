@@ -1,0 +1,129 @@
+---
+// R10: accessible accordion built on native <details>/<summary> (keyboard and
+// screen-reader support for free). JS only adds a smooth height animation via
+// the Web Animations API; without JS or with reduced motion it opens instantly.
+import { faq } from '../data/faq';
+---
+
+<section class="r10 container" aria-labelledby="faq-title">
+  <h2 id="faq-title" data-reveal>לפני שיוצאים לדרך</h2>
+  <div class="r10__list" data-r10>
+    {
+      faq.map((item, i) => (
+        <details data-reveal style={`--d:${i}`}>
+          <summary>
+            <span>{item.q}</span>
+            <i aria-hidden="true" />
+          </summary>
+          <div class="r10__body">
+            <p>{item.a}</p>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .r10 {
+    display: grid;
+    gap: 2rem;
+    padding-block: clamp(4rem, 10vw, 7rem);
+  }
+  @media (min-width: 900px) {
+    .r10 {
+      grid-template-columns: 1fr 1.6fr;
+      align-items: start;
+    }
+  }
+  .r10 h2 {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+  }
+  .r10__list {
+    border-block-start: 1px solid var(--line);
+  }
+  details {
+    border-block-end: 1px solid var(--line);
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.15rem;
+    font-weight: 600;
+    font-size: var(--step-1);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Plus that turns into a minus: the vertical bar collapses */
+  summary i {
+    position: relative;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+  }
+  summary i::before,
+  summary i::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 7.25px;
+    width: 16px;
+    height: 1.5px;
+    background: var(--sand);
+    transition: transform 0.4s var(--ease-out);
+  }
+  summary i::after {
+    transform: rotate(90deg);
+  }
+  details[open] summary i::after {
+    transform: rotate(0deg);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    summary:hover span {
+      color: var(--sand);
+    }
+  }
+  .r10__body {
+    overflow: hidden;
+  }
+  .r10__body p {
+    color: var(--muted);
+    padding-block-end: 1.3rem;
+    max-width: 44rem;
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const list = document.querySelector('[data-r10]');
+    if (!list || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    list.querySelectorAll('details').forEach((d) => {
+      const summary = d.querySelector('summary')!;
+      const body = d.querySelector<HTMLElement>('.r10__body')!;
+      let anim: Animation | null = null;
+
+      summary.addEventListener('click', (e) => {
+        e.preventDefault();
+        anim?.cancel();
+        const opening = !d.open;
+        if (opening) d.open = true; // must be open to measure the content
+        const full = body.scrollHeight;
+        anim = body.animate(
+          { height: opening ? ['0px', `${full}px`] : [`${full}px`, '0px'], opacity: opening ? [0, 1] : [1, 0] },
+          { duration: opening ? 420 : 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+        );
+        anim.onfinish = () => {
+          if (!opening) d.open = false;
+          anim = null;
+        };
+      });
+    });
+  });
+</script>
