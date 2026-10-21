@@ -12,9 +12,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@astrojs/preact": "^6.1.0",
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.4.1",
-    "gsap": "^3.15.0"
+    "gsap": "^3.15.0",
+    "preact": "^11.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.11",

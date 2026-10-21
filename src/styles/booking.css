@@ -1,0 +1,780 @@
+/* Booking wizard (Preact island). Global but every class is prefixed bk- / cal-. */
+
+.bk {
+  --bk-card: var(--night-2);
+  --bk-line: var(--line);
+  padding-block-end: 6rem; /* room for the mobile bottom bar */
+}
+.bk--loading {
+  min-height: 60svh;
+}
+
+/* ── Progress ── */
+.bk-progress {
+  margin-block-end: clamp(1.5rem, 4vw, 2.5rem);
+}
+.bk-progress ol {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+}
+.bk-progress li > * {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: var(--step--1);
+  background: none;
+  border: 0;
+  padding: 0.25rem 0;
+}
+.bk-progress button {
+  cursor: pointer;
+}
+.bk-progress button:hover .bk-progress__name {
+  color: var(--starlight);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.bk-progress__n {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.bk-progress .is-current .bk-progress__n {
+  background: var(--sand);
+  border-color: var(--sand);
+  color: var(--night);
+}
+.bk-progress .is-current > * {
+  color: var(--starlight);
+  font-weight: 700;
+}
+.bk-progress .is-done .bk-progress__n {
+  border-color: var(--sand);
+  color: var(--sand);
+}
+@media (max-width: 767px) {
+  /* Only the current step's name on phones; the rest are numbered dots */
+  .bk-progress li:not(.is-current) .bk-progress__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+}
+.bk-progress__bar {
+  height: 2px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bk-progress__bar span {
+  display: block;
+  height: 100%;
+  background: var(--sand);
+  transform-origin: right; /* RTL: fills from the right */
+  transition: transform 0.6s var(--ease-out);
+}
+
+/* ── Layout ── */
+.bk-layout {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 1000px) {
+  .bk-layout {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    align-items: start;
+    gap: clamp(2rem, 4vw, 4rem);
+  }
+}
+.bk-main {
+  min-width: 0;
+}
+.bk-title {
+  font-size: var(--step-3);
+  font-weight: 500;
+  margin-block-end: 1.5rem;
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+.bk-title:focus {
+  outline: none;
+}
+.bk-anim {
+  animation: bk-in 0.5s var(--ease-out);
+}
+@keyframes bk-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.bk-step {
+  display: grid;
+  gap: 1.25rem;
+}
+.bk-hint {
+  color: var(--muted);
+  font-size: var(--step--1);
+}
+.bk-msgs {
+  display: grid;
+  gap: 0.5rem;
+}
+.bk-msg {
+  font-size: var(--step--1);
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  background: var(--night-3);
+}
+.bk-msg--ok {
+  color: #cfe8c9;
+  background: rgb(120 170 110 / 0.14);
+}
+.bk-msg--err {
+  color: #ffc9b8;
+  background: rgb(226 104 60 / 0.16);
+}
+
+/* ── Nav buttons ── */
+.bk-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-block-start: 2rem;
+}
+.bk-nav__next {
+  min-width: 11rem;
+}
+.bk-nav__back {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  padding: 0.75rem 0.25rem;
+}
+.bk-nav__back:hover {
+  color: var(--starlight);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.bk-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  animation: bk-spin 0.8s linear infinite;
+}
+@keyframes bk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Calendar ── */
+.cal {
+  position: relative;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--bk-line);
+  border-radius: var(--radius);
+  background: var(--bk-card);
+}
+.cal__nav {
+  position: absolute;
+  inset-inline: clamp(0.5rem, 2vw, 1rem);
+  top: clamp(0.75rem, 2.4vw, 1.15rem);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.cal__arrow {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+}
+.cal__arrow svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cal__arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.cal__months {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .cal__months {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .cal__month--second {
+    display: none;
+  }
+}
+.cal__title {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  line-height: 40px;
+  margin-block-end: 0.75rem;
+}
+.cal__grid {
+  display: grid;
+  gap: 2px;
+}
+.cal__row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal__dow {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding-block-end: 0.35rem;
+}
+.cal__row > [role='gridcell'] {
+  display: block;
+}
+.cal__day {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cal__day:not(:disabled, .is-blocked, .is-start, .is-end):hover {
+    background: rgb(244 241 232 / 0.08);
+  }
+}
+.cal__day:disabled {
+  color: rgb(244 241 232 / 0.22);
+  cursor: default;
+}
+.cal__day.is-blocked {
+  color: rgb(244 241 232 / 0.3);
+  cursor: not-allowed;
+}
+.cal__day.is-blocked span {
+  text-decoration: line-through;
+  text-decoration-color: rgb(244 241 232 / 0.35);
+}
+/* Recommended dark night: a small crescent dot under the number */
+.cal__day.is-dark::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  inset-inline-start: 50%;
+  width: 5px;
+  height: 5px;
+  margin-inline-start: -2.5px;
+  border-radius: 50%;
+  background: var(--sand);
+}
+.cal__day.is-range {
+  background: rgb(217 168 108 / 0.16);
+  border-radius: 0;
+}
+.cal__day.is-start,
+.cal__day.is-end {
+  background: var(--sand);
+  color: var(--night);
+  font-weight: 700;
+}
+.cal__day.is-start.is-dark::after,
+.cal__day.is-end.is-dark::after {
+  background: var(--night);
+}
+.cal__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin-block-start: 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.cal__key {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.cal__key--dark {
+  background: var(--sand);
+}
+.cal__key--blocked {
+  margin-inline-start: 0.8rem;
+  width: 14px;
+  height: 1.5px;
+  border-radius: 0;
+  background: rgb(244 241 232 / 0.4);
+}
+
+/* ── Guests stepper ── */
+.bk-guests {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--bk-line);
+  border-radius: var(--radius);
+  background: var(--bk-card);
+  font-weight: 600;
+}
+.bk-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.bk-stepper button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.bk-stepper button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.bk-stepper output {
+  min-width: 2.2rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step-1);
+}
+.bk-stepper--sm button {
+  width: 38px;
+  height: 38px;
+}
+
+/* ── Suite choice ── */
+.bk-suites {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+.bk-suite {
+  position: relative;
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem;
+  padding-inline-end: 1rem;
+  border: 1px solid var(--bk-line);
+  border-radius: var(--radius);
+  background: var(--bk-card);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.bk-suite input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.bk-suite img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.bk-suite__text {
+  display: grid;
+  gap: 0.15rem;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+.bk-suite__text strong {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--step-1);
+  color: var(--starlight);
+}
+.bk-suite__meta {
+  color: var(--starlight);
+}
+.bk-suite em {
+  font-style: normal;
+  color: #ffc9b8;
+}
+.bk-suite.is-on {
+  border-color: var(--sand);
+  background: rgb(217 168 108 / 0.08);
+}
+.bk-suite.is-off {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.bk-suite:has(input:focus-visible) {
+  outline: 2px solid var(--sand);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .bk-suite {
+    grid-template-columns: 6.5rem 1fr;
+  }
+}
+
+/* ── Add-ons ── */
+.bk-addons {
+  display: grid;
+  gap: 0.9rem;
+}
+.bk-addon {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem;
+  padding-inline-end: 1rem;
+  border: 1px solid var(--bk-line);
+  border-radius: var(--radius);
+  background: var(--bk-card);
+}
+.bk-addon.is-on {
+  border-color: var(--sand);
+}
+.bk-addon img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.bk-addon__text {
+  display: grid;
+  gap: 0.15rem;
+  font-size: var(--step--1);
+  color: var(--muted);
+  min-width: 0;
+}
+.bk-addon__text strong {
+  color: var(--starlight);
+  font-size: var(--step-0);
+}
+.bk-addon__meta {
+  color: var(--starlight);
+}
+@media (max-width: 560px) {
+  .bk-addon {
+    grid-template-columns: 4.5rem 1fr;
+  }
+  .bk-addon > :last-child {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+}
+.bk-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.bk-toggle input {
+  accent-color: var(--sand);
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Form ── */
+.bk-form {
+  max-width: 34rem;
+}
+.bk-field {
+  display: grid;
+  gap: 0.4rem;
+}
+.bk-field label {
+  font-weight: 600;
+}
+.bk-field label small {
+  color: var(--muted);
+  font-weight: 400;
+}
+.bk-field input,
+.bk-field textarea,
+.bk-coupon input {
+  width: 100%;
+  font: inherit;
+  font-size: max(16px, 1rem); /* 16px+ stops iOS zooming into the field */
+  color: var(--starlight);
+  background: var(--night-3);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  transition: border-color 0.2s ease;
+}
+.bk-field input[dir='ltr'] {
+  text-align: right; /* LTR value, but aligned with the RTL form */
+}
+.bk-field textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+.bk-field input::placeholder,
+.bk-field textarea::placeholder {
+  color: rgb(244 241 232 / 0.45);
+}
+.bk-field input:focus,
+.bk-field textarea:focus,
+.bk-coupon input:focus {
+  outline: none;
+  border-color: var(--sand);
+  box-shadow: 0 0 0 3px rgb(217 168 108 / 0.25);
+}
+.bk-field.is-err input {
+  border-color: #ff9a7a;
+}
+.bk-field__err {
+  font-size: var(--step--1);
+  color: #ffb39b;
+}
+
+/* ── Review + coupon ── */
+.bk-review {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--bk-line);
+  border-radius: var(--radius);
+  background: var(--bk-card);
+}
+.bk-review__who {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--line);
+}
+.bk-review__who div,
+.bk-sum__facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.bk-review__who dt,
+.bk-sum__facts dt {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.bk-review__who dd,
+.bk-sum__facts dd {
+  margin: 0;
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+.bk-coupon {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 28rem;
+}
+.bk-coupon label {
+  font-weight: 600;
+}
+.bk-coupon__row {
+  display: flex;
+  gap: 0.6rem;
+}
+.bk-coupon__row input {
+  flex: 1;
+  min-width: 0;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* ── Summary (sidebar) ── */
+.bk-sum {
+  display: none;
+}
+@media (min-width: 1000px) {
+  .bk-sum {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+    padding: 1.5rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--bk-card);
+  }
+}
+.bk-sum__title {
+  font-size: var(--step-1);
+  font-weight: 500;
+  margin-block-end: 1rem;
+}
+.bk-sum__body {
+  display: grid;
+  gap: 1rem;
+  font-size: var(--step--1);
+}
+.bk-sum__facts {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+.bk-sum__lines {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 1rem 0 0;
+  list-style: none;
+  border-block-start: 1px solid var(--line);
+}
+.bk-sum__lines li,
+.bk-sum__total,
+.bk-sum__vat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+.bk-sum__lines small {
+  color: var(--muted);
+}
+.bk-sum__disc {
+  color: #cfe8c9;
+}
+.bk-sum__total {
+  padding-block-start: 0.9rem;
+  border-block-start: 1px solid var(--line-strong);
+  font-weight: 700;
+  font-size: var(--step-1);
+}
+.bk-sum__total .bk-money {
+  font-family: var(--font-display);
+  color: var(--sand);
+  font-size: 1.3em;
+}
+.bk-sum__vat,
+.bk-sum__note,
+.bk-sum__empty {
+  color: var(--muted);
+}
+.bk-money {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── Mobile bottom bar ── */
+.bk-bar {
+  position: fixed;
+  z-index: 45;
+  inset-inline: 0;
+  bottom: 0;
+  background: rgb(18 22 38 / 0.94);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-block-start: 1px solid var(--line-strong);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 1000px) {
+  .bk-bar {
+    display: none;
+  }
+}
+.bk-bar__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 60px;
+  padding-inline: var(--gutter);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+.bk-bar__toggle .bk-money {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--sand);
+}
+.bk-bar__toggle svg {
+  width: 20px;
+  height: 20px;
+  margin-inline-start: auto;
+  transition: transform 0.3s var(--ease-out);
+}
+.bk-bar.is-open .bk-bar__toggle svg {
+  transform: rotate(180deg);
+}
+.bk-bar__hint {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: var(--step--1);
+}
+.bk-bar__sheet {
+  max-height: 60svh;
+  overflow-y: auto;
+  padding: 1.25rem var(--gutter) 0.5rem;
+  animation: bk-in 0.35s var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk-anim,
+  .bk-bar__sheet {
+    animation: none;
+  }
+}
+
+@media (min-width: 1000px) {
+  .bk-layout--single {
+    grid-template-columns: minmax(0, 46rem);
+  }
+}

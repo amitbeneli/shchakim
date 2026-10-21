@@ -7,7 +7,8 @@ import { site } from '../data/site';
   <section class="thanks sky-art">
     <div class="container thanks__inner">
       <p class="eyebrow">ההזמנה התקבלה</p>
-      <h1>תודה. השמיים שמורים לכם</h1>
+      <h1 data-thanks-title>תודה. השמיים שמורים לכם</h1>
+      <p class="thanks__stay" data-thanks-stay hidden></p>
       <p>
         קיבלנו את הפרטים. נחזור אליכם תוך יום עסקים כדי לאשר את התאריכים ולענות על כל שאלה. לא חויבתם
         בשום תשלום.
@@ -58,4 +59,27 @@ import { site } from '../data/site';
     gap: 0.75rem;
     margin-block-start: 0.5rem;
   }
+  .thanks__stay {
+    color: var(--sand) !important;
+    font-size: var(--step-1);
+  }
 </style>
+
+<script>
+  import { formatDateHe } from '../lib/dates';
+  // Personalise with the booking just sent (stored by the wizard; storage may be unavailable)
+  document.addEventListener('astro:page-load', () => {
+    const stay = document.querySelector<HTMLElement>('[data-thanks-stay]');
+    if (!stay) return;
+    try {
+      const b = JSON.parse(sessionStorage.getItem('shchakim-last-booking') ?? 'null');
+      if (!b?.name) return;
+      const first = String(b.name).split(' ')[0];
+      document.querySelector('[data-thanks-title]')!.textContent = `תודה, ${first}. השמיים שמורים לכם`;
+      stay.textContent = `${b.suite}, ${formatDateHe(b.checkIn)} עד ${formatDateHe(b.checkOut)}`;
+      stay.hidden = false;
+    } catch {
+      /* keep the generic message */
+    }
+  });
+</script>
