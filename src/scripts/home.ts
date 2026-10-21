@@ -1,6 +1,8 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import { initMedia } from './media';
+
 gsap.registerPlugin(ScrollTrigger);
 
 // "Why here" icons draw their own lines, scrubbed to scroll (scrolling back
@@ -10,7 +12,9 @@ export function initHome() {
 
   const ctx = gsap.context(() => {
     document.querySelectorAll<HTMLElement>('[data-why]').forEach((item) => {
-      const paths = item.querySelectorAll('path');
+      const icon = item.querySelector<SVGElement>('.why__icon');
+      if (!icon) return;
+      const paths = icon.querySelectorAll('path');
       gsap.fromTo(
         paths,
         { strokeDashoffset: 1 },
@@ -18,11 +22,12 @@ export function initHome() {
           strokeDashoffset: 0,
           ease: 'none',
           stagger: 0.15,
-          scrollTrigger: { trigger: item, start: 'top 88%', end: 'top 50%', scrub: 0.5 },
+          scrollTrigger: { trigger: icon, start: 'top 95%', end: 'top 62%', scrub: 0.5 },
         },
       );
     });
   });
 
-  document.addEventListener('astro:before-swap', () => ctx.revert(), { once: true });
+  const media = initMedia();
+  document.addEventListener('astro:before-swap', () => { ctx.revert(); media(); }, { once: true });
 }

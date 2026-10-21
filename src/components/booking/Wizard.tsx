@@ -8,7 +8,7 @@ import { checkCoupon, couponError, quote, shekels, stayError, type Quote } from 
 import { isDarkNight, moonAge } from '../../lib/moon';
 import { normalizeIsraeliMobile, validateEmail, validateName, validatePhone } from '../../lib/validate';
 import { buildPayload, sendLead } from '../../lib/lead';
-import { src } from '../../data/images';
+import { photos, src } from '../../data/images';
 
 /* ─────────────── State ─────────────── */
 
@@ -95,6 +95,17 @@ const Money = ({ v, neg }: { v: number; neg?: boolean }) => (
 );
 
 const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+/** "יום ה׳, 12.11" for the check-in / check-out strip */
+const DAY_SHORT = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+const shortDate = (d: ISODate) => {
+  const [, m, day] = d.split('-').map(Number);
+  return `יום ${DAY_SHORT[new Date(`${d}T00:00:00Z`).getUTCDay()]}, ${day}.${m}`;
+};
+const Check = () => (
+  <svg viewBox="0 0 16 16" aria-hidden="true" class="bk-ico">
+    <path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+);
 const darkNight = (d: ISODate) => isDarkNight(moonAge(new Date(`${d}T20:00:00Z`))); // 22:00 Israel ≈ 20:00 UTC
 
 /* ─────────────── Component ─────────────── */
@@ -273,14 +284,30 @@ export default function Wizard() {
   /* ─────────────── Summary (sidebar / bottom sheet) ─────────────── */
   const summary = (
     <div class="bk-sum__body">
-      <dl class="bk-sum__facts">
+      {/* The stay, the way a hotel confirms it: the room, then the two dates */}
+      <figure class="bk-sum__media">
+        <img src={src(suite ? suite.photo : photos.lodgeExterior, 800)} alt="" loading="lazy" width="800" height="533" />
+        <figcaption>{suite ? suite.name : 'שחקים, שפת מכתש רמון'}</figcaption>
+      </figure>
+      <div class="bk-stay">
         <div>
-          <dt>תאריכים</dt>
-          <dd>{s.checkIn && s.checkOut ? `${formatDateHe(s.checkIn)} עד ${formatDateHe(s.checkOut)}` : 'עוד לא נבחרו'}</dd>
+          <span>צ׳ק־אין</span>
+          <strong>{s.checkIn ? shortDate(s.checkIn) : 'בחרו תאריך'}</strong>
+          <small>מ־15:00</small>
+        </div>
+        <div class="bk-stay__n" aria-label={nights ? `${nights} לילות` : undefined}>
+          {nights ? (nights === 1 ? 'לילה אחד' : `${nights} לילות`) : ''}
         </div>
         <div>
-          <dt>סוויטה</dt>
-          <dd>{suite ? `${suite.name}, ${s.guests} אורחים` : 'עוד לא נבחרה'}</dd>
+          <span>צ׳ק־אאוט</span>
+          <strong>{s.checkOut ? shortDate(s.checkOut) : '—'}</strong>
+          <small>עד 11:00</small>
+        </div>
+      </div>
+      <dl class="bk-sum__facts">
+        <div>
+          <dt>אורחים</dt>
+          <dd>{s.guests === 1 ? 'אורח אחד' : `${s.guests} אורחים`}</dd>
         </div>
       </dl>
       {q ? (
@@ -319,11 +346,21 @@ export default function Wizard() {
             <span>מתוכם מע״מ (18%)</span>
             <Money v={q.vat} />
           </p>
-          <p class="bk-sum__note">לא גובים תשלום עכשיו. נחזור אליכם לאישור.</p>
         </>
       ) : (
         <p class="bk-sum__empty">המחיר יופיע כאן אחרי שתבחרו תאריכים וסוויטה.</p>
       )}
+      <ul class="bk-trust" role="list">
+        <li>
+          <Check /> לא גובים תשלום עכשיו
+        </li>
+        <li>
+          <Check /> ביטול ללא עלות עד 14 יום לפני ההגעה
+        </li>
+        <li>
+          <Check /> נחזור אליכם לאישור תוך יום
+        </li>
+      </ul>
     </div>
   );
 
@@ -383,12 +420,27 @@ export default function Wizard() {
                 disabled={!free}
                 onChange={() => set({ suite: x.slug })}
               />
-              <img src={src(x.photo, 480)} alt="" loading="lazy" width="480" height="360" />
+              <span class="bk-suite__media">
+                <img src={src(x.photo, 800)} alt="" loading="lazy" width="800" height="533" />
+                {s.suite === x.slug && (
+                  <span class="bk-suite__badge">
+                    <Check /> נבחרה
+                  </span>
+                )}
+              </span>
               <span class="bk-suite__text">
                 <strong>{x.name}</strong>
                 <span>{x.highlight}</span>
+                <span class="bk-suite__chips">
+                  {x.amenities.slice(0, 3).map((a) => (
+                    <span key={a}>{a}</span>
+                  ))}
+                </span>
                 <span class="bk-suite__meta">
-                  עד {x.maxGuests} אורחים · <bdi dir="ltr">{ils.format(x.nightly)} ₪</bdi> ללילה
+                  <span>עד {x.maxGuests} אורחים</span>
+                  <span>
+                    <bdi dir="ltr" class="bk-suite__price">{ils.format(x.nightly)} ₪</bdi> ללילה
+                  </span>
                 </span>
                 {!free && <em>תפוסה בתאריכים שבחרתם</em>}
               </span>
@@ -648,8 +700,12 @@ export default function Wizard() {
           {summary}
         </div>
         <button type="button" class="bk-bar__toggle" aria-expanded={sheet} aria-controls="bk-sheet" onClick={() => setSheet(!sheet)}>
-          <span>{q ? 'סה״כ' : 'סיכום'}</span>
-          {q ? <Money v={q.total} /> : <span class="bk-bar__hint">בחרו תאריכים וסוויטה</span>}
+          {suite && <img class="bk-bar__thumb" src={src(suite.photo, 480)} alt="" width="48" height="48" />}
+          <span class="bk-bar__what">
+            <span>{suite ? suite.name : 'ההזמנה שלכם'}</span>
+            <small>{nights ? `${nights === 1 ? 'לילה אחד' : `${nights} לילות`} · ${s.guests} אורחים` : 'בחרו תאריכים וסוויטה'}</small>
+          </span>
+          {q && <Money v={q.total} />}
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
           </svg>

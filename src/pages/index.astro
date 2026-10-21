@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import R1Hero from '../components/R1Hero.astro';
 import Preloader from '../components/Preloader.astro';
-import TopoMap from '../components/TopoMap.astro';
 import R4Suites from '../components/R4Suites.astro';
 import R6Conditions from '../components/R6Conditions.astro';
 import R7Compare from '../components/R7Compare.astro';
@@ -47,16 +46,19 @@ const ld = {
 const stops = [
   {
     icon: ['M30 8a14 14 0 1 0 10 24A12 12 0 0 1 30 8Z', 'M38 6v6M35 9h6', 'M42 18v3M40.5 19.5h3'],
+    photo: photos.heroNight,
     title: 'שמיים כהים באמת',
     text: 'אין כאן אורות עיר. בלילה בהיר שביל החלב נראה בעין, בלי טלסקופ.',
   },
   {
     icon: ['M10 25 33 12l3 5.5L13 30.5Z', 'M6.5 27.5l3.2-1.8', 'M33 12l4-2.3 3 5.5-4 2.3', 'M22 25l-7 16M22 25l7 16M22 25v16'],
+    photo: photos.kochavRoom,
     title: 'חדרים שנבנו לתצפית',
     text: 'מרפסות פתוחות, תקרות זכוכית וטלסקופים. כל סוויטה מכוונת אל השמיים.',
   },
   {
     icon: ['M4 34c6-5 12-5 18 0s12 5 22 0', 'M4 41c8-4 16-4 24 0s10 2 16 0', 'M24 22a6 6 0 1 0 0.01 0Z', 'M24 10v3M14 14l2 2M34 14l-2 2'],
+    photo: photos.makhteshDeck,
     title: 'מדבר בקצב אחר',
     text: 'שקט עמוק, אוויר יבש ונוף של מכתש. מגיעים לסוף שבוע ויוצאים עם תחושה של שבוע.',
   },
@@ -96,11 +98,12 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   </section>
 
   <!-- THE PLACE: the crater as a trail map, with the facts as its legend -->
-  <section class="place container" aria-labelledby="place-title">
-    <div class="place__map" data-reveal>
-      <TopoMap />
-    </div>
-    <div class="place__text">
+  <section class="place" aria-labelledby="place-title">
+    <figure class="plate place__photo" data-media>
+      <Photo photo={photos.lodgeExterior} sizes="100vw" width={1800} height={1012} />
+      <figcaption>{photos.lodgeExterior.caption}</figcaption>
+    </figure>
+    <div class="container place__text">
       <h2 id="place-title" data-reveal>נקודה אחת על שפת המכתש</h2>
       <p data-reveal style="--d:1">
         שחקים יושב על השפה הצפונית של מכתש רמון, ארבעים קילומטרים של שקט וסלע מתחתיו ושמיים שלמים מעליו. תשע
@@ -141,31 +144,32 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   <R6Conditions />
 
-  <!-- WHY HERE: three stops on one marked trail, over the real crater at night -->
+  <!-- WHY HERE: three chapters, each a full-bleed photograph with its map symbol drawing itself -->
   <section class="why" aria-labelledby="why-title">
-    <figure class="plate why__plate">
-      <Photo photo={photos.heroNight} decorative sizes="100vw" />
-    </figure>
-    <div class="why__shade" aria-hidden="true"></div>
-    <div class="container why__inner">
+    <div class="container why__head">
       <h2 id="why-title" data-reveal>למה דווקא כאן</h2>
-      <ol role="list" class="why__trail">
-        {
-          stops.map((s, i) => (
-            <li data-why>
-              <span class="blaze why__blaze" aria-hidden="true" />
+    </div>
+    <ol role="list" class="why__list">
+      {
+        stops.map((s, i) => (
+          <li class:list={['why__ch', `why__ch--${i}`]} data-why>
+            <figure class="plate why__plate" data-media>
+              <Photo photo={s.photo} decorative sizes="100vw" width={1800} height={1200} />
+            </figure>
+            <div class="why__shade" aria-hidden="true" />
+            <div class="container why__copy">
               <svg class="why__icon" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                 {s.icon.map((d) => (
                   <path d={d} pathLength="1" />
                 ))}
               </svg>
-              <h3 data-reveal style={`--d:${i}`}>{s.title}</h3>
-              <p data-reveal style={`--d:${i + 1}`}>{s.text}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
+              <h3 data-reveal>{s.title}</h3>
+              <p data-reveal style="--d:1">{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
   </section>
 
   <R7Compare />
@@ -191,7 +195,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
                 <bdi class="price">{formatPrice(a.price)}</bdi> {a.pricing === 'perPerson' ? 'לאדם' : 'להזמנה'}
               </p>
             </div>
-            <figure class="plate night__plate">
+            <figure class="plate night__plate" data-media>
               <Photo photo={a.photo} sizes="(min-width: 900px) 220px, 30vw" width={600} height={600} />
               <figcaption>{a.photo.caption}</figcaption>
             </figure>
@@ -208,14 +212,14 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <!-- CLOSE: the real crater at sunset -->
   <section class="close" aria-labelledby="close-title">
     <figure class="plate close__plate">
-      <Photo photo={photos.lodgeExterior} decorative sizes="100vw" width={1800} height={1012} />
+      <Photo photo={photos.coupleNight} decorative sizes="100vw" width={1800} height={1012} />
     </figure>
     <div class="close__shade" aria-hidden="true"></div>
     <div class="container close__inner">
       <h2 id="close-title">הלילה הבא שלכם כבר על המפה</h2>
       <p>בוחרים תאריך, בוחרים סוויטה, ואנחנו דואגים לשאר.</p>
       <a href="/book" class="btn">להזמין לילה</a>
-      <p class="label close__cap">{photos.lodgeExterior.caption}</p>
+      <p class="label close__cap">{photos.coupleNight.caption}</p>
     </div>
   </section>
 </Base>
@@ -248,24 +252,47 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     max-width: 44ch;
   }
   /* ── The place ── */
+  /* An establishing shot, edge to edge, then the words and the facts beneath it */
   .place {
-    display: grid;
-    gap: clamp(2rem, 5vw, 4rem);
-    padding-block: clamp(5rem, 11vw, 9rem);
-    align-items: center;
+    padding-block: clamp(4rem, 9vw, 7rem) clamp(5rem, 11vw, 9rem);
   }
-  @media (min-width: 960px) {
-    .place {
-      grid-template-columns: 1fr 1.45fr;
+  .place__photo {
+    aspect-ratio: 4 / 5;
+    border-radius: 0;
+  }
+  .place__photo :global(img) {
+    object-position: 70% 60%;
+  }
+  @media (min-width: 700px) {
+    .place__photo {
+      aspect-ratio: 16 / 9;
+      max-height: 86svh;
+      width: 100%;
     }
-    .place__map {
-      order: 2;
+    .place__photo :global(img) {
+      object-position: 50% 60%;
     }
   }
   .place__text {
     display: grid;
     gap: 1.5rem;
     align-content: start;
+    margin-block-start: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  @media (min-width: 960px) {
+    .place__text {
+      grid-template-columns: 1fr 1fr;
+      column-gap: clamp(2rem, 6vw, 6rem);
+      align-items: start;
+    }
+    .place__text h2,
+    .place__text > p {
+      grid-column: 1;
+    }
+    .place__text .legend {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+    }
   }
   .place h2 {
     font-size: var(--fs-h2);
@@ -330,10 +357,22 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── Why here ── */
   .why {
+    padding-block-start: clamp(4rem, 9vw, 7rem);
+  }
+  .why__head {
+    margin-block-end: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .why h2 {
+    font-size: var(--fs-h2);
+  }
+  /* Each chapter is a full-bleed photograph with its copy low on the frame */
+  .why__ch {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    padding-block: clamp(6rem, 14vw, 11rem);
+    min-height: min(92svh, 860px);
+    display: grid;
+    align-items: end;
   }
   .why__plate {
     position: absolute;
@@ -341,82 +380,45 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     z-index: -2;
     border-radius: 0;
   }
+  .why__ch--1 .why__plate :global(img) {
+    object-position: 50% 45%;
+  }
   .why__shade {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(to bottom, var(--night) 0%, rgb(11 14 26 / 0.55) 22%, rgb(11 14 26 / 0.6) 75%, var(--night) 100%);
+    background: linear-gradient(to bottom, rgb(11 14 26 / 0.55) 0%, rgb(11 14 26 / 0) 30%, rgb(11 14 26 / 0) 45%, rgb(11 14 26 / 0.88) 88%);
   }
-  .why__inner {
+  .why__copy {
     display: grid;
-    gap: clamp(2.5rem, 5vw, 4rem);
+    justify-items: start;
+    gap: 0.9rem;
+    padding-block: 8rem clamp(3rem, 8vw, 5.5rem);
   }
-  .why h2 {
-    font-size: var(--fs-h2);
+  .why__ch--1 .why__copy {
+    justify-items: end;
+    text-align: end;
   }
-  /* One marked trail runs through the three stops */
-  .why__trail {
-    position: relative;
-    display: grid;
-    gap: 2.5rem;
+  .why__copy h3 {
+    font-size: var(--fs-display);
+    line-height: 1.04;
+    max-width: 12ch;
+    text-shadow: 0 2px 24px rgb(11 14 26 / 0.5);
   }
-  .why__trail::before {
-    content: '';
-    position: absolute;
-    inset-block: 0.5rem;
-    inset-inline-start: 0.25rem;
-    border-inline-start: 2px dashed rgb(226 104 60 / 0.7);
-  }
-  @media (min-width: 900px) {
-    .why__trail {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3rem;
-    }
-    .why__trail::before {
-      inset-inline: 0;
-      inset-block: 0.55rem auto;
-      border-inline-start: 0;
-      border-block-start: 2px dashed rgb(226 104 60 / 0.7);
-    }
-  }
-  .why__trail li {
-    position: relative;
-    display: grid;
-    gap: 0.6rem;
-    padding-inline-start: 1.75rem;
-  }
-  @media (min-width: 900px) {
-    .why__trail li {
-      padding-inline-start: 0;
-      padding-block-start: 2.25rem;
-    }
-  }
-  .why__blaze {
-    position: absolute;
-    inset-inline-start: -0.05rem;
-    inset-block-start: 0;
-    font-size: 1.3rem;
-  }
-  @media (min-width: 900px) {
-    .why__blaze {
-      inset-inline-start: 0;
-    }
+  .why__copy p {
+    font-size: var(--fs-lead);
+    max-width: 34ch;
+    color: rgb(244 241 232 / 0.92);
   }
   .why__icon {
-    width: 44px;
-    height: 44px;
+    width: clamp(44px, 5vw, 60px);
+    height: auto;
     color: var(--sand);
   }
+
   /* pathLength=1 lets one dash cover any path; JS scrubs dashoffset 1 → 0 */
   .why__icon path {
     stroke-dasharray: 1;
-  }
-  .why__trail h3 {
-    font-size: var(--fs-h3);
-  }
-  .why__trail p {
-    color: rgb(244 241 232 / 0.86);
-    max-width: 32ch;
   }
 
   /* ── The night, by the hour ── */
@@ -513,11 +515,11 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     border-radius: 0;
   }
   .close__plate :global(img) {
-    object-position: 72% 60%;
+    object-position: 50% 70%;
   }
   @media (min-width: 900px) {
     .close__plate :global(img) {
-      object-position: 50% 62%;
+      object-position: 50% 60%;
     }
   }
   .close__shade {
