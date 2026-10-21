@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
+import R1Hero from '../components/R1Hero.astro';
 import { site } from '../data/site';
 import { suites, addons } from '../data/pricing';
 import { photos } from '../data/images';
@@ -48,20 +49,7 @@ const reasons = [
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
 
-  <!-- HERO. Stage 3 layers the R1 sunset-to-night scroll scene over this photo. -->
-  <section class="hero" data-hero aria-labelledby="hero-title">
-    <Photo photo={photos.heroSky} class="hero__img" eager decorative sizes="100vw" />
-    <div class="hero__shade" aria-hidden="true"></div>
-    <div class="container hero__inner">
-      <p class="hero__place">מצפה רמון</p>
-      <h1 id="hero-title">לילה אחד מתחת<br />לשמיים שלמים</h1>
-      <p class="hero__lead">תשע סוויטות על שפת המכתש, בנויות לדבר אחד: להסתכל למעלה.</p>
-      <div class="hero__actions">
-        <a href="/book" class="btn">להזמין לילה</a>
-        <a href="/suites" class="btn btn--ghost">הסוויטות</a>
-      </div>
-    </div>
-  </section>
+  <R1Hero />
 
   <!-- INTRO -->
   <section class="intro container" aria-labelledby="intro-title">
@@ -185,16 +173,6 @@ const reasons = [
 </Base>
 
 <style>
-  /* ── Hero ── */
-  .hero {
-    position: relative;
-    min-height: 100svh;
-    display: grid;
-    align-items: end;
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .hero__img,
   .why__img,
   .cta__img {
     position: absolute;
@@ -203,49 +181,6 @@ const reasons = [
     height: 100%;
     object-fit: cover;
     z-index: -2;
-  }
-  .hero__img {
-    object-position: 50% 35%;
-  }
-  .hero__shade {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      linear-gradient(to bottom, rgb(11 14 26 / 0.55) 0%, transparent 22%),
-      linear-gradient(to top, var(--night) 2%, rgb(11 14 26 / 0.7) 30%, transparent 62%);
-  }
-  .hero__inner {
-    display: grid;
-    gap: 1.1rem;
-    padding-block: 0 clamp(3rem, 9vh, 6rem);
-  }
-  .hero__place {
-    color: var(--sand);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-  }
-  .hero h1 {
-    font-size: clamp(2.6rem, 1.4rem + 6vw, 6.2rem);
-    font-weight: 500;
-    line-height: 1.02;
-    letter-spacing: -0.01em;
-  }
-  .hero__lead {
-    font-size: var(--step-1);
-    max-width: 30ch;
-    color: rgb(244 241 232 / 0.85);
-  }
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-block-start: 0.75rem;
-  }
-  @media (max-width: 420px) {
-    .hero__actions .btn {
-      flex: 1;
-    }
   }
 
   .text-link {

@@ -1,0 +1,119 @@
+---
+// Scroll companion: a moon that travels down a thin track as the page scrolls,
+// waxing from a thin crescent to full. Stars light up at each section heading.
+// Decorative only (aria-hidden); hidden entirely under reduced motion.
+---
+
+<div class="moonpath" data-moonpath aria-hidden="true">
+  <div class="moonpath__track"></div>
+  <div class="moonpath__stops" data-moon-stops></div>
+  <div class="moonpath__moon" data-moon>
+    <span class="moonpath__glow" data-moon-glow></span>
+    <svg viewBox="-12 -12 24 24">
+      <circle r="10" class="moonpath__dark"></circle>
+      <path data-moon-lit class="moonpath__lit" d=""></path>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .moonpath {
+    --moon: 30px;
+    position: fixed;
+    z-index: 30;
+    inset-inline-end: clamp(10px, 2.2vw, 36px);
+    inset-block: calc(var(--header-h) + 20px) 28px;
+    width: var(--moon);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .moonpath.is-visible {
+    opacity: 1;
+  }
+  @media (max-width: 767px) {
+    .moonpath {
+      --moon: 20px;
+      inset-inline-end: 5px;
+      inset-block-start: calc(var(--header-h) + 12px);
+      inset-block-end: 96px; /* clear of the floating book button */
+    }
+  }
+  .moonpath__track {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 50%;
+    width: 1px;
+    translate: -50% 0;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(244 241 232 / 0.18) 12%,
+      rgb(244 241 232 / 0.18) 88%,
+      transparent
+    );
+  }
+  .moonpath__stops {
+    position: absolute;
+    inset: 0;
+  }
+  .moonpath__stops :global(i) {
+    position: absolute;
+    inset-inline-start: 50%;
+    width: 5px;
+    height: 5px;
+    margin: -2.5px 0 0 -2.5px;
+    border-radius: 50%;
+    background: var(--starlight);
+    opacity: 0.18;
+    transform: scale(0.6);
+    transition:
+      opacity 0.5s ease,
+      transform 0.6s var(--ease-out),
+      box-shadow 0.6s ease;
+  }
+  .moonpath__stops :global(i.is-lit) {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px 2px rgb(244 241 232 / 0.55);
+  }
+  .moonpath__moon {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    width: var(--moon);
+    height: var(--moon);
+    will-change: transform;
+  }
+  .moonpath__moon svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .moonpath__dark {
+    fill: #1b2034;
+    stroke: rgb(244 241 232 / 0.22);
+    stroke-width: 0.6;
+  }
+  .moonpath__lit {
+    fill: var(--starlight);
+  }
+  .moonpath__glow {
+    position: absolute;
+    inset: -110%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(244 241 232 / 0.3), transparent 62%);
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .moonpath {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { initMoonPath } from '../scripts/moonpath';
+  document.addEventListener('astro:page-load', initMoonPath);
+</script>

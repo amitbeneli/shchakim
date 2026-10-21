@@ -1,0 +1,243 @@
+---
+// R1: day-to-night hero. The section is taller than the screen; its inner
+// stage is position:sticky, and GSAP scrubs a timeline against the section's
+// scroll progress. Sticky (not GSAP pin) because it is far steadier on iOS Safari.
+import Photo from './Photo.astro';
+import { photos } from '../data/images';
+
+const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
+---
+
+<section class="r1" data-hero data-r1 aria-labelledby="hero-title">
+  <div class="r1__stage">
+    <!-- Night (end state): the real photo + twinkling stars -->
+    <div class="r1__night" data-r1-night>
+      <Photo photo={photos.heroSky} class="r1__photo" eager decorative sizes="100vw" />
+    </div>
+    <canvas class="r1__stars" data-r1-stars></canvas>
+
+    <!-- Sunset (start state): colour layers that fade away in sequence -->
+    <div class="r1__dusk" data-r1-dusk></div>
+    <div class="r1__gold" data-r1-gold></div>
+    <div class="r1__sun" data-r1-sun><span></span></div>
+
+    <!-- Three crater ridges, each moving at its own speed -->
+    <svg class="r1__ridge r1__ridge--back" data-r1-ridge="back" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path d="M0 150C90 128 160 96 250 104S390 150 470 132 600 70 700 78 860 140 960 126 1110 66 1210 74 1360 120 1440 112V320H0Z"></path>
+    </svg>
+    <svg class="r1__ridge r1__ridge--mid" data-r1-ridge="mid" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path d="M0 196C120 172 220 150 330 160S520 208 640 196 820 140 930 150 1120 206 1230 196 1380 160 1440 166V320H0Z"></path>
+    </svg>
+    <svg class="r1__ridge r1__ridge--front" data-r1-ridge="front" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path d="M0 250C160 236 260 218 400 226S620 262 780 252 1000 214 1140 222 1340 252 1440 246V320H0Z"></path>
+    </svg>
+    <div class="r1__fade"></div>
+
+    <div class="container r1__copy">
+      <p class="r1__place">מצפה רמון</p>
+      <h1 id="hero-title" class="r1__title" aria-label={words.join(' ')}>
+        {words.map((w, i) => (
+          <span class="r1__word" style={`--i:${i}`} aria-hidden="true">{w}</span>
+        ))}
+      </h1>
+      <p class="r1__lead">תשע סוויטות על שפת המכתש, בנויות לדבר אחד: להסתכל למעלה.</p>
+      <div class="r1__actions">
+        <a href="/book" class="btn">להזמין לילה</a>
+        <a href="/suites" class="btn btn--ghost">הסוויטות</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .r1 {
+    position: relative;
+    height: 230svh;
+  }
+  @media (max-width: 767px) {
+    .r1 {
+      height: 190svh;
+    }
+  }
+  .r1__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--night);
+  }
+  .r1__stage > * {
+    position: absolute;
+  }
+
+  .r1__night {
+    inset: 0;
+    will-change: transform;
+  }
+  .r1__night :global(.r1__photo) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+  .r1__stars {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+
+  /* Purple dusk sits over the photo and fades last (purple → black) */
+  .r1__dusk {
+    inset: 0;
+    background: linear-gradient(to bottom, #1d1633 0%, #3b2550 38%, #7a3b55 66%, #b2553f 82%, #c9673d 100%);
+  }
+  /* Orange/gold sunset sits on top and fades first (orange → purple) */
+  .r1__gold {
+    inset: 0;
+    background: linear-gradient(to bottom, #3a2a52 0%, #a24c4f 34%, #e2683c 58%, #f29a55 74%, #f6c27f 88%);
+  }
+
+  /* Mobile: centred above the copy. Desktop: the far side from the headline. */
+  .r1__sun {
+    inset-inline-start: 50%;
+    top: 27%;
+    --sun: clamp(120px, 22vw, 260px);
+    width: var(--sun);
+    aspect-ratio: 1;
+    /* centre with margins, not translate: GSAP owns the transform */
+    margin-inline-start: calc(var(--sun) / -2);
+    margin-block-start: calc(var(--sun) / -2);
+    will-change: transform, opacity;
+  }
+  @media (min-width: 768px) {
+    .r1__sun {
+      inset-inline-start: 74%;
+      top: 38%;
+    }
+  }
+  .r1__sun span {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 45%, #fff1d2 0%, #ffd08a 45%, #f39a52 80%, #e2683c 100%);
+    box-shadow:
+      0 0 80px 30px rgb(246 178 104 / 0.55),
+      0 0 220px 90px rgb(226 104 60 / 0.35);
+  }
+
+  .r1__ridge {
+    inset-inline: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 42%;
+    will-change: transform;
+  }
+  .r1__ridge--back path {
+    fill: #4a2a45;
+  }
+  .r1__ridge--mid {
+    height: 34%;
+  }
+  .r1__ridge--mid path {
+    fill: #241a33;
+  }
+  .r1__ridge--front {
+    height: 26%;
+  }
+  .r1__ridge--front path {
+    fill: var(--night);
+  }
+  /* Keeps the copy legible over any sky state */
+  .r1__fade {
+    inset: 0;
+    background: linear-gradient(to top, rgb(11 14 26 / 0.85) 0%, rgb(11 14 26 / 0.35) 32%, transparent 55%);
+  }
+
+  .r1__copy {
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    gap: 1.1rem;
+    padding-block-end: clamp(2.5rem, 8vh, 5.5rem);
+  }
+  .r1__place {
+    color: var(--sand);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  .r1__title {
+    font-size: clamp(2.6rem, 1.4rem + 6vw, 6.2rem);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    max-width: 9.5ch;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.25em;
+  }
+  /* Word-by-word reveal on load (time-based so the LCP text is never hidden for long) */
+  .r1__word {
+    display: inline-block;
+    animation: r1-word 0.9s var(--ease-out) both;
+    animation-delay: calc(0.15s + var(--i) * 0.11s);
+  }
+  @keyframes r1-word {
+    from {
+      opacity: 0;
+      transform: translateY(0.45em);
+      filter: blur(6px);
+    }
+  }
+  .r1__lead,
+  .r1__actions,
+  .r1__place {
+    animation: r1-fade 0.9s var(--ease-out) 0.75s both;
+  }
+  .r1__place {
+    animation-delay: 0s;
+  }
+  @keyframes r1-fade {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  .r1__lead {
+    font-size: var(--step-1);
+    max-width: 30ch;
+    color: rgb(244 241 232 / 0.88);
+  }
+  .r1__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: 0.75rem;
+  }
+  @media (max-width: 420px) {
+    .r1__actions .btn {
+      flex: 1;
+    }
+  }
+
+  /* Reduced motion: a quiet, complete night scene. No sticky, no sunset. */
+  @media (prefers-reduced-motion: reduce) {
+    .r1 {
+      height: 100svh;
+    }
+    .r1__gold,
+    .r1__dusk,
+    .r1__sun {
+      display: none;
+    }
+    .r1__stars {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import { initR1 } from '../scripts/r1';
+  document.addEventListener('astro:page-load', initR1);
+</script>
