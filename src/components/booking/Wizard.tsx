@@ -213,13 +213,18 @@ export default function Wizard() {
   const showErr = (f: keyof typeof fieldErr) => (touched[f] || tried[3]) && fieldErr[f];
 
   /* ── Coupon ── */
+  const couponRef = useRef<HTMLInputElement>(null);
   const applyCoupon = () => {
-    const c = checkCoupon(couponInput);
+    // Read the field itself, not state: a paste followed by an instant tap can
+    // run before Preact re-renders, and state would still hold the old value
+    const value = couponRef.current?.value ?? couponInput;
+    setCouponInput(value);
+    const c = checkCoupon(value);
     if (c === 'none') {
       set({ coupon: '' });
       setCouponMsg(null);
     } else if (c === 'valid') {
-      set({ coupon: couponInput });
+      set({ coupon: value });
       setCouponMsg({ ok: true, text: 'הקוד הופעל: 10% הנחה על הלינה.' });
     } else {
       set({ coupon: '' });
@@ -516,6 +521,7 @@ export default function Wizard() {
         <div class="bk-coupon__row">
           <input
             id="bk-coupon"
+            ref={couponRef}
             dir="ltr"
             value={couponInput}
             autoComplete="off"
