@@ -2,7 +2,6 @@
 import Base from '../../layouts/Base.astro';
 import { suites, type Suite } from '../../data/pricing';
 import { formatPrice } from '../../lib/format';
-import SuiteDrawing from '../../components/SuiteDrawing.astro';
 import SuiteGallery from '../../components/SuiteGallery.astro';
 import PageHero from '../../components/PageHero.astro';
 import SuiteCard from '../../components/SuiteCard.astro';
@@ -69,11 +68,6 @@ const others = suites.filter((s) => s.slug !== suite.slug);
         {suite.amenities.map((a) => <li>{a}</li>)}
       </ul>
 
-      <h2 class="suite-sub">חתך הסוויטה</h2>
-      <figure class="suite-plan">
-        <SuiteDrawing slug={suite.slug} />
-        <figcaption>חתך דרך הסוויטה ושפת המצוק. כך היא יושבת מול המכתש.</figcaption>
-      </figure>
     </div>
 
     <aside class="suite-book" aria-label="הזמנה">

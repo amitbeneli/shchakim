@@ -9,7 +9,7 @@ import { site } from '../data/site';
 
 <section class="r8" aria-labelledby="r8-title">
   <div class="container r8__head" data-reveal>
-    <h2 id="r8-title">מה אומרים האורחים</h2>
+    <h2 id="r8-title">מהאורחים שלנו</h2>
     <p><bdi>{site.stats.rating}</bdi> מתוך 5, לפי <bdi>{site.stats.reviews}</bdi> ביקורות</p>
   </div>
 
@@ -88,7 +88,7 @@ import { site } from '../data/site';
     gap: 2.5rem;
     padding-inline-end: 2.5rem; /* same as gap, so copy 2 starts exactly one gap after copy 1 */
   }
-  /* A visitors' log entry: hairline rule, blaze, the note, who wrote it as a map label */
+  /* A guest's note: a hairline rule, the words, who wrote them */
   .r8__card {
     position: relative;
     width: clamp(260px, 74vw, 360px);
@@ -97,16 +97,6 @@ import { site } from '../data/site';
     gap: 0.9rem;
     padding-block-start: 1.25rem;
     border-block-start: 1px solid var(--line-strong);
-  }
-  .r8__card::before {
-    content: '';
-    position: absolute;
-    inset-block-start: -0.45rem;
-    inset-inline-start: 0;
-    width: 0.5rem;
-    height: 0.85rem;
-    background: linear-gradient(to bottom, var(--starlight) 0 30%, var(--ember) 30% 70%, var(--starlight) 70%);
-    border-radius: 1px;
   }
   .r8__stars {
     width: 70px;

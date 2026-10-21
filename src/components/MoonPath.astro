@@ -5,7 +5,6 @@
 ---
 
 <div class="moonpath" data-moonpath aria-hidden="true">
-  <div class="moonpath__track"></div>
   <div class="moonpath__stops" data-moon-stops></div>
   <div class="moonpath__moon" data-moon>
     <span class="moonpath__glow" data-moon-glow></span>
@@ -40,25 +39,13 @@
       inset-block-end: 96px; /* clear of the floating book button */
     }
     /* Phones: just the moon. The rail and stops would cross drawings and photos at the edge. */
-    .moonpath__track,
     .moonpath__stops {
       display: none;
     }
   }
-  .moonpath__track {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: 50%;
-    width: 2px;
-    translate: -50% 0;
-    /* A marked trail: ember dashes, fading at both ends */
-    background: repeating-linear-gradient(to bottom, rgb(226 104 60 / 0.55) 0 7px, transparent 7px 13px);
-    mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-  }
+  /* the stops stay in the DOM for the script, but are no longer drawn */
   .moonpath__stops {
-    position: absolute;
-    inset: 0;
+    display: none;
   }
   .moonpath__stops :global(i) {
     position: absolute;

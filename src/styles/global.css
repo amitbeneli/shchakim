@@ -74,11 +74,7 @@ body {
   caret-color: var(--sand);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
-  /* The faint 1-km map grid under everything */
-  background:
-    linear-gradient(to left, rgb(217 168 108 / 0.035) 1px, transparent 1px) 0 0 / var(--grid) var(--grid),
-    linear-gradient(to bottom, rgb(217 168 108 / 0.035) 1px, transparent 1px) 0 0 / var(--grid) var(--grid),
-    var(--night);
+  background: var(--night);
 }
 ::-webkit-scrollbar {
   width: 10px;
@@ -252,7 +248,7 @@ button {
   color: var(--sand);
 }
 
-/* Buttons: square legend plates; the primary one carries a trail blaze */
+/* Buttons: quiet, square, one sand fill for the primary action */
 .btn {
   --btn-bg: var(--sand);
   --btn-fg: var(--night);
@@ -277,13 +273,6 @@ button {
     color 0.25s ease,
     border-color 0.25s ease,
     transform 0.25s var(--ease-out);
-}
-.btn:not(.btn--ghost)::before {
-  content: '';
-  width: 0.45em;
-  height: 0.85em;
-  background: linear-gradient(to bottom, var(--night) 0 30%, var(--ember) 30% 70%, var(--night) 70%);
-  border-radius: 1px;
 }
 .btn:active {
   transform: scale(0.98);

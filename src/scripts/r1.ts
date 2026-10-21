@@ -98,14 +98,15 @@ export function initR1() {
     const sun = q('[data-r1-sun]');
     const stage = q('.r1__stage');
     const sunDrop = () => {
-      const ridgeLine = stage.clientHeight * (0.58 + 0.42 * 0.215);
-      return ridgeLine - sun.offsetTop + 6; // sun's top edge just below the crest
+      const ridgeLine = stage.clientHeight * (0.58 + 0.42 * 0.22);
+      return ridgeLine - sun.offsetTop + sun.offsetHeight * 0.2; // the hot core just below the far rim
     };
 
     // Night arrives by ~55% of the scroll and then holds
     tl.to(sun, { y: sunDrop, duration: 0.45, ease: 'power1.in' }, 0)
       .to(sun, { autoAlpha: 0, duration: 0.12 }, 0.4)
       .to('[data-r1-gold]', { autoAlpha: 0, duration: 0.3 }, 0)
+      .to('[data-r1-glow]', { autoAlpha: 0, duration: 0.4 }, 0.05)
       .to('[data-r1-dusk]', { autoAlpha: 0, duration: 0.35 }, 0.15)
       .to('[data-r1-stars]', { autoAlpha: 1, duration: 0.3 }, 0.25)
       .fromTo('[data-r1-night]', { yPercent: 0 }, { yPercent: -4, duration: 1 }, 0)

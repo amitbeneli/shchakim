@@ -649,7 +649,7 @@ export default function Wizard() {
             <span class="visually-hidden">
               שלב {s.step + 1} מתוך {STEPS.length}:{' '}
             </span>
-            {['מתי מגיעים?', 'מי מגיע, ולאן?', 'רוצים להוסיף משהו ללילה?', 'איך נחזור אליכם?', 'הכול נכון?'][s.step]}
+            {['תאריכי השהייה', 'אורחים וסוויטה', 'חוויות לתוספת', 'פרטי התקשרות', 'סיכום ההזמנה'][s.step]}
           </h2>
 
           <div key={s.step} class="bk-anim">

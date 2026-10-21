@@ -185,37 +185,104 @@
     return stars;
   }
 
-  // Foregrounds in the map's own ink: filled night silhouette + one sand hairline on top.
-  // Ramon: the crater section (flat rim, sheer stepped cliff, floor). Tel Aviv: a skyline profile.
-  function ink(ctx: CanvasRenderingContext2D, pts: [number, number][], w: number, h: number) {
+  // Foregrounds as silhouettes, not drawings. Tel Aviv: a dense skyline with the three
+  // Azrieli towers (round, triangular, square) and lit windows. Ramon: the crater rim,
+  // rough and nearly level, with nine small warm lights where the lodge sits.
+  function cityline(ctx: CanvasRenderingContext2D, w: number, h: number, rnd: () => number) {
+    const base = h * 0.9;
+    type B = { x: number; bw: number; top: number; kind: 'box' | 'round' | 'tri' };
+    const bs: B[] = [];
+    let x = -4;
+    while (x < w) {
+      const bw = w * (0.022 + rnd() * 0.045);
+      const tall = rnd() < 0.16;
+      const top = base - h * (tall ? 0.24 + rnd() * 0.14 : 0.05 + rnd() * 0.16);
+      bs.push({ x, bw, top, kind: 'box' });
+      x += bw - 1; // touching, so the sky never shows as an outline between towers
+    }
+    // Azrieli: three landmark towers, a little left of centre
+    const ax = w * 0.34, aw = w * 0.05;
+    bs.push({ x: ax, bw: aw, top: base - h * 0.5, kind: 'round' });
+    bs.push({ x: ax + aw * 1.25, bw: aw, top: base - h * 0.46, kind: 'tri' });
+    bs.push({ x: ax + aw * 2.5, bw: aw, top: base - h * 0.43, kind: 'box' });
+
+    for (const b of bs) {
+      const body = ctx.createLinearGradient(b.x, 0, b.x + b.bw, 0);
+      body.addColorStop(0, '#0d1020');
+      body.addColorStop(1, '#090b16');
+      ctx.fillStyle = body;
+      ctx.beginPath();
+      if (b.kind === 'tri') {
+        ctx.moveTo(b.x, base);
+        ctx.lineTo(b.x, b.top + h * 0.04);
+        ctx.lineTo(b.x + b.bw, b.top);
+        ctx.lineTo(b.x + b.bw, base);
+      } else if (b.kind === 'round') {
+        const r = b.bw / 2;
+        ctx.moveTo(b.x, base);
+        ctx.lineTo(b.x, b.top + r * 0.35);
+        ctx.quadraticCurveTo(b.x + r, b.top - r * 0.25, b.x + b.bw, b.top + r * 0.35);
+        ctx.lineTo(b.x + b.bw, base);
+      } else ctx.rect(b.x, b.top, b.bw, base - b.top);
+      ctx.fill();
+      // a few tall ones carry an antenna with a red light
+      if (b.kind === 'box' && base - b.top > h * 0.3 && rnd() < 0.6) {
+        const cx = b.x + b.bw / 2;
+        ctx.strokeStyle = '#0d1020';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, b.top);
+        ctx.lineTo(cx, b.top - h * 0.03);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,90,70,0.9)';
+        ctx.fillRect(cx - 1, b.top - h * 0.03 - 1, 2, 2);
+      }
+      // lit windows
+      const step = Math.max(4, h * 0.012);
+      for (let y = b.top + step * 1.4; y < base - step; y += step) {
+        for (let wx = b.x + step * 0.6; wx < b.x + b.bw - step * 0.4; wx += step * 0.8) {
+          if (rnd() < 0.2) {
+            ctx.fillStyle = rnd() < 0.8 ? 'rgba(255,205,150,0.75)' : 'rgba(200,225,255,0.6)';
+            ctx.fillRect(wx, y, step * 0.32, step * 0.42);
+          }
+        }
+      }
+    }
+    // street-level glow and the ground
+    const g = ctx.createLinearGradient(0, base - h * 0.06, 0, base);
+    g.addColorStop(0, 'rgba(255,170,100,0)');
+    g.addColorStop(1, 'rgba(255,170,100,0.18)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, base - h * 0.06, w, h * 0.06);
+    ctx.fillStyle = '#07080f';
+    ctx.fillRect(0, base, w, h - base);
+  }
+
+  function rimline(ctx: CanvasRenderingContext2D, w: number, h: number, rnd: () => number) {
+    const pts = Array.from({ length: 40 }, () => rnd() * 2 - 1);
+    const n = (t: number) => {
+      const p = t * 39, k = Math.floor(p), u = p - k, sm = u * u * (3 - 2 * u);
+      return pts[k] * (1 - sm) + pts[Math.min(39, k + 1)] * sm;
+    };
+    const yAt = (x: number) => h * (0.83 + n(x / w) * 0.012 + Math.sin(x / w * 7) * 0.004) - (x < w * 0.42 ? (w * 0.42 - x) / w * h * 0.08 : 0);
+    const rock = ctx.createLinearGradient(0, h * 0.75, 0, h);
+    rock.addColorStop(0, '#0c0f1c');
+    rock.addColorStop(1, '#05070d');
+    ctx.fillStyle = rock;
     ctx.beginPath();
     ctx.moveTo(0, h);
-    pts.forEach(([x, y]) => ctx.lineTo(x * w, y * h));
+    for (let x = 0; x <= w; x += 3) ctx.lineTo(x, yAt(x));
     ctx.lineTo(w, h);
     ctx.closePath();
-    ctx.fillStyle = '#0b0e1a';
     ctx.fill();
-    ctx.beginPath();
-    pts.forEach(([x, y], i) => (i ? ctx.lineTo(x * w, y * h) : ctx.moveTo(x * w, y * h)));
-    ctx.strokeStyle = 'rgba(217,168,108,0.85)';
-    ctx.lineWidth = 1.2;
-    ctx.stroke();
-  }
-  const RAMON: [number, number][] = [
-    [0, 0.9], [0.34, 0.9], [0.37, 0.88], [0.39, 0.84], [0.41, 0.83], [0.43, 0.79], [0.46, 0.78], [0.48, 0.75], [1, 0.745],
-  ];
-  function skyline(rnd: () => number): [number, number][] {
-    const pts: [number, number][] = [[0, 0.86]];
-    let x = 0;
-    while (x < 1) {
-      const bw = 0.03 + rnd() * 0.07;
-      const top = 0.86 - (0.06 + rnd() * 0.28) * (rnd() < 0.15 ? 1.5 : 1);
-      pts.push([x, top], [Math.min(1, x + bw), top]);
-      x += bw;
-      pts.push([Math.min(1, x), 0.86]);
-      x += 0.004;
+    // the lodge: nine small warm windows on the rim
+    let lx = w * 0.64;
+    for (let i = 0; i < 9; i++) {
+      lx += w * (0.014 + rnd() * 0.016);
+      const ly = yAt(lx) + h * 0.014;
+      ctx.fillStyle = 'rgba(255,200,140,0.8)';
+      ctx.fillRect(lx, ly, Math.max(1.5, w * 0.0035), Math.max(1.5, h * 0.006));
     }
-    return pts;
   }
 
   function draw(canvas: HTMLCanvasElement, stars: Star[], city: boolean) {
@@ -266,7 +333,8 @@
     }
     ctx.globalAlpha = 1;
 
-    ink(ctx, city ? skyline(mulberry32(7)) : RAMON, w, h);
+    if (city) cityline(ctx, w, h, mulberry32(7));
+    else rimline(ctx, w, h, mulberry32(19));
   }
 
   document.addEventListener('astro:page-load', () => {

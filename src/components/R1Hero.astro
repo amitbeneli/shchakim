@@ -1,22 +1,67 @@
 ---
-// R1: day to night, drawn as a trail map's elevation profile across the crater.
+// R1: day to night over the crater, photographic: real rock planes, a soft setting sun.
 // The section is taller than the screen; its stage is position:sticky and GSAP
 // scrubs one timeline against scroll (sticky, not GSAP pin: steadier on iOS).
 // Layers: night sky + canvas stars (end state), dusk and gold washes (start
-// state), the sun, and three ridge profiles hatched like map contours.
+// state), the sun and its horizon glow, and three ridge planes cut from real photos.
 
 import BookingBar from './BookingBar.astro';
 import { photos, src } from '../data/images';
 
-const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
+// two lines, revealed word by word
+const lines = [['כשהשמש', 'שוקעת,'], ['השמיים', 'נפתחים']];
+const words = lines.flat();
 
-// A true Makhtesh Ramon section (viewBox 1440×300): the far wall is a level plateau
-// edge; the floor carries isolated hills; the near rim is flat where you stand and
-// drops in a sheer, stepped cliff to the floor. Not hills: a crater.
-const back = 'M0 64 L300 62 L330 67 L620 62 L660 69 L1010 63 L1050 67 L1440 64 V300 H0Z';
-const mid = 'M0 190 L170 188 C 220 188 245 150 285 147 C 318 145 338 186 378 188 L820 191 C 868 191 890 160 928 157 C 960 155 985 190 1022 191 L1440 193 V300 H0Z';
-const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L748 282 L0 285 V300 H1440Z';
-const paths = { back, mid, front };
+// Ridge outlines for the three rock planes, generated (seeded, so every build is the
+// same) as natural profiles instead of drawn shapes: the far wall is the crater's long,
+// nearly level plateau; the middle plane carries a few low flat-topped mesas; the near
+// rim is rough rock that drops away on one side. Each becomes a CSS mask (data URI).
+function rng(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+// smooth value noise: a few octaves of interpolated random points
+function noise(seed: number, octaves: [number, number][]) {
+  const layers = octaves.map(([cell, amp], i) => {
+    const r = rng(seed + i * 101);
+    const pts = Array.from({ length: Math.ceil(1440 / cell) + 2 }, () => r() * 2 - 1);
+    return (x: number) => {
+      const p = x / cell, k = Math.floor(p), t = p - k, u = t * t * (3 - 2 * t);
+      return (pts[k] * (1 - u) + pts[k + 1] * u) * amp;
+    };
+  });
+  return (x: number) => layers.reduce((a, l) => a + l(x), 0);
+}
+const W = 1440, H = 300, STEP = 6;
+function profile(fn: (x: number) => number) {
+  let d = 'M0 ' + fn(0).toFixed(1);
+  for (let x = STEP; x <= W; x += STEP) d += ' L' + x + ' ' + fn(x).toFixed(1);
+  return d + ' V' + H + ' H0Z';
+}
+const plateau = (x: number, c: number, w: number, h: number, edge: number) => {
+  const dx = Math.abs(x - c) - w / 2;
+  return dx <= 0 ? h : dx < edge ? h * (1 - (dx / edge) ** 1.6) : 0;
+};
+const backN = noise(11, [[220, 5], [60, 2.2], [14, 0.8]]);
+const midN = noise(23, [[90, 4], [22, 1.6], [7, 0.6]]);
+const frontN = noise(37, [[120, 7], [30, 3], [9, 1.4]]);
+const outlines = {
+  back: profile((x) => 66 + backN(x)),
+  mid: profile((x) => 192 + midN(x) - plateau(x, 300, 120, 34, 70) - plateau(x, 930, 170, 26, 90) - plateau(x, 1260, 60, 18, 50)),
+  front: profile((x) => {
+    // near rim: high and rough on the right (where we stand), the cliff falls away to the left
+    const rim = 214 + frontN(x);
+    const fall = x < 780 ? Math.min(1, (780 - x) / 90) : 0;
+    return rim + fall * (64 + frontN(x * 1.7) * 0.6);
+  }),
+};
+const mask = (d: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${W} ${H}'><path d='${d}' fill='#fff'/></svg>`)}")`;
 // Far wall hazy and wide, crater floor in between, the near cliff face closest
 const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.rimCliff };
 ---
@@ -27,6 +72,7 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     <canvas class="r1__stars" data-r1-stars></canvas>
     <div class="r1__dusk" data-r1-dusk></div>
     <div class="r1__gold" data-r1-gold></div>
+    <div class="r1__glow" data-r1-glow></div>
     <div class="r1__sun" data-r1-sun><span></span></div>
 
     <!-- Three ridge planes, each a real Ramon photo cut to the crater-section outline
@@ -34,43 +80,28 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
          crest line on top. Each plane is its own layer, so parallax stays transform-only. -->
     {
       (['back', 'mid', 'front'] as const).map((k) => (
-        <div class={`r1__ridge r1__ridge--${k}`} data-r1-ridge={k} aria-hidden="true">
+        <div class={`r1__ridge r1__ridge--${k}`} data-r1-ridge={k} aria-hidden="true" style={`--mask:${mask(outlines[k])}`}>
           <div class="r1__rock"><span style={`--rs:url(${src(rocks[k], k === 'back' ? 800 : 480)});--rl:url(${src(rocks[k], 1800)})`}></span></div>
           <div class="r1__shade" data-r1-shade></div>
-          <svg class="r1__line" viewBox="0 0 1440 300" preserveAspectRatio="none">
-            <path d={paths[k]} class:list={['r1__crest', k === 'front' && 'r1__crest--front']}></path>
-          </svg>
         </div>
       ))
     }
 
-    <!-- Map furniture: north arrow, scale bar, elevation axis -->
-    <svg class="r1__north" viewBox="0 0 24 40" aria-hidden="true">
-      <path d="M12 2 L19 26 L12 21 L5 26 Z"></path>
-      <text x="12" y="38" text-anchor="middle">צ</text>
-    </svg>
-    <div class="r1__scale" aria-hidden="true">
-      <span></span><span></span><span></span>
-      <em>0</em><em>3 ק״מ</em>
-    </div>
-    <div class="r1__axis" aria-hidden="true">
-      <span>900 מ׳</span>
-      <span>850 מ׳</span>
-      <span>800 מ׳</span>
-    </div>
-
     <div class="container r1__copy">
       <h1 id="hero-title" class="r1__title" aria-label={words.join(' ')}>
-        {words.map((w, i) => (
-          <span class="r1__word" style={`--i:${i}`} aria-hidden="true">{w}</span>
+        {lines.map((line, li) => (
+          <span class="r1__line" aria-hidden="true">
+            {line.map((w, wi) => (
+              <span class="r1__word" style={`--i:${li * 2 + wi}`}>{w}</span>
+            ))}
+          </span>
         ))}
       </h1>
-      <p class="r1__lead">תשע סוויטות על שפת מכתש רמון, בנויות לדבר אחד: להסתכל למעלה.</p>
+      <p class="r1__lead">תשע סוויטות על שפת מכתש רמון. בלי אורות עיר, בלי רעש. רק אתם והשמיים.</p>
       <div class="r1__actions">
         <a href="/book" class="btn">להזמין לילה</a>
         <a href="/suites" class="btn btn--ghost">הסוויטות</a>
       </div>
-      <p class="r1__coords label"><bdi dir="ltr">30°36′N 34°48′E</bdi> · מצפה רמון, שפת המכתש</p>
     </div>
 
     <!-- Desktop: availability search docked on the near rim. Phones get it right under the hero. -->
@@ -119,18 +150,20 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   /* Dusk fades second (purple → night) */
   .r1__dusk {
     inset: 0;
-    background: linear-gradient(to bottom, #1a1430 0%, var(--dusk) 38%, #5b2f4d 70%, #9a4a43 100%);
+    background: linear-gradient(to bottom, #0f1226 0%, #1c1834 34%, var(--dusk) 58%, #4e2c45 80%, #7a3e40 100%);
   }
   /* Gold fades first (ember → purple) */
   .r1__gold {
     inset: 0;
-    background: linear-gradient(to bottom, #2a1e3f 0%, #7a3a4c 32%, #c75a3c 58%, var(--ember) 70%, #f0a25e 86%);
+    background: linear-gradient(to bottom, #1b1c38 0%, #3a2a4a 26%, #6e3c50 44%, #b0604c 58%, #d98a5c 66%, #edb983 72%);
   }
 
+  /* The sun as light, not a drawing: a small hot core with no hard edge, inside a
+     wide haze that sits on the horizon and fades with the gold sky. */
   .r1__sun {
-    inset-inline-start: 74%;
-    top: 46%;
-    --sun: clamp(90px, 11vw, 150px);
+    inset-inline-start: 70%;
+    top: 47%;
+    --sun: clamp(56px, 6vw, 92px);
     width: var(--sun);
     aspect-ratio: 1;
     /* centre with margins, not translate: GSAP owns the transform */
@@ -140,18 +173,30 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   }
   @media (max-width: 767px) {
     .r1__sun {
-      inset-inline-start: 72%;
-      top: 60%;
+      inset-inline-start: 68%;
+      top: 58%;
     }
   }
   .r1__sun span {
     position: absolute;
-    inset: 0;
+    inset: -60%;
     border-radius: 50%;
-    background: radial-gradient(circle, #fff3dc 0%, #ffd79a 42%, #f39a52 78%, #e2683c 100%);
-    box-shadow: 0 0 70px 24px rgb(243 154 82 / 0.4);
+    background: radial-gradient(
+      circle,
+      #fffaf0 0 17%,
+      rgb(255 236 200 / 0.95) 24%,
+      rgb(255 196 130 / 0.55) 34%,
+      rgb(240 140 80 / 0.22) 50%,
+      transparent 70%
+    );
   }
-
+  .r1__glow {
+    inset-inline: -20%;
+    top: 40%;
+    height: 34%;
+    background: radial-gradient(50% 50% at 62% 60%, rgb(242 168 104 / 0.55), rgb(199 90 60 / 0.18) 55%, transparent 75%);
+    will-change: opacity;
+  }
   .r1__ridge {
     inset-inline: 0;
     bottom: -1px;
@@ -164,21 +209,12 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     width: 100%;
     height: 100%;
   }
-  /* The photo, cut to the ridge outline. The mask stretches with the layer;
-     the photo keeps its proportions underneath. */
+  /* The photo, cut to the ridge outline. The outline keeps its proportions (cover,
+     anchored to the bottom), so on a phone it is cropped at the sides, never squeezed. */
   .r1__rock,
   .r1__shade {
-    -webkit-mask: var(--mask) 0 0 / 100% 100% no-repeat;
-    mask: var(--mask) 0 0 / 100% 100% no-repeat;
-  }
-  .r1__ridge--back {
-    --mask: url(/r1/back.svg);
-  }
-  .r1__ridge--mid {
-    --mask: url(/r1/mid.svg);
-  }
-  .r1__ridge--front {
-    --mask: url(/r1/front.svg);
+    -webkit-mask: var(--mask) 50% 100% / cover no-repeat;
+    mask: var(--mask) 50% 100% / cover no-repeat;
   }
   /* Each photo is placed so its own horizon (--h, fraction of the photo's height) lands on
      the ridge crest (--crest, fraction of the layer), at any screen width. --ar is the
@@ -237,61 +273,6 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     background: var(--night);
     opacity: 0;
   }
-  .r1__line {
-    overflow: visible;
-  }
-  .r1__crest {
-    fill: none;
-    stroke: var(--sand);
-    stroke-opacity: 0.55;
-    stroke-width: 1.2;
-    vector-effect: non-scaling-stroke;
-  }
-  .r1__crest--front {
-    stroke-opacity: 0.85;
-  }
-
-  .r1__north {
-    inset-inline-end: max(var(--gutter), 1rem);
-    top: calc(var(--header-h) + 1.5rem);
-    width: 22px;
-    height: 36px;
-  }
-  .r1__north path {
-    fill: none;
-    stroke: var(--sand);
-    stroke-width: 1.2;
-  }
-  .r1__north text {
-    fill: var(--sand);
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 10px;
-  }
-  .r1__scale {
-    inset-inline-end: max(var(--gutter), 1rem);
-    top: calc(var(--header-h) + 1.5rem + 52px);
-    display: grid;
-    grid-template-columns: repeat(3, 40px);
-    row-gap: 0.3rem;
-    font-size: var(--fs-label);
-    font-weight: 600;
-    color: var(--sand);
-  }
-  .r1__scale span {
-    height: 4px;
-    border: 1px solid var(--sand);
-  }
-  .r1__scale span:nth-child(odd) {
-    background: var(--sand);
-  }
-  .r1__scale em {
-    font-style: normal;
-  }
-  .r1__scale em:last-child {
-    grid-column: 3;
-    text-align: end;
-  }
   /* The booking bar sits on the near rim (desktop); phones get it under the hero */
   .r1__book {
     inset-inline: 0;
@@ -308,30 +289,6 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
       display: none;
     }
   }
-  @media (max-width: 767px) {
-    .r1__scale {
-      display: none;
-    }
-  }
-  .r1__axis {
-    inset-inline-end: max(var(--gutter), 1rem);
-    bottom: 6%;
-    height: 34%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-inline-end: 0.6rem;
-    border-inline-end: 1px solid var(--line-strong);
-    font-size: var(--fs-label);
-    font-weight: 600;
-    color: var(--sand);
-    font-variant-numeric: tabular-nums;
-  }
-  @media (max-width: 1199px) {
-    .r1__axis {
-      display: none;
-    }
-  }
 
   .r1__copy {
     inset-inline: 0;
@@ -341,9 +298,12 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     gap: 1.25rem;
   }
   .r1__title {
-    font-size: var(--fs-display);
-    line-height: 1.02;
-    max-width: 12ch;
+    font-size: clamp(2.6rem, 1.4rem + 4.6vw, 5rem);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    display: grid;
+  }
+  .r1__line {
     display: flex;
     flex-wrap: wrap;
     column-gap: 0.24em;
@@ -362,8 +322,7 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     }
   }
   .r1__lead,
-  .r1__actions,
-  .r1__coords {
+  .r1__actions {
     animation: r1-fade 0.9s var(--ease-out) 0.75s both;
   }
   @keyframes r1-fade {
@@ -374,22 +333,14 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   }
   .r1__lead {
     font-size: var(--fs-lead);
-    max-width: 30ch;
-    color: rgb(244 241 232 / 0.9);
+    max-width: 34ch;
+    color: rgb(244 241 232 / 0.86);
   }
   .r1__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-block-start: 0.5rem;
-  }
-  .r1__coords {
-    margin-block-start: 0.25rem;
-    color: var(--starlight);
-    font-size: var(--fs-small);
-    /* it sits on a moving sky: an offset shadow keeps it legible on the brightest frame */
-    text-shadow: 0 1px 2px rgb(11 14 26 / 0.9), 0 0 10px rgb(11 14 26 / 0.7), 0 0 22px rgb(11 14 26 / 0.5);
-    font-weight: 600;
   }
   .r1__actions .btn {
     white-space: nowrap;
@@ -402,7 +353,8 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     }
     .r1__gold,
     .r1__dusk,
-    .r1__sun {
+    .r1__sun,
+    .r1__glow {
       display: none;
     }
     .r1__stars {
