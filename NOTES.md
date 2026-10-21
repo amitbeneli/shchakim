@@ -31,13 +31,31 @@
   - בבדיקות Playwright (Chromium headless בסביבה הזו) הבקשה ל-Open-Meteo לפעמים נתקעת, למרות ש-Node מקבל תשובה ב-~100ms ודפדפן אמיתי עובד מיד. מצב השגיאה עבד בדיוק כמתוכנן.
 - R7: שני הקנבסים מצוירים מאותו שדה כוכבים עם seed (בונוס): רמון = כל הכוכבים + שביל החלב; תל אביב = רק ~2% הבהירים מבעד לזוהר כתום + קו רקיע. role="slider" עם aria-valuenow/valuetext; חצים לפי הכיוון על המסך, Shift לצעד גדול, Home/End/PageUp/PageDown; גרירה ב-pointer events עם `touch-action: pan-y` כדי שגלילה אנכית בטלפון לא תיחסם.
 - באג שנמצא: כללי display (grid/flex) דורסים את `hidden` → נוסף `[hidden]{display:none!important}` גלובלי.
+- R5: סמן (נקודה + טבעת עם lerp) וכפתורים מגנטיים נוצרים ב-JS רק ב-`(hover:hover) and (pointer:fine)` ובלי reduced-motion → במגע הם לא קיימים ב-DOM. מעל שדות טקסט הסמן נעלם (סמן I רגיל), ומעל מפת השמיים הפנס של המפה מחליף אותו.
+- Preloader: רק בכניסה הראשונה לסשן, ורק בדף הבית. סקריפט inline ב-head מחליט לפני הציור הראשון (אין הבהוב למבקרים חוזרים). ההתקדמות אמיתית: 4 פונטים + תמונת ה-Hero, והמספר נע בהדרגה לעבר הערך האמיתי. מינימום 700ms (בלי הבהוב), מקסימום 6 שניות. אנימציות הכניסה של ה-Hero מושהות עד שהמסך עולה. הגרסה הראשונה הייתה module script דחוי, שרץ רק אחרי שהכול כבר נטען (קפץ מ-0 ל-100), אז הוחלף ב-inline.
+- OG: תמונה מעוצבת 1200×630 (JPEG, 90KB) ו-apple-touch-icon/favicon PNG, מרונדרים מ-HTML עם Playwright (`design/tools/og.mjs`).
+- תמונות: נשארו על ה-CDN של Unsplash ולא הועברו ל-astro:assets. בדקתי: עם `auto=format` ה-CDN מגיש AVIF לדפדפנים שתומכים (45KB), WebP כגיבוי (53KB) ו-JPEG רק כמוצא אחרון, וה-srcset מגיש גודל מתאים. התוצאה בפועל זהה לדרישה, בלי לנהל עשרות קבצים.
+- Lighthouse מובייל (build, דרך Playwright Chromium): בית 98/100/100/100, הזמנה 100/100/100/100, חוויות 100/100/100/100, סוויטת כוכב 97/100/100/100, הסיפור 90/100/100/100 (ביצועים/נגישות/שיטות/SEO).
+- בדיקות smoke: כל 11 העמודים ב-375/768/1440/1920, ב-Chromium וב-WebKit, בלי overflow ובלי שגיאות קונסול. אשף ההזמנה עבר מקצה לקצה גם באמולציית iPhone 13 ב-WebKit.
 - אייקוני "למה כאן": SVG עם `pathLength=1`, GSAP מגליל dashoffset 1→0 (גלילה אחורה מוחקת).
 
 ## ויתורים ולמה
 - שלב 1: תמונות הן placeholder של גרדיאנט שמיים ב-CSS עד שלב 5. עמוד ההזמנה מציג הזמנה טלפונית עד שהאשף ייבנה בשלב 2.
 
 ## קרדיטים לתמונות
--
+כל התמונות מ-Unsplash (רישיון Unsplash, שימוש חופשי). זה אתר מבחן, ולכן הן נבחרו לפי יופי ולא לפי עקביות מוחלטת של מקום אחד.
+- שמיים מעל צוק (Hero, OG): Sean Jahansooz (@sean_ca)
+- שביל החלב מעל דיונות: David Billings (@dav_billings)
+- מצביעים לשביל החלב (תצפית מודרכת): Intricate Explorer (@intricateexplorer)
+- עקבות כוכבים מעל צוק במכתש רמון (סדנת צילום, הסיפור): Yoav Aziz (@yoavaziz)
+- מבט אל מכתש רמון: Or Hakim (@orhakim)
+- וילת אבן עם בריכה + חצר פנימית (גלקסיה): Agnieszka Stankiewicz (@dubai_love_story)
+- פתח מקושת אל המדבר (מכתש): Artur Matosyan (@artmatters)
+- כיפת זכוכית בלילה (כוכב): Tommaso Ubezio (@tommasoubezio)
+- סוויטות מוארות בלילה: Hotel Lal Garh Fort and Palace (@hotellalgarhfortandpalace)
+- נרות בקניון (CTA): Gabor Koszegi (@gabor_koszegi)
+- ארוחה בפנסים: Bernard Czerkiewicz (@bernifactory)
+- זריחה מעל המדבר (ג׳יפ): Big Dodzy (@bigdodzy)
 
 ## מה הייתי משפר עם עוד שבוע
 -

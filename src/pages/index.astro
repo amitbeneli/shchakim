@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import R1Hero from '../components/R1Hero.astro';
+import Preloader from '../components/Preloader.astro';
 import R4Suites from '../components/R4Suites.astro';
 import R6Conditions from '../components/R6Conditions.astro';
 import R7Compare from '../components/R7Compare.astro';
@@ -62,9 +63,11 @@ const reasons = [
   title="שחקים"
   description="לודג׳ בוטיק לתצפית כוכבים על שפת מכתש רמון. תשע סוויטות עם מרפסות פתוחות, תקרות זכוכית וטלסקופים, ויותר מ־300 לילות צלולים בשנה."
   overlayHeader
+  preloader
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
 
+  <Preloader />
   <R1Hero />
 
   <!-- INTRO -->

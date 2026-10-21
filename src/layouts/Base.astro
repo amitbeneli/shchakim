@@ -11,11 +11,13 @@ interface Props {
   /** Hide the mobile floating "book" button (e.g. on /book itself) */
   hideFab?: boolean;
   noindex?: boolean;
+  /** Home page: enables the first-visit preloader */
+  preloader?: boolean;
   /** Transparent header over a full-bleed hero until the user scrolls */
   overlayHeader?: boolean;
 }
 
-const { title, description, hideFab = false, noindex = false, overlayHeader = false } = Astro.props;
+const { title, description, hideFab = false, noindex = false, overlayHeader = false, preloader = false } = Astro.props;
 const fullTitle = title === 'שחקים' ? title : `${title} · שחקים`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -31,6 +33,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#0B0E1A" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
@@ -39,6 +43,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.jpg', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="שחקים: לילה אחד מתחת לשמיים שלמים. לודג׳ תצפית כוכבים במכתש רמון" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,6 +56,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap"
     />
 
+    {
+      preloader && (
+        <script is:inline>
+          // Decide before first paint, so returning visitors never see the preloader flash
+          try {
+            if (!sessionStorage.getItem('shchakim-seen') && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+              document.documentElement.classList.add('pl-on');
+          } catch (e) {}
+        </script>
+      )
+    }
     <slot name="head" />
     <ClientRouter fallback="animate" />
   </head>
@@ -68,7 +88,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     }
     <script>
       import { initReveal } from '../scripts/reveal';
+      import { initCursor } from '../scripts/cursor';
       document.addEventListener('astro:page-load', initReveal);
+      document.addEventListener('astro:page-load', initCursor);
     </script>
   </body>
 </html>

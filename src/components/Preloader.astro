@@ -1,0 +1,152 @@
+---
+// Preloader: first home visit per session only. Progress is REAL: it counts
+// the hero photo and each web font as they actually finish loading (the
+// on-screen number eases toward that value so it never jumps).
+// A safety cap ends it after 6s whatever happens; reduced motion just fades.
+// An inline script in <head> (see Base) adds .pl-on before first paint, so
+// returning visitors never see a flash of it.
+---
+
+<div class="pl" data-pl aria-hidden="true">
+  <div class="pl__inner">
+    <svg class="pl__star" viewBox="0 0 24 24"><path d="M12 1.5 13.6 10.4 22.5 12 13.6 13.6 12 22.5 10.4 13.6 1.5 12 10.4 10.4Z"></path></svg>
+    <p class="pl__word">שחקים</p>
+    <div class="pl__bar"><span data-pl-bar></span></div>
+    <p class="pl__pct"><bdi dir="ltr"><span data-pl-num>0</span>%</bdi></p>
+  </div>
+</div>
+
+<style is:global>
+  .pl {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    place-items: center;
+    background:
+      radial-gradient(70% 50% at 50% 100%, rgb(42 30 63 / 0.9), transparent 70%),
+      var(--night);
+  }
+  .pl-on .pl {
+    display: grid;
+  }
+  .pl.is-out {
+    transform: translateY(-100%);
+    transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  .pl__inner {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    width: min(260px, 70vw);
+  }
+  .pl__star {
+    width: 22px;
+    height: 22px;
+    fill: var(--sand);
+    animation: pl-spin 3s linear infinite;
+  }
+  @keyframes pl-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .pl__word {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+  .pl__bar {
+    width: 100%;
+    height: 1px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .pl__bar span {
+    display: block;
+    height: 100%;
+    background: var(--sand);
+    transform: scaleX(0);
+    transform-origin: right; /* RTL: fills from the right */
+  }
+  .pl__pct {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+  /* Hold the hero's entrance until the curtain lifts */
+  .pl-on .r1__word,
+  .pl-on .r1__lead,
+  .pl-on .r1__actions,
+  .pl-on .r1__place {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pl__star {
+      animation: none;
+    }
+    .pl.is-out {
+      transform: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Inline (not a deferred module) so tracking starts while the page is still
+  // parsing: fonts are requested right away and the hero photo is watched from
+  // DOMContentLoaded, before it has finished downloading.
+  (function () {
+    var root = document.documentElement;
+    var pl = document.querySelector('[data-pl]');
+    if (!pl) return;
+    if (!root.classList.contains('pl-on')) return pl.remove();
+    try {
+      sessionStorage.setItem('shchakim-seen', '1');
+    } catch (e) {}
+
+    var bar = pl.querySelector('[data-pl-bar]');
+    var num = pl.querySelector('[data-pl-num]');
+    var t0 = performance.now();
+    var total = 5; // hero photo + 4 font faces
+    var done = 0;
+    var bump = function () {
+      done++;
+    };
+
+    ['500 1em "Frank Ruhl Libre"', '900 1em "Frank Ruhl Libre"', '400 1em Assistant', '700 1em Assistant'].forEach(function (f) {
+      document.fonts.load(f).then(bump, bump);
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+      var hero = document.querySelector('.r1__photo');
+      if (!hero || hero.complete) return bump();
+      hero.addEventListener('load', bump, { once: true });
+      hero.addEventListener('error', bump, { once: true });
+    });
+
+    var shown = 0;
+    var finished = false;
+    var finish = function () {
+      if (finished) return;
+      finished = true;
+      pl.classList.add('is-out');
+      root.classList.remove('pl-on'); // releases the paused hero animations
+      pl.addEventListener('transitionend', function () { pl.remove(); }, { once: true });
+      setTimeout(function () { pl.remove(); }, 1200);
+    };
+    var tick = function () {
+      var target = (done / total) * 100;
+      shown += (target - shown) * 0.12; // ease toward the real value, never past it
+      if (target === 100 && shown > 99.4) shown = 100;
+      num.textContent = String(Math.round(shown));
+      bar.style.transform = 'scaleX(' + shown / 100 + ')';
+      var elapsed = performance.now() - t0;
+      if ((shown === 100 && elapsed > 700) || elapsed > 6000) return finish(); // 700ms min: no blink
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  })();
+</script>

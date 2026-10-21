@@ -336,3 +336,66 @@ button {
 .moon-ico__lit {
   fill: var(--starlight);
 }
+
+/* ───────────── R5 custom cursor (desktop only, created by JS) ───────────── */
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+.has-cursor :is(input, textarea, select) {
+  cursor: text !important;
+}
+.cur-dot,
+.cur-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+.cur-on .cur-dot,
+.cur-on .cur-ring {
+  opacity: 1;
+}
+.cur-hidden .cur-dot,
+.cur-hidden .cur-ring {
+  opacity: 0;
+}
+.cur-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--sand);
+}
+.cur-ring {
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+}
+/* The ring's look lives on a pseudo-element so its scale never fights the JS transform */
+.cur-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgb(244 241 232 / 0.55);
+  transition:
+    transform 0.35s var(--ease-out),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.cur-ring.is-hover::before {
+  transform: scale(1.75);
+  background: rgb(217 168 108 / 0.14);
+  border-color: var(--sand);
+}
+.cur-ring.is-down::before {
+  transform: scale(0.8);
+}
+.cur-ring.is-hover.is-down::before {
+  transform: scale(1.5);
+}
