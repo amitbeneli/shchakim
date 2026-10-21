@@ -1,6 +1,6 @@
 # שחקים · מסמך הגשה
 
-**האתר החי:** _(יעודכן אחרי העלאה ל-Vercel)_
+**האתר החי:** https://shchakim-plum.vercel.app
 **הקוד:** https://github.com/amitbeneli/shchakim
 **זמן עבודה בפועל:** _(למלא)_ שעות
 

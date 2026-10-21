@@ -4,9 +4,9 @@ import sitemap from '@astrojs/sitemap';
 
 import preact from '@astrojs/preact';
 
-// TODO: update `site` once the Vercel URL is final (used for sitemap + OG absolute URLs)
+// Production URL (sitemap, canonical and absolute OG image URLs)
 export default defineConfig({
-  site: 'https://shchakim.vercel.app',
+  site: 'https://shchakim-plum.vercel.app',
   trailingSlash: 'never',
   // 'class' makes the parent's scope class flow through the `class` prop into child components (Photo)
   scopedStyleStrategy: 'class',

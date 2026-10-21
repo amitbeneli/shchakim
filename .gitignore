@@ -11,3 +11,5 @@ design/
 _s.mjs
 test-results/
 playwright-report/
+
+.vercel
