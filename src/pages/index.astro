@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import R1Hero from '../components/R1Hero.astro';
 import R4Suites from '../components/R4Suites.astro';
+import R6Conditions from '../components/R6Conditions.astro';
+import R7Compare from '../components/R7Compare.astro';
 import R8Reviews from '../components/R8Reviews.astro';
 import R10Faq from '../components/R10Faq.astro';
 import { site } from '../data/site';
@@ -97,6 +99,8 @@ const reasons = [
 
   <R4Suites />
 
+  <R6Conditions />
+
   <!-- WHY HERE, over the Milky Way. Icons draw themselves as you scroll. -->
   <section class="why" aria-labelledby="why-title">
     <Photo photo={photos.duneMilkyWay} class="why__img" decorative sizes="100vw" />
@@ -118,6 +122,8 @@ const reasons = [
       </ul>
     </div>
   </section>
+
+  <R7Compare />
 
   <!-- EXPERIENCES -->
   <section class="exp container" aria-labelledby="exp-title">

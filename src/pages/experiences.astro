@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import { addons } from '../data/pricing';
 import { formatPrice } from '../lib/format';
 import Photo from '../components/Photo.astro';
+import R3MoonCalendar from '../components/R3MoonCalendar.astro';
 ---
 
 <Base
@@ -22,11 +23,11 @@ import Photo from '../components/Photo.astro';
         <h2>מפת השמיים</h2>
         <p>אוריון, העגלה הגדולה, קסיופאה, עקרב, ברבור ונבל. שש קבוצות כוכבים שרואים מכאן, ומאחורי כל אחת סיפור ישן.</p>
       </article>
-      <article>
-        <h2>לוח הירח</h2>
-        <p>הלילות הטובים ביותר לתצפית הם סביב מולד הירח, כשהשמיים הכי כהים. כדאי לתכנן את ההגעה לפיהם.</p>
-      </article>
     </section>
+
+    <div class="section">
+      <R3MoonCalendar />
+    </div>
 
     <section class="section" aria-labelledby="addons-title">
       <div class="section-head">

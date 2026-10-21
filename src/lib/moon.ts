@@ -36,3 +36,14 @@ export function litPath(k: number, waxing: boolean, r: number) {
   const bottom = `0 ${r}`;
   return `M${top}A${r} ${r} 0 0 ${limbSweep} ${bottom}A${rx.toFixed(3)} ${r} 0 0 ${termSweep} ${top}Z`;
 }
+
+/** Moon for a calendar night, sampled at 22:00 Israel time (≈ 20:00 UTC) */
+export function moonForNight(isoDate: string) {
+  const age = moonAge(new Date(`${isoDate}T20:00:00Z`));
+  return { age, k: illumination(age), waxing: isWaxing(age), dark: isDarkNight(age) };
+}
+
+/** Inline SVG markup of a moon in a given phase (decorative: aria-hidden) */
+export function moonSvg(k: number, waxing: boolean, size = 32) {
+  return `<svg class="moon-ico" viewBox="-12 -12 24 24" width="${size}" height="${size}" aria-hidden="true"><circle r="10" class="moon-ico__dark"/><path class="moon-ico__lit" d="${litPath(k, waxing, 10)}"/></svg>`;
+}

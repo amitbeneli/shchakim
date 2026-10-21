@@ -1,0 +1,360 @@
+---
+// R7: Tel Aviv vs Ramon. Both skies are drawn in code from ONE seeded star
+// field (brief bonus): Ramon shows every star + the Milky Way; Tel Aviv shows
+// only the brightest few through an orange light-pollution glow.
+// The divider is a real role="slider": mouse, touch (pointer events) and
+// keyboard (arrows follow the screen in RTL, Home/End, PageUp/PageDown).
+---
+
+<section class="r7" aria-labelledby="r7-title">
+  <div class="container r7__head" data-reveal>
+    <h2 id="r7-title">אותם שמיים, שני מקומות</h2>
+    <p>מעל תל אביב רואים בלילה טוב כמה עשרות כוכבים. מעל המכתש, אלפים. גררו את הקו וראו את ההבדל.</p>
+  </div>
+
+  <div class="container">
+    <div class="r7__frame" data-r7 style="--pos: 50%">
+      <canvas class="r7__sky r7__sky--ramon" data-r7-ramon aria-hidden="true"></canvas>
+      <canvas class="r7__sky r7__sky--city" data-r7-city aria-hidden="true"></canvas>
+      <span class="r7__tag r7__tag--ramon">מכתש רמון</span>
+      <span class="r7__tag r7__tag--city">תל אביב</span>
+      <div
+        class="r7__handle"
+        data-r7-handle
+        role="slider"
+        tabindex="0"
+        aria-label="השוואת שמי הלילה: כמה מהתמונה מציגה את מכתש רמון"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="50"
+        aria-valuetext="חצי רמון, חצי תל אביב"
+      >
+        <span class="r7__knob" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"></path></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .r7 {
+    padding-block: clamp(4rem, 10vw, 7rem);
+  }
+  .r7__head {
+    display: grid;
+    gap: 1rem;
+    margin-block-end: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .r7__head h2 {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
+    font-weight: 400;
+  }
+  .r7__head p {
+    color: var(--muted);
+    max-width: 46ch;
+    font-size: var(--step-1);
+  }
+  .r7__frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: #05070f;
+    touch-action: pan-y; /* vertical page scroll still works; horizontal drags move the divider */
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: ew-resize;
+  }
+  @media (min-width: 768px) {
+    .r7__frame {
+      aspect-ratio: 16 / 8;
+    }
+  }
+  .r7__sky {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* RTL: Ramon is revealed from the right edge, --pos = its share of the width */
+  .r7__sky--city {
+    clip-path: inset(0 var(--pos) 0 0);
+  }
+  .r7__tag {
+    position: absolute;
+    top: 1rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgb(11 14 26 / 0.6);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    font-size: var(--step--1);
+    font-weight: 700;
+    pointer-events: none;
+  }
+  .r7__tag--ramon {
+    right: 1rem;
+  }
+  .r7__tag--city {
+    left: 1rem;
+  }
+  .r7__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: var(--pos);
+    width: 44px;
+    margin-right: -22px;
+    display: grid;
+    place-items: center;
+    outline: none;
+  }
+  .r7__handle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--starlight);
+    box-shadow: 0 0 12px rgb(0 0 0 / 0.5);
+  }
+  .r7__knob {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--starlight);
+    color: var(--night);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.45);
+    transition: transform 0.2s var(--ease-out);
+  }
+  .r7__knob svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .r7__handle:focus-visible .r7__knob {
+    outline: 2px solid var(--sand);
+    outline-offset: 4px;
+  }
+  .r7__frame.is-dragging .r7__knob {
+    transform: scale(1.1);
+  }
+</style>
+
+<script>
+  // Deterministic PRNG so both canvases share one star field
+  function mulberry32(seed: number) {
+    return () => {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  interface Star { x: number; y: number; b: number; r: number; hue: number }
+
+  function field(): Star[] {
+    const rnd = mulberry32(42);
+    const stars: Star[] = [];
+    for (let i = 0; i < 2600; i++) {
+      // Milky Way: a diagonal band holds extra stars
+      const inBand = rnd() < 0.45;
+      let x = rnd();
+      let y = rnd();
+      if (inBand) {
+        const t = rnd();
+        x = t;
+        y = 0.75 - t * 0.6 + (rnd() - 0.5) * 0.22 * (0.6 + rnd());
+      }
+      // Brightness: many faint, few bright (roughly a power law)
+      const b = Math.pow(rnd(), 3.2);
+      stars.push({ x, y, b, r: 0.35 + b * 1.6, hue: rnd() });
+    }
+    return stars;
+  }
+
+  // Foreground: a crater rim silhouette (same in both scenes)
+  function rim(ctx: CanvasRenderingContext2D, w: number, h: number, color: string) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    const pts = [0.86, 0.82, 0.84, 0.78, 0.8, 0.83, 0.79, 0.76, 0.8, 0.84, 0.82];
+    pts.forEach((p, i) => ctx.lineTo((i / (pts.length - 1)) * w, h * p));
+    ctx.lineTo(w, h);
+    ctx.fill();
+  }
+
+  function draw(canvas: HTMLCanvasElement, stars: Star[], city: boolean) {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    const ctx = canvas.getContext('2d')!;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Sky
+    const sky = ctx.createLinearGradient(0, 0, 0, h);
+    if (city) {
+      sky.addColorStop(0, '#1d1a2a');
+      sky.addColorStop(0.55, '#4a3a3e');
+      sky.addColorStop(1, '#b0704a'); // sodium-lamp glow
+    } else {
+      sky.addColorStop(0, '#04060d');
+      sky.addColorStop(1, '#0d1226');
+    }
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, w, h);
+
+    // Milky Way glow (invisible under city light)
+    if (!city) {
+      ctx.save();
+      ctx.translate(w * 0.5, h * 0.45);
+      ctx.rotate(-Math.atan2(h * 0.6, w));
+      const g = ctx.createLinearGradient(0, -h * 0.16, 0, h * 0.16);
+      g.addColorStop(0, 'rgba(180,170,210,0)');
+      g.addColorStop(0.5, 'rgba(200,190,225,0.16)');
+      g.addColorStop(1, 'rgba(180,170,210,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(-w, -h * 0.16, w * 2, h * 0.32);
+      ctx.restore();
+    }
+
+    // Stars: the city only lets the brightest ~2% through (b = u^3.2 ≥ 0.92 ⇔ u ≥ 0.974)
+    for (const s of stars) {
+      if (city && s.b < 0.92) continue;
+      const a = city ? 0.55 + s.b * 0.4 : 0.25 + s.b * 0.75;
+      ctx.globalAlpha = a;
+      ctx.fillStyle = s.hue < 0.15 ? '#ffd9b0' : s.hue > 0.88 ? '#cfe0ff' : '#f4f1e8';
+      ctx.beginPath();
+      ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (city) {
+      // Skyline with lit windows
+      const rnd = mulberry32(7);
+      ctx.fillStyle = '#120f17';
+      let x = 0;
+      while (x < w) {
+        const bw = 18 + rnd() * 46;
+        const bh = h * (0.12 + rnd() * 0.3);
+        ctx.fillRect(x, h - bh, bw, bh);
+        ctx.fillStyle = 'rgba(255,214,150,0.75)';
+        for (let wy = h - bh + 8; wy < h - 6; wy += 9)
+          for (let wx = x + 5; wx < x + bw - 5; wx += 8) if (rnd() < 0.35) ctx.fillRect(wx, wy, 3, 4);
+        ctx.fillStyle = '#120f17';
+        x += bw + 2;
+      }
+    } else {
+      rim(ctx, w, h, '#07080f');
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const frame = document.querySelector<HTMLElement>('[data-r7]');
+    if (!frame) return;
+    const ramon = frame.querySelector<HTMLCanvasElement>('[data-r7-ramon]')!;
+    const city = frame.querySelector<HTMLCanvasElement>('[data-r7-city]')!;
+    const handle = frame.querySelector<HTMLElement>('[data-r7-handle]')!;
+    const stars = field();
+    const ac = new AbortController();
+    const { signal } = ac;
+
+    // Draw lazily when it first scrolls near, and again on size changes
+    let drawn = false;
+    const paint = () => {
+      draw(ramon, stars, false);
+      draw(city, stars, true);
+      drawn = true;
+    };
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && !drawn && paint(), { rootMargin: '300px' });
+    io.observe(frame);
+    let rt = 0;
+    const ro = new ResizeObserver(() => {
+      if (!drawn) return;
+      clearTimeout(rt);
+      rt = window.setTimeout(paint, 120);
+    });
+    ro.observe(frame);
+
+    // value = Ramon's share of the width, measured from the right edge
+    let value = 50;
+    const set = (v: number) => {
+      value = Math.max(0, Math.min(100, v));
+      frame.style.setProperty('--pos', `${value}%`);
+      handle.setAttribute('aria-valuenow', String(Math.round(value)));
+      handle.setAttribute(
+        'aria-valuetext',
+        value > 85 ? 'כמעט כולו מכתש רמון' : value < 15 ? 'כמעט כולו תל אביב' : `${Math.round(value)}% מכתש רמון`,
+      );
+    };
+    const fromPointer = (clientX: number) => {
+      const r = frame.getBoundingClientRect();
+      set(((r.right - clientX) / r.width) * 100);
+    };
+
+    frame.addEventListener(
+      'pointerdown',
+      (e) => {
+        frame.setPointerCapture(e.pointerId);
+        frame.classList.add('is-dragging');
+        fromPointer(e.clientX);
+      },
+      { signal },
+    );
+    frame.addEventListener('pointermove', (e) => frame.hasPointerCapture(e.pointerId) && fromPointer(e.clientX), { signal });
+    const end = (e: PointerEvent) => {
+      if (frame.hasPointerCapture(e.pointerId)) frame.releasePointerCapture(e.pointerId);
+      frame.classList.remove('is-dragging');
+    };
+    frame.addEventListener('pointerup', end, { signal });
+    frame.addEventListener('pointercancel', end, { signal });
+
+    // Arrows move the line in the direction pressed on screen (left = more Ramon)
+    handle.addEventListener(
+      'keydown',
+      (e) => {
+        const step = e.shiftKey ? 10 : 5;
+        const map: Record<string, number> = {
+          ArrowLeft: value + step,
+          ArrowRight: value - step,
+          ArrowUp: value + step,
+          ArrowDown: value - step,
+          PageUp: value + 25,
+          PageDown: value - 25,
+          Home: 0,
+          End: 100,
+        };
+        if (e.key in map) {
+          e.preventDefault();
+          set(map[e.key]);
+        }
+      },
+      { signal },
+    );
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        ac.abort();
+        io.disconnect();
+        ro.disconnect();
+      },
+      { once: true },
+    );
+  });
+</script>

@@ -64,6 +64,10 @@ canvas {
   display: block;
   max-width: 100%;
 }
+/* Author display rules (grid/flex) must never un-hide [hidden] elements */
+[hidden] {
+  display: none !important;
+}
 /* width/height attributes reserve space (no CLS); CSS aspect-ratio decides the final shape */
 img {
   height: auto;
@@ -321,4 +325,14 @@ button {
     transform: none;
     clip-path: inset(0 0 0 0 round var(--radius));
   }
+}
+
+/* Moon phase icon (R3, R6) */
+.moon-ico__dark {
+  fill: #1b2034;
+  stroke: rgb(244 241 232 / 0.25);
+  stroke-width: 0.6;
+}
+.moon-ico__lit {
+  fill: var(--starlight);
 }
