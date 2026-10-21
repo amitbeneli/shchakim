@@ -52,11 +52,11 @@ const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
 <style>
   .r1 {
     position: relative;
-    height: 230svh;
+    height: 210svh;
   }
   @media (max-width: 767px) {
     .r1 {
-      height: 190svh;
+      height: 175svh;
     }
   }
   .r1__stage {
@@ -88,63 +88,86 @@ const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
     opacity: 0;
   }
 
-  /* Purple dusk sits over the photo and fades last (purple → black) */
+  /* The sunset is a colour grade OVER the photo, never a curtain: both layers
+     are translucent so the real crater reads through from the first frame. */
+  /* Purple dusk fades second (purple → night) */
   .r1__dusk {
     inset: 0;
-    background: linear-gradient(to bottom, #1d1633 0%, #3b2550 38%, #7a3b55 66%, #b2553f 82%, #c9673d 100%);
+    background: linear-gradient(
+      to bottom,
+      rgb(29 22 51 / 0.78) 0%,
+      rgb(59 37 80 / 0.62) 40%,
+      rgb(122 59 85 / 0.45) 72%,
+      rgb(178 85 63 / 0.35) 100%
+    );
   }
-  /* Orange/gold sunset sits on top and fades first (orange → purple) */
+  /* Warm gold fades first (orange → purple) */
   .r1__gold {
     inset: 0;
-    background: linear-gradient(to bottom, #3a2a52 0%, #a24c4f 34%, #e2683c 58%, #f29a55 74%, #f6c27f 88%);
+    background: linear-gradient(
+      to bottom,
+      rgb(70 44 88 / 0.7) 0%,
+      rgb(170 76 76 / 0.55) 38%,
+      rgb(226 104 60 / 0.5) 62%,
+      rgb(242 154 85 / 0.5) 82%
+    );
   }
 
-  /* Mobile: centred above the copy. Desktop: the far side from the headline. */
+  /* A soft glow rather than a hard disc; screen blend lights the photo like real low sun */
+  /* Mobile: over the mesa (away from the copy). Desktop: the far side from the headline. */
   .r1__sun {
-    inset-inline-start: 50%;
-    top: 27%;
-    --sun: clamp(120px, 22vw, 260px);
+    inset-inline-start: 72%;
+    top: 28%;
+    --sun: clamp(260px, 70vw, 640px);
     width: var(--sun);
     aspect-ratio: 1;
     /* centre with margins, not translate: GSAP owns the transform */
     margin-inline-start: calc(var(--sun) / -2);
     margin-block-start: calc(var(--sun) / -2);
+    mix-blend-mode: screen;
     will-change: transform, opacity;
   }
   @media (min-width: 768px) {
     .r1__sun {
       inset-inline-start: 74%;
-      top: 38%;
+      top: 40%;
+      --sun: clamp(380px, 42vw, 680px);
     }
   }
   .r1__sun span {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: radial-gradient(circle at 50% 45%, #fff1d2 0%, #ffd08a 45%, #f39a52 80%, #e2683c 100%);
-    box-shadow:
-      0 0 80px 30px rgb(246 178 104 / 0.55),
-      0 0 220px 90px rgb(226 104 60 / 0.35);
+    background: radial-gradient(
+      circle,
+      #fff3dc 0%,
+      #ffd99c 9%,
+      rgb(255 190 120 / 0.85) 15%,
+      rgb(242 140 80 / 0.45) 30%,
+      rgb(226 104 60 / 0.18) 50%,
+      transparent 70%
+    );
   }
 
+  /* Low dune silhouettes in the foreground: they frame the photo, the crater stays the star */
   .r1__ridge {
     inset-inline: 0;
     bottom: -2px;
     width: 100%;
-    height: 42%;
+    height: 24%;
     will-change: transform;
   }
   .r1__ridge--back path {
-    fill: #4a2a45;
+    fill: rgb(58 32 52 / 0.9);
   }
   .r1__ridge--mid {
-    height: 34%;
+    height: 17%;
   }
   .r1__ridge--mid path {
-    fill: #241a33;
+    fill: rgb(28 22 40 / 0.95);
   }
   .r1__ridge--front {
-    height: 26%;
+    height: 11%;
   }
   .r1__ridge--front path {
     fill: var(--night);
