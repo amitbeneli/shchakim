@@ -1,6 +1,8 @@
 // Every photo is a real photograph of Makhtesh Ramon / Mitzpe Ramon (Unsplash licence,
 // credits in NOTES.md). They ship under one duotone grade (#ramon-grade in the layout),
 // so photos from different photographers read as one archive of one place.
+// Two night photos (starTrailsMesa, craterStars) have a camp at their base: they are only
+// used as square plates cropped to sky and rock (focus), never in a gallery or lightbox.
 // The suites themselves are drawn (src/components/SuiteDrawing.astro), never borrowed
 // from other hotels.
 
@@ -15,8 +17,8 @@ export interface Photo {
 
 export const photos = {
   heroNight: { id: '1662960126803-02048050f381', alt: 'עקבות כוכבים מסתובבים מעל מצוק במכתש רמון', caption: 'מצוק המכתש, חשיפה של שעה' },
-  starTrailsMesa: { id: '1662960126799-d621b5020d13', alt: 'עקבות כוכבים מעל גבעה בתוך המכתש', caption: 'בתוך המכתש, אחרי חצות' },
-  craterStars: { id: '1662960158221-f76b79584491', alt: 'כוכבים מעל קיר סלע מואר במכתש רמון', caption: 'קיר השכבות, 23:40' },
+  starTrailsMesa: { id: '1662960126799-d621b5020d13', alt: 'עקבות כוכבים מעל גבעה בתוך המכתש', caption: 'בתוך המכתש, אחרי חצות', focus: '60% 8%' },
+  craterStars: { id: '1662960158221-f76b79584491', alt: 'כוכבים מעל קיר סלע מואר במכתש רמון', caption: 'קיר השכבות, 23:40', focus: '30% 10%' },
   road: { id: '1662961345124-c8f747c38181', alt: 'הכביש יורד מהשפה אל קרקעית המכתש', caption: 'הירידה למכתש' },
   rimCouple: { id: '1664880847082-e7125cbc7ef0', alt: 'זוג יושב על שפת מכתש רמון ומביט אל עומקו', caption: 'שפת המכתש' },
   rimDeck: { id: '1662961047858-e570733ae899', alt: 'אדם עומד במרפסת תצפית מעל המכתש בשעת דמדומים', caption: 'מרפסת התצפית, דמדומים' },
@@ -28,12 +30,15 @@ export const photos = {
   ibex: { id: '1604080566273-928a568303fc', alt: 'יעל על סלע בשפת המכתש', caption: 'יעל על השפה' },
 } satisfies Record<string, Photo>;
 
-const base = (id: string) => `https://images.unsplash.com/photo-${id}`;
+// Self-hosted (public/photos, fetched once by design/tools/fetch-photos.mjs) so pages never
+// depend on a third-party image CDN at load time.
+const widths = [480, 800, 1200, 1800] as const;
 
 export function src(p: Photo, w = 1200) {
-  return `${base(p.id)}?w=${w}&q=70&auto=format&fit=crop`;
+  const fit = widths.find((x) => x >= w) ?? 1800;
+  return `/photos/${p.id}-${fit}.webp`;
 }
 
-export function srcset(p: Photo, widths = [480, 800, 1200, 1800, 2400]) {
+export function srcset(p: Photo) {
   return widths.map((w) => `${src(p, w)} ${w}w`).join(', ');
 }

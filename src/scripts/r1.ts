@@ -94,11 +94,11 @@ export function initR1() {
 
     // Drop the sun until its bright core is hidden behind the back ridge. Measured
     // from layout (offsetTop ignores transforms) so a refresh mid-scroll stays correct.
-    // The ridges cover the bottom 42% of the stage; the back crest sits ~25% down the SVG.
+    // The ridges cover the bottom 42% of the stage; the far rim (back crest) sits ~21% down the SVG.
     const sun = q('[data-r1-sun]');
     const stage = q('.r1__stage');
     const sunDrop = () => {
-      const ridgeLine = stage.clientHeight * (0.58 + 0.42 * 0.3);
+      const ridgeLine = stage.clientHeight * (0.58 + 0.42 * 0.215);
       return ridgeLine - sun.offsetTop + 6; // sun's top edge just below the crest
     };
 

@@ -38,6 +38,11 @@
       inset-block-start: calc(var(--header-h) + 12px);
       inset-block-end: 96px; /* clear of the floating book button */
     }
+    /* Phones: just the moon. The rail and stops would cross drawings and photos at the edge. */
+    .moonpath__track,
+    .moonpath__stops {
+      display: none;
+    }
   }
   .moonpath__track {
     position: absolute;

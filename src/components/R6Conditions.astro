@@ -22,8 +22,7 @@ import { RULE_TEXT } from '../lib/conditions';
     </div>
 
     <div class="r6__state" data-r6-result hidden>
-      <p class="r6__label">תנאי תצפית הלילה</p>
-      <p class="r6__rating" data-r6-rating></p>
+      <p class="r6__rating"><span class="visually-hidden">תנאי התצפית הלילה: </span><span data-r6-rating></span></p>
       <p class="r6__text" data-r6-text></p>
       <dl class="r6__stats">
         <div>
@@ -39,7 +38,6 @@ import { RULE_TEXT } from '../lib/conditions';
     </div>
 
     <div class="r6__state" data-r6-error hidden>
-      <p class="r6__label">תנאי תצפית הלילה</p>
       <p class="r6__err-title">התחזית לא זמינה כרגע</p>
       <p class="r6__text">
         לא הצלחנו לקבל את תחזית העננים. הירח הלילה מואר ב־<bdi dir="ltr" data-r6-moon-only></bdi>, ובממוצע יש כאן
@@ -94,11 +92,6 @@ import { RULE_TEXT } from '../lib/conditions';
     display: grid;
     gap: 0.9rem;
     align-content: start;
-  }
-  .r6__label {
-    color: var(--sand);
-    font-weight: 600;
-    font-size: var(--step--1);
   }
   .r6__rating {
     font-family: var(--font-display);
@@ -249,7 +242,7 @@ import { RULE_TEXT } from '../lib/conditions';
       const r = rate(cloud, moonPct);
       const rating = $('[data-r6-rating]');
       rating.textContent = RATING_LABEL[r];
-      rating.dataset.rating = r;
+      rating.parentElement!.dataset.rating = r;
       $('[data-r6-text]').textContent = RATING_TEXT[r];
       $('[data-r6-cloud]').textContent = `${Math.round(cloud)}%`;
       $('[data-r6-moon]').textContent = `${moonPct}%`;

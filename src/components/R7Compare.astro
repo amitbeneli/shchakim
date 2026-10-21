@@ -185,15 +185,37 @@
     return stars;
   }
 
-  // Foreground: a crater rim silhouette (same in both scenes)
-  function rim(ctx: CanvasRenderingContext2D, w: number, h: number, color: string) {
-    ctx.fillStyle = color;
+  // Foregrounds in the map's own ink: filled night silhouette + one sand hairline on top.
+  // Ramon: the crater section (flat rim, sheer stepped cliff, floor). Tel Aviv: a skyline profile.
+  function ink(ctx: CanvasRenderingContext2D, pts: [number, number][], w: number, h: number) {
     ctx.beginPath();
     ctx.moveTo(0, h);
-    const pts = [0.86, 0.82, 0.84, 0.78, 0.8, 0.83, 0.79, 0.76, 0.8, 0.84, 0.82];
-    pts.forEach((p, i) => ctx.lineTo((i / (pts.length - 1)) * w, h * p));
+    pts.forEach(([x, y]) => ctx.lineTo(x * w, y * h));
     ctx.lineTo(w, h);
+    ctx.closePath();
+    ctx.fillStyle = '#0b0e1a';
     ctx.fill();
+    ctx.beginPath();
+    pts.forEach(([x, y], i) => (i ? ctx.lineTo(x * w, y * h) : ctx.moveTo(x * w, y * h)));
+    ctx.strokeStyle = 'rgba(217,168,108,0.85)';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+  const RAMON: [number, number][] = [
+    [0, 0.9], [0.34, 0.9], [0.37, 0.88], [0.39, 0.84], [0.41, 0.83], [0.43, 0.79], [0.46, 0.78], [0.48, 0.75], [1, 0.745],
+  ];
+  function skyline(rnd: () => number): [number, number][] {
+    const pts: [number, number][] = [[0, 0.86]];
+    let x = 0;
+    while (x < 1) {
+      const bw = 0.03 + rnd() * 0.07;
+      const top = 0.86 - (0.06 + rnd() * 0.28) * (rnd() < 0.15 ? 1.5 : 1);
+      pts.push([x, top], [Math.min(1, x + bw), top]);
+      x += bw;
+      pts.push([Math.min(1, x), 0.86]);
+      x += 0.004;
+    }
+    return pts;
   }
 
   function draw(canvas: HTMLCanvasElement, stars: Star[], city: boolean) {
@@ -244,24 +266,7 @@
     }
     ctx.globalAlpha = 1;
 
-    if (city) {
-      // Skyline with lit windows
-      const rnd = mulberry32(7);
-      ctx.fillStyle = '#120f17';
-      let x = 0;
-      while (x < w) {
-        const bw = 18 + rnd() * 46;
-        const bh = h * (0.12 + rnd() * 0.3);
-        ctx.fillRect(x, h - bh, bw, bh);
-        ctx.fillStyle = 'rgba(255,214,150,0.75)';
-        for (let wy = h - bh + 8; wy < h - 6; wy += 9)
-          for (let wx = x + 5; wx < x + bw - 5; wx += 8) if (rnd() < 0.35) ctx.fillRect(wx, wy, 3, 4);
-        ctx.fillStyle = '#120f17';
-        x += bw + 2;
-      }
-    } else {
-      rim(ctx, w, h, '#07080f');
-    }
+    ink(ctx, city ? skyline(mulberry32(7)) : RAMON, w, h);
   }
 
   document.addEventListener('astro:page-load', () => {

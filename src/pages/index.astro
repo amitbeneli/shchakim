@@ -177,17 +177,17 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   <R10Faq />
 
-  <!-- CLOSE: a real couple on the real rim -->
+  <!-- CLOSE: the real crater at sunset -->
   <section class="close" aria-labelledby="close-title">
     <figure class="plate close__plate">
-      <Photo photo={photos.rimCouple} decorative sizes="100vw" />
+      <Photo photo={photos.craterDusk} decorative sizes="100vw" />
     </figure>
     <div class="close__shade" aria-hidden="true"></div>
     <div class="container close__inner">
       <h2 id="close-title">הלילה הבא שלכם כבר על המפה</h2>
       <p>בוחרים תאריך, בוחרים סוויטה, ואנחנו דואגים לשאר.</p>
       <a href="/book" class="btn">להזמין לילה</a>
-      <p class="label close__cap">{photos.rimCouple.caption}, מכתש רמון</p>
+      <p class="label close__cap">{photos.craterDusk.caption}, מכתש רמון</p>
     </div>
   </section>
 </Base>
@@ -458,7 +458,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     border-radius: 0;
   }
   .close__plate :global(img) {
-    object-position: 50% 70%;
+    object-position: 50% 60%;
   }
   .close__shade {
     position: absolute;

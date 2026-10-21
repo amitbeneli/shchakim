@@ -8,6 +8,7 @@ import { checkCoupon, couponError, quote, shekels, stayError, type Quote } from 
 import { isDarkNight, moonAge } from '../../lib/moon';
 import { normalizeIsraeliMobile, validateEmail, validateName, validatePhone } from '../../lib/validate';
 import { buildPayload, sendLead } from '../../lib/lead';
+import { src } from '../../data/images';
 
 /* ─────────────── State ─────────────── */
 
@@ -377,7 +378,7 @@ export default function Wizard() {
                 disabled={!free}
                 onChange={() => set({ suite: x.slug })}
               />
-              <img src={`https://images.unsplash.com/photo-${x.photo.id}?w=480&q=60&auto=format&fit=crop`} alt="" loading="lazy" width="480" height="360" />
+              <img src={src(x.photo, 480)} alt="" loading="lazy" width="480" height="360" />
               <span class="bk-suite__text">
                 <strong>{x.name}</strong>
                 <span>{x.highlight}</span>
@@ -408,7 +409,7 @@ export default function Wizard() {
           };
           return (
             <li class={`bk-addon${qty ? ' is-on' : ''}`} key={a.id}>
-              <img src={`https://images.unsplash.com/photo-${a.photo.id}?w=320&q=60&auto=format&fit=crop`} alt="" loading="lazy" width="320" height="320" />
+              <img src={src(a.photo, 480)} alt="" loading="lazy" width="320" height="320" />
               <div class="bk-addon__text">
                 <strong id={`bk-a-${a.id}`}>{a.name}</strong>
                 <span>{a.summary}</span>

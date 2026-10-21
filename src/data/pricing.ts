@@ -63,8 +63,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 3,
-    photo: photos.craterStars,
-    gallery: [photos.craterStars, photos.starTrailsMesa, photos.heroNight],
+    photo: photos.heroNight,
+    gallery: [photos.heroNight, photos.craterDusk, photos.craterRed],
   },
   {
     slug: 'galaxia',
@@ -87,7 +87,7 @@ export const suites: Suite[] = [
     ],
     units: 2,
     photo: photos.rimCliff,
-    gallery: [photos.rimCliff, photos.heroNight, photos.ibex],
+    gallery: [photos.rimCliff, photos.canyon, photos.ibex],
   },
 ];
 

@@ -7,10 +7,12 @@
 
 const words = ['לילה', 'אחד', 'מתחת', 'לשמיים', 'שלמים'];
 
-// Ridge profiles (viewBox 1440×300). Back = far crater wall, front = the rim you stand on.
-const back = 'M0 92 C 120 70 210 40 330 48 S 520 96 640 88 S 820 30 930 36 S 1130 92 1250 80 S 1390 54 1440 60 V300 H0Z';
-const mid = 'M0 150 C 160 128 280 112 420 120 S 640 168 790 158 S 1010 104 1140 112 S 1360 150 1440 146 V300 H0Z';
-const front = 'M0 214 C 200 200 330 186 500 194 S 760 226 940 218 S 1220 190 1440 200 V300 H0Z';
+// A true Makhtesh Ramon section (viewBox 1440×300): the far wall is a level plateau
+// edge; the floor carries isolated hills; the near rim is flat where you stand and
+// drops in a sheer, stepped cliff to the floor. Not hills: a crater.
+const back = 'M0 64 L300 62 L330 67 L620 62 L660 69 L1010 63 L1050 67 L1440 64 V300 H0Z';
+const mid = 'M0 190 L170 188 C 220 188 245 150 285 147 C 318 145 338 186 378 188 L820 191 C 868 191 890 160 928 157 C 960 155 985 190 1022 191 L1440 193 V300 H0Z';
+const front = 'M1440 212 L842 214 L818 219 L808 236 L792 242 L782 262 L760 270 L748 282 L0 285 V300 H1440Z';
 ---
 
 <section class="r1" data-hero data-r1 aria-labelledby="hero-title">
@@ -44,7 +46,15 @@ const front = 'M0 214 C 200 200 330 186 500 194 S 760 226 940 218 S 1220 190 144
       </g>
     </svg>
 
-    <!-- Map furniture: the elevation axis -->
+    <!-- Map furniture: north arrow, scale bar, elevation axis -->
+    <svg class="r1__north" viewBox="0 0 24 40" aria-hidden="true">
+      <path d="M12 2 L19 26 L12 21 L5 26 Z"></path>
+      <text x="12" y="38" text-anchor="middle">צ</text>
+    </svg>
+    <div class="r1__scale" aria-hidden="true">
+      <span></span><span></span><span></span>
+      <em>0</em><em>3 ק״מ</em>
+    </div>
     <div class="r1__axis" aria-hidden="true">
       <span>900 מ׳</span>
       <span>850 מ׳</span>
@@ -165,6 +175,52 @@ const front = 'M0 214 C 200 200 330 186 500 194 S 760 226 940 218 S 1220 190 144
     stroke-opacity: 0.85;
   }
 
+  .r1__north {
+    inset-inline-end: max(var(--gutter), 1rem);
+    top: calc(var(--header-h) + 1.5rem);
+    width: 22px;
+    height: 36px;
+  }
+  .r1__north path {
+    fill: none;
+    stroke: var(--sand);
+    stroke-width: 1.2;
+  }
+  .r1__north text {
+    fill: var(--sand);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 10px;
+  }
+  .r1__scale {
+    inset-inline-start: max(var(--gutter), 1rem);
+    bottom: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    row-gap: 0.3rem;
+    font-size: var(--fs-label);
+    font-weight: 600;
+    color: var(--sand);
+  }
+  .r1__scale span {
+    height: 4px;
+    border: 1px solid var(--sand);
+  }
+  .r1__scale span:nth-child(odd) {
+    background: var(--sand);
+  }
+  .r1__scale em {
+    font-style: normal;
+  }
+  .r1__scale em:last-child {
+    grid-column: 3;
+    text-align: end;
+  }
+  @media (max-width: 767px) {
+    .r1__scale {
+      display: none;
+    }
+  }
   .r1__axis {
     inset-inline-end: max(var(--gutter), 1rem);
     bottom: 6%;
