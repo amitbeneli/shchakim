@@ -37,10 +37,11 @@ export const photos = {
   coupleNight: { id: 'gen-couple-night', alt: 'זוג עטוף בשמיכה על מעקה המרפסת, מתחת לקשת שביל החלב מעל המכתש', caption: 'מרפסת סוויטה, אחרי חצות' },
   galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם ספה שקועה, אח טיח וחלונות רחבים אל המכתש', caption: 'הסלון בווילה' },
   // R7: the city side of the comparison (a real Tel Aviv night, Unsplash)
-  // R7: one night frame over the crater, and its twin baked in code with a city's skyglow
-  // (tools/r7-city-sky.py: the same stars; the faint ones and the Milky Way lost in the glow)
+  // R7: one night sky over two places. Ramon is the frame as it is; the city side is a real
+  // Tel Aviv photo (Unsplash 1670702389707) whose sky is replaced by the same frame under city
+  // skyglow (tools/r7-city-sky.py + tools/r7-tel-aviv.py), so the surviving stars line up.
   r7Ramon: { id: 'gen-r7-ramon', alt: 'שביל החלב עולה מעל קרקעית מכתש רמון ומאות כוכבים', caption: 'מעל המכתש' },
-  r7City: { id: 'gen-r7-city', alt: 'אותו נוף ואותם שמיים תחת זוהר כתום של עיר, רק כוכבים בודדים נראים', caption: 'אותם שמיים עם אור של עיר' },
+  r7City: { id: 'gen-r7-city', alt: 'מגדלי תל אביב בלילה, כביש ופנסי רחוב, ומעליהם אותם שמיים תחת זוהר כתום של העיר, רק כוכבים בודדים נראים', caption: 'תל אביב' },
   // The experiences, each showing the activity itself
   xpDinner: { id: 'gen-xp-dinner', alt: 'שולחן נמוך ערוך על מרפסת אבן מעל המכתש, כריות ישיבה, פנסים, נרות ומדורה בשעה כחולה', caption: 'ארוחת ערב במדבר', focus: '50% 62%' },
   xpAstronomer: { id: 'gen-xp-astronomer', alt: 'מדריך מצביע בלייזר ירוק אל שביל החלב, לידו טלסקופ גדול וזוג שמביט לשמיים על שפת המכתש', caption: 'תצפית מודרכת', focus: '50% 55%' },
@@ -58,7 +59,7 @@ const widths = [480, 800, 1200, 1800] as const;
 export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
   // gen-* files were regenerated under the same names: the query busts browser and CDN caches
-  const v = p.id.startsWith('gen-') ? '?v=4' : '';
+  const v = p.id.startsWith('gen-') ? '?v=5' : '';
   return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp${v}`;
 }
 

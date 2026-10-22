@@ -28,7 +28,7 @@ k = 90
 edge = np.array([np.median(edge[max(0, i - k):i + k]) for i in range(W)])
 edge = np.convolve(np.pad(edge, 12, mode='edge'), np.ones(25) / 25, 'valid')
 sky_mask = np.clip((edge[None, :] - np.arange(H)[:, None]) / 3 + 0.5, 0, 1)[..., None]  # soft 3px edge
-sky = smooth * 0.3 + glow_col * glow_amt[..., None] + stars * keep[..., None] * 0.75
+sky = smooth * 0.12 + glow_col * glow_amt[..., None] + stars * keep[..., None] * 0.75
 # the ground picks up a little of the city's light
 ground = a * 0.85 + np.array([40, 24, 14]) * 0.6
 res = sky * sky_mask + ground * (1 - sky_mask)
