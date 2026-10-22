@@ -18,8 +18,7 @@ const { suite } = Astro.props;
     <p class="suite-card__hl">{suite.highlight}</p>
     <p class="suite-card__summary">{suite.summary}</p>
     <p class="suite-card__meta">
-      עד {suite.maxGuests} אורחים<span aria-hidden="true"> · </span>{suite.units}
-      {suite.slug === 'galaxia' ? ' וילות' : ' סוויטות'} כאלה
+      עד {suite.maxGuests} אורחים<span aria-hidden="true"> · </span>{suite.units} יחידות במתחם
     </p>
     <div class="suite-card__foot">
       <p class="suite-card__price">

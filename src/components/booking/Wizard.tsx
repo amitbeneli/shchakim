@@ -173,7 +173,7 @@ export default function Wizard() {
     const v = PRICING.surchargeWeekdays.includes(wd) ? Math.round(base * (1 + PRICING.surchargeRate)) : base;
     return ils.format(v);
   };
-  const priceNote = s.suite ? `מחיר ללילה ב־₪, ${priceSuite.name}` : `מחיר ללילה ב־₪, החל מ־${priceSuite.name}`;
+  const priceNote = s.suite ? `המחירים בלוח: ללילה ב${priceSuite.name}, בש״ח` : `המחירים בלוח: החל מ־, ללילה ב${priceSuite.name}, בש״ח`;
   const suiteFree = (slug: SuiteSlug) => (s.checkIn && nights ? isStayFree(slug, s.checkIn, nights) : true);
   // Before a suite is chosen a night is only blocked if every suite is taken
   const blocked = useMemo(

@@ -10,7 +10,7 @@ import { site } from '../data/site';
     <figure class="plate thanks__plate"><Photo photo={photos.coupleNight} decorative eager sizes="100vw" /></figure>
     <div class="thanks__shade" aria-hidden="true"></div>
     <div class="container thanks__inner">
-      <h1 data-thanks-title>תודה. השמיים שמורים לכם</h1>
+      <h1 data-thanks-title>תודה, קיבלנו את הבקשה</h1>
       <p class="thanks__stay" data-thanks-stay hidden></p>
 
       <!-- The booking just sent, the way a hotel confirmation shows it (filled from the wizard) -->
@@ -193,7 +193,7 @@ import { site } from '../data/site';
       const b = JSON.parse(sessionStorage.getItem('shchakim-last-booking') ?? 'null');
       if (!b?.name) return;
       const first = String(b.name).split(' ')[0];
-      document.querySelector('[data-thanks-title]')!.textContent = `תודה, ${first}. השמיים שמורים לכם`;
+      document.querySelector('[data-thanks-title]')!.textContent = `תודה, ${first}. קיבלנו את הבקשה`;
       const card = document.querySelector<HTMLElement>('[data-thanks-card]');
       const suite = suites.find((x) => x.slug === b.slug);
       if (card && suite && b.nights) {

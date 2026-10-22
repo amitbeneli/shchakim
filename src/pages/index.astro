@@ -59,8 +59,8 @@ const stops = [
   {
     icon: ['M4 34c6-5 12-5 18 0s12 5 22 0', 'M4 41c8-4 16-4 24 0s10 2 16 0', 'M24 22a6 6 0 1 0 0.01 0Z', 'M24 10v3M14 14l2 2M34 14l-2 2'],
     photo: photos.makhteshDeck,
-    title: 'מדבר בקצב אחר',
-    text: 'שקט עמוק, אוויר יבש, ונוף פתוח עד האופק.',
+    title: 'שקט של מדבר',
+    text: 'אוויר יבש וצלול, בלי רעש תנועה, ונוף פתוח עד האופק.',
   },
 ];
 
@@ -70,7 +70,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 ---
 
 <Base
-  title="שחקים"
+  title="שחקים · סוויטות לתצפית כוכבים במכתש רמון"
   description="לודג׳ בוטיק לתצפית כוכבים על שפת מכתש רמון. תשע סוויטות עם מרפסות פתוחות, תקרות זכוכית וטלסקופים, ויותר מ־300 לילות צלולים בשנה."
   overlayHeader
   preloader
@@ -106,12 +106,12 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     <div class="container place__text">
       <h2 id="place-title" data-reveal>על שפת מכתש רמון</h2>
       <p data-reveal style="--d:1">
-        שחקים יושב על השפה הצפונית של מכתש רמון, ארבעים קילומטרים של שקט וסלע מתחתיו ושמיים שלמים מעליו. תשע
-        סוויטות, מדריכים שמכירים כל כוכב בשמו, ולילות שקטים כל כך שאפשר לשמוע את המדבר נושם.
+        שחקים נמצא על השפה הצפונית של מכתש רמון, מול נוף פתוח לאורך המכתש כולו. תשע סוויטות, מדריכי תצפית
+        במקום, ושמיים חשוכים ביותר מ־300 לילות בשנה.
       </p>
       <dl class="legend" data-reveal style="--d:2" aria-label="שחקים במספרים">
         <div>
-          <dt>סוויטות, בשלושה סוגים</dt>
+          <dt>סוויטות בשלושה סוגים</dt>
           <dd><bdi data-count={site.stats.suites}>{site.stats.suites}</bdi></dd>
         </div>
         <div>
@@ -123,7 +123,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
           <dd><bdi data-count={site.stats.guests}>{site.stats.guests.toLocaleString('he-IL')}</bdi></dd>
         </div>
         <div>
-          <dt>מתוך {site.stats.reviews} ביקורות</dt>
+          <dt>דירוג ממוצע, {site.stats.reviews} ביקורות</dt>
           <dd><bdi data-count={site.stats.rating} data-decimals="1">{site.stats.rating}</bdi></dd>
         </div>
       </dl>
@@ -137,7 +137,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <section class="album container section" aria-labelledby="album-title">
     <div class="album__head" data-reveal>
       <h2 id="album-title">המקום בתמונות</h2>
-      <p>הסוויטות, הגג, והמכתש שמתחיל ממש מעבר לזכוכית.</p>
+      <p>הסוויטות, הגג והנוף מהמרפסות.</p>
     </div>
     <SuiteGallery photos={[photos.makhteshRoom, photos.kochavRoom, photos.galaxiaRoof, photos.kochavBath, photos.makhteshDeck, photos.galaxiaLiving, photos.heroNight, photos.lodgeExterior]} name="שחקים" variant="wide" label="תמונות מהמקום" />
   </section>
@@ -178,7 +178,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <section class="night container" aria-labelledby="night-title">
     <div class="night__head" data-reveal>
       <h2 id="night-title">חוויות הלילה</h2>
-      <p>כל אחת מהחוויות האלה נוספת להזמנה בלחיצה, בשלב התוספות.</p>
+      <p>אפשר להוסיף כל אחת מהן להזמנה, בשלב התוספות.</p>
     </div>
     <ol role="list" class="night__list">
       {
@@ -197,7 +197,6 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
             </div>
             <figure class="plate night__plate" data-media>
               <Photo photo={a.photo} sizes="(min-width: 900px) 220px, 30vw" width={600} height={600} />
-              <figcaption>{a.photo.caption}</figcaption>
             </figure>
           </li>
         ))
@@ -216,8 +215,8 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     </figure>
     <div class="close__shade" aria-hidden="true"></div>
     <div class="container close__inner">
-      <h2 id="close-title">הלילה הבא שלכם, במכתש</h2>
-      <p>בוחרים תאריך, בוחרים סוויטה, ואנחנו דואגים לשאר.</p>
+      <h2 id="close-title">הלילה הבא שלכם במכתש רמון</h2>
+      <p>בוחרים תאריך וסוויטה, ואנחנו דואגים לכל השאר.</p>
       <a href="/book" class="btn">להזמין לילה</a>
       <p class="label close__cap">{photos.coupleNight.caption}</p>
     </div>
@@ -254,7 +253,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   /* ── The place ── */
   /* An establishing shot, edge to edge, then the words and the facts beneath it */
   .place {
-    padding-block: clamp(4rem, 9vw, 7rem) clamp(5rem, 11vw, 9rem);
+    padding-block: clamp(4rem, 9vw, 7rem) clamp(2.5rem, 6vw, 6rem);
   }
   .place__photo {
     aspect-ratio: 4 / 5;

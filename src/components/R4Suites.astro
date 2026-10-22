@@ -10,12 +10,20 @@ import { formatPrice } from '../lib/format';
 ---
 
 <section class="r4" data-r4 aria-labelledby="suites-title">
+  <!-- Carousel mode: the heading sits above the cards. Pinned (desktop) mode shows the
+       same words as the first panel of the moving track, and this block becomes
+       visually hidden so the h2 stays in the document outline. -->
+  <div class="container r4__head">
+    <h2 id="suites-title">הסוויטות</h2>
+    <p>תשע סוויטות בשלושה סוגים, כולן על שפת המצוק ופונות אל המכתש.</p>
+    <a href="/suites" class="text-link">כל הסוויטות</a>
+  </div>
   <div class="r4__pin">
     <ul role="list" class="r4__track" data-r4-track>
-      <li class="r4__intro">
-        <h2 id="suites-title">הסוויטות</h2>
+      <li class="r4__intro" aria-hidden="true">
+        <p class="r4__intro-title">הסוויטות</p>
         <p>תשע סוויטות בשלושה סוגים, כולן על שפת המצוק ופונות אל המכתש.</p>
-        <a href="/suites" class="text-link">כל הסוויטות</a>
+        <a href="/suites" class="text-link" tabindex="-1">כל הסוויטות</a>
       </li>
       {
         suites.map((s, i) => (
@@ -30,7 +38,7 @@ import { formatPrice } from '../lib/format';
                   <a href={`/suites/${s.slug}`} class="r4__link">{s.name}</a>
                 </h3>
                 <p class="r4__meta">
-                  עד {s.maxGuests} אורחים<span aria-hidden="true"> · </span>{s.units} {s.slug === 'galaxia' ? 'וילות' : 'סוויטות'} כאלה
+                  עד {s.maxGuests} אורחים<span aria-hidden="true"> · </span>{s.units} יחידות במתחם
                 </p>
                 <div class="r4__foot">
                   <p class="r4__price">
@@ -53,7 +61,7 @@ import { formatPrice } from '../lib/format';
 
 <style>
   .r4 {
-    padding-block: clamp(4rem, 10vw, 7rem);
+    padding-block: clamp(2.5rem, 7vw, 7rem) clamp(4rem, 10vw, 7rem);
   }
 
   /* ── Carousel (default) ── */
@@ -88,9 +96,41 @@ import { formatPrice } from '../lib/format';
     gap: 1rem;
     padding-block-end: 1rem;
   }
+  /* carousel mode: heading above, intro panel hidden */
+  .r4__head {
+    display: grid;
+    gap: 0.75rem;
+    margin-block-end: clamp(1.5rem, 4vw, 2.25rem);
+  }
+  .r4__head h2 {
+    font-size: var(--fs-h2);
+  }
+  .r4__head p {
+    color: var(--muted);
+    max-width: 40ch;
+  }
+  .r4__head .text-link {
+    justify-self: start;
+  }
+  .r4:not(.is-pinned) .r4__intro {
+    display: none;
+  }
+  .r4.is-pinned .r4__head {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+  }
+  .r4__intro-title,
   .r4__intro h2 {
+    font-family: var(--font-display);
+    color: var(--starlight) !important;
     font-size: clamp(2rem, 1.3rem + 2.6vw, 3.4rem);
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.12;
   }
   .r4__intro p {

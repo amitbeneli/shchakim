@@ -48,12 +48,12 @@ const others = suites.filter((s) => s.slug !== suite.slug);
       </div>
     </dl>
     <p class="facts__cta">
-      <a href={`/book?suite=${suite.slug}`} class="btn">להזמין את הסוויטה</a>
+      <a href={`/book?suite=${suite.slug}`} class="btn">להזמין עכשיו</a>
     </p>
   </div>
 
   <section class="container suite-gallery" aria-labelledby="view-title">
-    <h2 id="view-title" class="suite-sub">הסוויטה בתמונות</h2>
+    <h2 id="view-title" class="suite-sub">גלריה</h2>
     <SuiteGallery photos={suite.gallery} name={suite.name} />
   </section>
 
@@ -63,7 +63,7 @@ const others = suites.filter((s) => s.slug !== suite.slug);
         {suite.description.map((p) => <p>{p}</p>)}
       </div>
 
-      <h2 class="suite-sub">מה יש בסוויטה</h2>
+      <h2 class="suite-sub">מה כולל</h2>
       <ul role="list" class="amenities">
         {suite.amenities.map((a) => <li>{a}</li>)}
       </ul>
@@ -76,7 +76,7 @@ const others = suites.filter((s) => s.slug !== suite.slug);
         <span>ללילה, כולל מע״מ</span>
       </p>
       <p class="suite-book__note">עד {suite.maxGuests} אורחים. לילות חמישי ושישי בתוספת 20%.</p>
-      <a href={`/book?suite=${suite.slug}`} class="btn">להזמין את הסוויטה הזו</a>
+      <a href={`/book?suite=${suite.slug}`} class="btn">להזמין את {suite.name}</a>
     </aside>
   </div>
 

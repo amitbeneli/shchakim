@@ -9,7 +9,7 @@ import BookingBar from './BookingBar.astro';
 import { photos, src } from '../data/images';
 
 // two lines, revealed word by word
-const lines = [['כשהשמש', 'שוקעת,'], ['השמיים', 'נפתחים']];
+const lines = [['סוויטות', 'לתצפית', 'כוכבים'], ['על', 'שפת', 'מכתש', 'רמון']];
 const words = lines.flat();
 
 // Ridge outlines for the three rock planes, generated (seeded, so every build is the
@@ -92,12 +92,12 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
         {lines.map((line, li) => (
           <span class="r1__line" aria-hidden="true">
             {line.map((w, wi) => (
-              <span class="r1__word" style={`--i:${li * 2 + wi}`}>{w}</span>
+              <span class="r1__word" style={`--i:${li * 3 + wi}`}>{w}</span>
             ))}
           </span>
         ))}
       </h1>
-      <p class="r1__lead">תשע סוויטות על שפת מכתש רמון. בלי אורות עיר, בלי רעש. רק אתם והשמיים.</p>
+      <p class="r1__lead">תשע סוויטות עם מרפסות פתוחות, תקרות זכוכית וטלסקופים, הרחק מאורות העיר.</p>
       <div class="r1__actions">
         <a href="/book" class="btn">להזמין לילה</a>
         <a href="/suites" class="btn btn--ghost">הסוויטות</a>
