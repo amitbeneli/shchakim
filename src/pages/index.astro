@@ -493,6 +493,13 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     .close + :global(.r10) {
       padding-block-start: 2rem;
     }
+    /* The couple fills a portrait crop: start the photo lower so the copy sits in the
+       night sky above their heads; its dark top melts into the page through the shade */
+    .close__plate {
+      inset-block-start: 22%;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%);
+      mask-image: linear-gradient(to bottom, transparent, #000 22%);
+    }
   }
   .close__inner {
     display: grid;
