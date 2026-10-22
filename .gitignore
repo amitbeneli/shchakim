@@ -13,3 +13,7 @@ test-results/
 playwright-report/
 
 .vercel
+
+# kept locally, not published
+docs/brief.html
+.impeccable/review/
