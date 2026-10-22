@@ -74,62 +74,7 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
     }
   </ol>
 
-  <section class="compare container section" aria-labelledby="compare-title">
-    <h2 id="compare-title" data-reveal>להשוות בין הסוויטות</h2>
-    <div class="compare__scroll" data-reveal>
-      <table class="compare__table">
-        <thead>
-          <tr>
-            <td></td>
-            {suites.map((s) => <th scope="col">{s.name}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">מה מיוחד</th>
-            {suites.map((s) => <td>{s.highlight}</td>)}
-          </tr>
-          <tr>
-            <th scope="row">אורחים</th>
-            {suites.map((s) => <td>עד {s.maxGuests}</td>)}
-          </tr>
-          <tr>
-            <th scope="row">במקום</th>
-            {
-              suites.map((s) => (
-                <td>
-                  {s.units} {unitWord(s.slug)}
-                </td>
-              ))
-            }
-          </tr>
-          <tr>
-            <th scope="row">ללילה, כולל מע״מ</th>
-            {
-              suites.map((s) => (
-                <td>
-                  <bdi class="room__price">{formatPrice(s.nightly)}</bdi>
-                </td>
-              ))
-            }
-          </tr>
-          <tr>
-            <th scope="row"><span class="visually-hidden">הזמנה</span></th>
-            {
-              suites.map((s) => (
-                <td>
-                  <a href={`/book?suite=${s.slug}`} class="text-link">
-                    להזמין<span class="visually-hidden"> את {s.name}</span>
-                  </a>
-                </td>
-              ))
-            }
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="compare__note">לילות חמישי ושישי בתוספת 20%. הזמנה שכוללת לילה של חמישי או שישי היא לפחות שני לילות.</p>
-  </section>
+  <p class="container rooms__note">לילות חמישי ושישי בתוספת 20%. הזמנה שכוללת לילה של חמישי או שישי היא לפחות שני לילות.</p>
 </Base>
 
 <style>
@@ -236,55 +181,8 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
     margin-block-start: 0.5rem;
   }
 
-  /* the table scrolls inside its frame; nothing in this section may widen the page */
-  .compare {
-    overflow-x: clip;
-  }
-  .compare h2 {
-    font-size: var(--fs-h2);
-    margin-block-end: clamp(1.5rem, 4vw, 2.25rem);
-  }
-  .compare__scroll {
-    overflow-x: auto;
-    min-width: 0;
-    max-width: calc(100vw - 2 * var(--gutter));
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-  }
-  .compare__table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .compare__table th,
-  .compare__table td {
-    padding: 0.8rem 0.55rem;
-    font-size: var(--fs-small);
-    text-align: start;
-    vertical-align: top;
-    border-block-end: 1px solid var(--line);
-  }
-  .compare__table tr:last-child > * {
-    border-block-end: 0;
-  }
-  .compare__table thead th {
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: var(--fs-h3);
-  }
-  @media (min-width: 700px) {
-    .compare__table th,
-    .compare__table td {
-      padding: 1rem 1.1rem;
-      font-size: var(--fs-body);
-    }
-  }
-  .compare__table tbody th {
-    font-size: var(--fs-label);
-    font-weight: 600;
-    color: var(--sand);
-  }
-  .compare__note {
-    margin-block-start: 1rem;
+  .rooms__note {
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(4rem, 9vw, 6rem);
     color: var(--muted);
     font-size: var(--fs-small);
   }
