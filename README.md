@@ -16,7 +16,7 @@ npm run test:e2e     # Playwright: all pages in Chromium, WebKit (iPhone) and de
 
 ### Booking leads
 
-Bookings are posted to a Google Apps Script web app that appends a row to a Google Sheet (see `CLAUDE.md`, appendix A). Set the URL as an environment variable:
+Bookings are posted to a Google Apps Script web app (source: `docs/apps-script.gs`) that appends a row to a Google Sheet and sends a designed email to the owner and a confirmation to the guest. Set the URL as an environment variable:
 
 ```
 PUBLIC_LEAD_ENDPOINT=https://script.google.com/macros/s/…/exec
@@ -36,6 +36,8 @@ Without it, `npm run dev` simulates a successful send so the flow can be tested,
 | `src/data/` | Suites, add-ons, FAQ, reviews, constellations, mock availability |
 | `src/scripts/` | Client scripts (nav, moon path, sky map, cursor, reveals) |
 | `tests/` | Vitest unit tests and Playwright e2e smoke tests |
+| `public/photos/` | Self-hosted WebP photos with the colour grade baked in (`design/tools/bake-grade.mjs`) |
+| `marketing/` | Two Instagram feed ads and their copy |
 | `NOTES.md` / `SUBMISSION.md` | Decisions, trade-offs, photo credits, submission summary (Hebrew) |
 
-Photos: Unsplash (credits in `NOTES.md`).
+Photos: Unsplash, plus AI-generated interiors of the fictional lodge (all credited in `NOTES.md`).
