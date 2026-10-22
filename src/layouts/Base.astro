@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MoonPath from '../components/MoonPath.astro';
+import AmbientSound from '../components/AmbientSound.astro';
 // Self-hosted fonts (only the faces the system uses): Frank Ruhl Libre 500, Assistant 400/600
 import '@fontsource/frank-ruhl-libre/hebrew-500.css';
 import '@fontsource/frank-ruhl-libre/latin-500.css';
@@ -78,6 +79,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </main>
     <Footer />
     {!hideFab && <MoonPath />}
+    {!hideFab && <AmbientSound />}
 
     {
       !hideFab && (

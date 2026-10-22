@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from 'astro:transitions/client';
 import Calendar from './Calendar';
 import { addons as ADDONS, suites as SUITES, getSuite, pricingConfig as PRICING, type SuiteSlug } from '../../data/pricing';
-import { isBooked, isStayFree } from '../../data/booked';
+import { isBooked, isStayFree, loadAvailability } from '../../data/booked';
 import { addDays, diffDays, formatDateHe, isISODate, todayInIsrael, type ISODate } from '../../lib/dates';
 import { checkCoupon, couponError, findCoupon, normalizeCoupon, quote, shekels, stayError, type Quote } from '../../lib/pricing';
 import { isDarkNight, moonAge } from '../../lib/moon';
@@ -124,6 +124,11 @@ export default function Wizard() {
   const [sheet, setSheet] = useState(false);
   const headRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
+  // Live availability from the owner's sheet; bumps a version so the calendar redraws
+  const [availVersion, setAvailVersion] = useState(0);
+  useEffect(() => {
+    loadAvailability().then((changed) => changed && setAvailVersion((v) => v + 1));
+  }, []);
 
   // Hydrate: saved progress, then URL params on top
   useEffect(() => {
@@ -178,7 +183,7 @@ export default function Wizard() {
   // Before a suite is chosen a night is only blocked if every suite is taken
   const blocked = useMemo(
     () => (d: ISODate) => (s.suite ? isBooked(s.suite, d) : SUITES.every((x) => isBooked(x.slug, d))),
-    [s.suite],
+    [s.suite, availVersion],
   );
 
   /* ── Live quote ── */
