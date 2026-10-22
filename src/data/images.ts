@@ -37,7 +37,15 @@ export const photos = {
   coupleNight: { id: 'gen-couple-night', alt: 'זוג עטוף בשמיכה על מעקה המרפסת, מתחת לקשת שביל החלב מעל המכתש', caption: 'מרפסת סוויטה, אחרי חצות' },
   galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם ספה שקועה, אח טיח וחלונות רחבים אל המכתש', caption: 'הסלון בווילה' },
   // R7: the city side of the comparison (a real Tel Aviv night, Unsplash)
-  telAvivNight: { id: '1670702389707-e20984fab9f6', alt: 'מגדלי תל אביב בלילה, שמיים כתומים וריקים מכוכבים', caption: 'תל אביב, 23:00' },
+  // R7: one night frame over the crater, and its twin baked in code with a city's skyglow
+  // (tools/r7-city-sky.py: the same stars; the faint ones and the Milky Way lost in the glow)
+  r7Ramon: { id: 'gen-r7-ramon', alt: 'שביל החלב עולה מעל קרקעית מכתש רמון ומאות כוכבים', caption: 'מעל המכתש' },
+  r7City: { id: 'gen-r7-city', alt: 'אותו נוף ואותם שמיים תחת זוהר כתום של עיר, רק כוכבים בודדים נראים', caption: 'אותם שמיים עם אור של עיר' },
+  // The experiences, each showing the activity itself
+  xpDinner: { id: 'gen-xp-dinner', alt: 'שולחן נמוך ערוך לשניים על שפת המכתש, פנסים, נרות ומדורה קטנה בשעה כחולה', caption: 'ארוחת ערב במדבר', focus: '45% 75%' },
+  xpAstronomer: { id: 'gen-xp-astronomer', alt: 'מדריך מצביע בלייזר ירוק על כוכב, לידו טלסקופ גדול וזוג שמביט לשמיים', caption: 'תצפית מודרכת', focus: '60% 55%' },
+  xpPhoto: { id: 'gen-xp-photo', alt: 'מצלמה על חצובה מול שביל החלב, וצלם כורע לידה עם פנס ראש אדום', caption: 'סדנת צילום כוכבים', focus: '62% 55%' },
+  xpJeep: { id: 'gen-xp-jeep', alt: 'זוג עטוף בשמיכות ליד ג׳יפ פתוח על שפת המכתש, רגע לפני הזריחה', caption: 'ג׳יפ לזריחה', focus: '55% 60%' },
   ibex: { id: '1604080566273-928a568303fc', alt: 'יעל על סלע בשפת המכתש', caption: 'יעל על השפה' },
 } satisfies Record<string, Photo>;
 

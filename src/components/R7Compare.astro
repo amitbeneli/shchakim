@@ -1,5 +1,6 @@
 ---
-// R7: Tel Aviv vs Ramon, two real night photographs on one frame. The divider is a
+// R7: the same sky twice, one frame: the crater's dark night, and the same stars under a city's
+// skyglow (baked in code from that frame, so every surviving star sits in the same place). The divider is a
 // real role="slider": mouse, touch (pointer events) and keyboard (arrows follow the
 // screen in RTL, Home/End, PageUp/PageDown).
 import Photo from './Photo.astro';
@@ -9,16 +10,16 @@ import { photos } from '../data/images';
 <section class="r7" aria-labelledby="r7-title">
   <div class="container r7__head" data-reveal>
     <h2 id="r7-title">אותם שמיים, שני מקומות</h2>
-    <p>מעל תל אביב רואים בלילה טוב כמה עשרות כוכבים. מעל המכתש, אלפים. גררו את הקו וראו את ההבדל.</p>
+    <p>אותו לילה ואותם כוכבים. מעל עיר כמו תל אביב, האור של הרחובות מסתיר את כולם חוץ מכמה עשרות. מעל המכתש רואים אלפים. גררו את הקו וראו את ההבדל.</p>
   </div>
 
   <div class="container">
     <div class="r7__frame" data-r7 style="--pos: 50%">
       <div class="r7__sky r7__sky--ramon" aria-hidden="true">
-        <Photo photo={photos.coupleNight} decorative sizes="(min-width: 768px) 90vw, 100vw" width={1800} height={1012} />
+        <Photo photo={photos.r7Ramon} decorative sizes="(min-width: 768px) 90vw, 100vw" width={1800} height={1005} />
       </div>
       <div class="r7__sky r7__sky--city" aria-hidden="true">
-        <Photo photo={photos.telAvivNight} decorative sizes="(min-width: 768px) 90vw, 100vw" width={1800} height={1200} />
+        <Photo photo={photos.r7City} decorative sizes="(min-width: 768px) 90vw, 100vw" width={1800} height={1005} />
       </div>
       <span class="r7__tag r7__tag--ramon">מכתש רמון</span>
       <span class="r7__tag r7__tag--city">תל אביב</span>
@@ -89,12 +90,9 @@ import { photos } from '../data/images';
     user-select: none;
     -webkit-user-drag: none;
   }
-  /* same horizon height on both sides, so the line reads as one view */
-  .r7__sky--ramon :global(img) {
-    object-position: 70% 30%;
-  }
-  .r7__sky--city :global(img) {
-    object-position: 50% 45%;
+  /* one frame: both layers share the crop, so every star lines up across the divider */
+  .r7__sky :global(img) {
+    object-position: 50% 50%;
   }
   /* RTL: Ramon is revealed from the right edge, --pos = its share of the width */
   .r7__sky--city {
