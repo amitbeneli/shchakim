@@ -14,6 +14,8 @@ npm test             # Vitest: pricing, moon phases, validation, conditions
 npm run test:e2e     # Playwright: all pages in Chromium, WebKit (iPhone) and desktop
 ```
 
+CI (`.github/workflows/ci.yml`) runs `astro check`, Vitest and the Playwright suite (Chromium + WebKit) on every push to `main` and on every pull request.
+
 ### Booking leads
 
 Bookings are posted to a Google Apps Script web app (source: `docs/apps-script.gs`) that appends a row to a Google Sheet and sends a designed email to the owner and a confirmation to the guest. Set the URL as an environment variable:
