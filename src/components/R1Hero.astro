@@ -173,8 +173,8 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   }
   @media (max-width: 767px) {
     .r1__sun {
-      inset-inline-start: 68%;
-      top: 58%;
+      inset-inline-start: 66%;
+      top: 61%;
     }
   }
   .r1__sun span {
@@ -197,10 +197,27 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     background: radial-gradient(50% 50% at 62% 60%, rgb(242 168 104 / 0.55), rgb(199 90 60 / 0.18) 55%, transparent 75%);
     will-change: opacity;
   }
+  @media (max-width: 767px) {
+    .r1__glow {
+      top: 52%;
+      height: 34%;
+    }
+  }
+  /* --ridge-h: how much of the stage the rock covers (r1.ts reads it to drop the sun) */
+  .r1__stage {
+    --ridge-h: 0.42;
+  }
+  @media (max-width: 767px) {
+    /* Phones: lower, shorter rock, so the sky between the buttons and the rim is the sunset
+       itself, and the outline is barely enlarged (less of a cut-out look) */
+    .r1__stage {
+      --ridge-h: 0.3;
+    }
+  }
   .r1__ridge {
     inset-inline: 0;
     bottom: -1px;
-    height: 42%;
+    height: calc(var(--ridge-h) * 100%);
     will-change: transform;
   }
   .r1__ridge > * {
@@ -260,7 +277,7 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   }
   /* Depth: the far wall sits in dusk haze, the near rim is nearly black */
   .r1__ridge--back .r1__rock::after {
-    background: linear-gradient(to bottom, rgb(199 90 60 / 0.18) 15%, rgb(42 30 63 / 0.55) 45%, rgb(24 20 41 / 0.8));
+    background: linear-gradient(to bottom, rgb(196 112 82 / 0.5) 18%, rgb(150 80 78 / 0.32) 28%, rgb(42 30 63 / 0.55) 48%, rgb(24 20 41 / 0.8));
   }
   .r1__ridge--mid .r1__rock::after {
     background: linear-gradient(to bottom, rgb(42 30 63 / 0.35) 45%, rgb(16 17 34 / 0.85) 85%);
