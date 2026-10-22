@@ -482,6 +482,18 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
       radial-gradient(70% 45% at 75% 22%, rgb(11 14 26 / 0.55), transparent 70%),
       linear-gradient(to bottom, var(--night) 0%, rgb(11 14 26 / 0.5) 24%, rgb(11 14 26 / 0) 52%, rgb(11 14 26 / 0) 80%, var(--night) 100%);
   }
+  /* Phones: the rock and the couple run almost to the edge, the fade to night is short,
+     and the questions start right on it instead of after an empty band */
+  @media (max-width: 767px) {
+    .close__shade {
+      background:
+        radial-gradient(70% 45% at 75% 22%, rgb(11 14 26 / 0.55), transparent 70%),
+        linear-gradient(to bottom, var(--night) 0%, rgb(11 14 26 / 0.5) 24%, rgb(11 14 26 / 0) 52%, rgb(11 14 26 / 0) 90%, var(--night) 100%);
+    }
+    .close + :global(.r10) {
+      padding-block-start: 2rem;
+    }
+  }
   .close__inner {
     display: grid;
     justify-items: start;
