@@ -13,6 +13,8 @@ import { RULE_TEXT } from '../lib/conditions';
   </div>
 
   <div class="r6__card" data-r6 aria-live="polite" aria-busy="true">
+    <!-- Tonight's real moon phase, drawn large: the visual anchor of the section -->
+    <div class="r6__moon" data-r6-moon-big aria-hidden="true"></div>
     <!-- Loading skeleton: same shape as the result, so nothing jumps -->
     <div class="r6__state r6__state--loading" data-r6-loading>
       <span class="r6__sk r6__sk--title"></span>
@@ -24,17 +26,12 @@ import { RULE_TEXT } from '../lib/conditions';
     <div class="r6__state" data-r6-result hidden>
       <p class="r6__rating"><span class="visually-hidden">תנאי התצפית הלילה: </span><span data-r6-rating></span></p>
       <p class="r6__text" data-r6-text></p>
-      <dl class="r6__stats">
-        <div>
-          <dt>עננות ממוצעת</dt>
-          <dd><bdi dir="ltr" data-r6-cloud></bdi></dd>
-        </div>
-        <div>
-          <dt>תאורת הירח</dt>
-          <dd><span data-r6-moon-ico></span><bdi dir="ltr" data-r6-moon></bdi></dd>
-        </div>
-      </dl>
-      <a class="r6__cta" data-r6-cta href="/book">להזמין את הלילה הזה</a>
+      <p class="r6__stats">
+        עננות ממוצעת <bdi class="r6__num" dir="ltr" data-r6-cloud></bdi>
+        <span class="r6__dot" aria-hidden="true"></span>
+        הירח מואר <bdi class="r6__num" dir="ltr" data-r6-moon></bdi>
+      </p>
+      <a class="btn r6__cta" data-r6-cta href="/book">להזמין את הלילה הזה</a>
     </div>
 
     <div class="r6__state" data-r6-error hidden>
@@ -59,7 +56,7 @@ import { RULE_TEXT } from '../lib/conditions';
   }
   @media (min-width: 900px) {
     .r6 {
-      grid-template-columns: 1fr 1.1fr;
+      grid-template-columns: 0.8fr 1.2fr;
       gap: clamp(3rem, 6vw, 6rem);
     }
   }
@@ -76,14 +73,54 @@ import { RULE_TEXT } from '../lib/conditions';
     max-width: 34ch;
     font-size: var(--step-1);
   }
+  /* No card: the moon, the verdict, one sentence of numbers, one action */
   .r6__card {
+    position: relative;
     display: grid;
-    gap: 1.25rem;
-    padding: clamp(1.5rem, 4vw, 2.25rem);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background: var(--night-2);
-    min-height: 20rem;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    min-height: 15rem;
+  }
+  .r6__moon {
+    position: relative;
+    width: clamp(120px, 22vw, 220px);
+    aspect-ratio: 1;
+  }
+  .r6__moon::before {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(244 241 232 / 0.14), transparent 62%);
+  }
+  .r6__moon :global(svg) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .r6__card > .r6__state,
+  .r6__card > .r6__rule {
+    grid-column: 2;
+  }
+  .r6__rule {
+    grid-row: 2;
+  }
+  @media (max-width: 599px) {
+    .r6__card {
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+    .r6__card > .r6__state,
+    .r6__card > .r6__rule {
+      grid-column: 1;
+    }
+    .r6__rule {
+      grid-row: auto;
+    }
+    .r6__moon {
+      width: 120px;
+    }
   }
   .r6__state {
     display: grid;
@@ -92,9 +129,9 @@ import { RULE_TEXT } from '../lib/conditions';
   }
   .r6__rating {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
+    font-size: clamp(3.2rem, 2rem + 5vw, 5.5rem);
     font-weight: 500;
-    line-height: 1;
+    line-height: 0.95;
   }
   .r6__rating[data-rating='excellent'] {
     color: var(--sand);
@@ -102,34 +139,31 @@ import { RULE_TEXT } from '../lib/conditions';
   .r6__text {
     color: var(--muted);
     max-width: 40ch;
+    font-size: var(--fs-lead);
   }
   .r6__stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 0.5rem 0 0;
-    padding-block-start: 1rem;
-    border-block-start: 1px solid var(--line);
-  }
-  .r6__stats dt {
-    color: var(--muted);
-    font-size: var(--step--1);
-  }
-  .r6__stats dd {
-    margin: 0.25rem 0 0;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.6rem;
+    color: var(--muted);
+  }
+  .r6__num {
     font-family: var(--font-display);
-    font-size: var(--step-2);
+    font-size: 1.6rem;
+    color: var(--starlight);
+  }
+  .r6__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--sand);
+    align-self: center;
+    margin-inline: 0.4rem;
   }
   .r6__cta {
     justify-self: start;
-    color: var(--sand);
-    font-weight: 600;
-    text-decoration: none;
-    padding-block: 0.4rem;
-    border-block-end: 1px solid rgb(217 168 108 / 0.4);
+    margin-block-start: 0.4rem;
   }
   .r6__err-title {
     font-family: var(--font-display);
@@ -145,12 +179,10 @@ import { RULE_TEXT } from '../lib/conditions';
     cursor: pointer;
   }
   .r6__rule {
-    align-self: end;
-    font-size: 0.8rem;
+    font-size: var(--fs-label);
     color: var(--muted);
     line-height: 1.6;
-    padding-block-start: 0.75rem;
-    border-block-start: 1px solid var(--line);
+    max-width: 52ch;
   }
   .r6__sk {
     display: block;
@@ -230,6 +262,7 @@ import { RULE_TEXT } from '../lib/conditions';
     const today = todayInIsrael();
     const moon = moonForNight(today);
     const moonPct = Math.round(moon.k * 100);
+    $('[data-r6-moon-big]').innerHTML = moonSvg(moon.k, moon.waxing, 240);
     show('loading');
 
     try {
@@ -243,7 +276,7 @@ import { RULE_TEXT } from '../lib/conditions';
       $('[data-r6-text]').textContent = RATING_TEXT[r];
       $('[data-r6-cloud]').textContent = `${Math.round(cloud)}%`;
       $('[data-r6-moon]').textContent = `${moonPct}%`;
-      $('[data-r6-moon-ico]').innerHTML = moonSvg(moon.k, moon.waxing, 28);
+
       $<HTMLAnchorElement>('[data-r6-cta]').href = `/book?date=${today}`;
       show('result');
     } catch {
