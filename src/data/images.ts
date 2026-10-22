@@ -49,7 +49,9 @@ const widths = [480, 800, 1200, 1800] as const;
  *  kept only for the hero's rock layers, which carry their own tint. */
 export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
-  return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp`;
+  // gen-* files were regenerated under the same names: the query busts browser and CDN caches
+  const v = p.id.startsWith('gen-') ? '?v=2' : '';
+  return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp${v}`;
 }
 
 export function srcset(p: Photo) {
