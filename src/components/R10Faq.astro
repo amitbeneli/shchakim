@@ -28,7 +28,7 @@ import { faq } from '../data/faq';
   .r10 {
     display: grid;
     gap: 2rem;
-    padding-block: clamp(4rem, 10vw, 7rem);
+    padding-block: clamp(3rem, 10vw, 7rem);
   }
   @media (min-width: 900px) {
     .r10 {
@@ -41,7 +41,7 @@ import { faq } from '../data/faq';
     font-weight: 400;
   }
   /* A guest booklet, not a hairline accordion: questions set in the display face,
-     each with a small moon that waxes from crescent to full when it opens */
+     each with a plus that becomes a minus when it opens */
   .r10__list {
     display: grid;
     gap: 0.25rem;
@@ -72,32 +72,37 @@ import { faq } from '../data/faq';
     flex: 1;
     transition: color 0.25s ease;
   }
+  /* plus that turns into a minus: the clearest open/close cue */
   summary i {
     position: relative;
     flex-shrink: 0;
-    order: -1;
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--line-strong);
     border-radius: 50%;
-    background: var(--starlight);
-    box-shadow: 0 0 0 1px rgb(217 168 108 / 0.45);
-    overflow: hidden;
+    transition: border-color 0.25s ease;
   }
-  /* the shadow of the moon: slides off to reveal a full moon */
+  summary i::before,
   summary i::after {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: var(--night);
-    transform: translateX(-28%);
-    transition: transform 0.6s var(--ease-out);
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 1.5px;
+    margin: -0.75px 0 0 -6px;
+    background: currentColor;
+    transition: transform 0.35s var(--ease-out);
+  }
+  summary i::after {
+    transform: rotate(90deg);
   }
   details[open] summary i {
-    box-shadow: 0 0 12px 1px rgb(244 241 232 / 0.35);
+    border-color: var(--sand);
+    color: var(--sand);
   }
   details[open] summary i::after {
-    transform: translateX(-110%);
+    transform: rotate(0deg);
   }
   details[open] summary span {
     color: var(--sand);
@@ -111,14 +116,15 @@ import { faq } from '../data/faq';
     overflow: hidden;
   }
   .r10__body p {
-    color: var(--muted);
+    color: rgb(244 241 232 / 0.88);
     padding-block: 0 1.3rem;
-    padding-inline: calc(2rem + 18px) 1rem;
+    padding-inline: 1rem calc(2rem + 28px);
     max-width: 44rem;
     font-size: var(--fs-body);
     line-height: 1.75;
   }
   @media (prefers-reduced-motion: reduce) {
+    summary i::before,
     summary i::after {
       transition: none;
     }

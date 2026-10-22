@@ -113,19 +113,30 @@ export function initHeader() {
     .matchMedia('(min-width: 768px)')
     .addEventListener('change', (e) => e.matches && setOpen(false, false), { signal });
 
-  /* ── Floating "book" CTA (mobile) — appears once the hero is out of view ── */
+  /* ── Floating "book" CTA (mobile) ──
+     Shown only when nothing else on screen already offers booking: it hides over the hero,
+     over any other booking button or the availability search, and over the footer, so it
+     never doubles a visible CTA or covers the end of the page. */
   const fab = document.querySelector<HTMLElement>('[data-fab]');
   if (fab) {
     const hero = document.querySelector('[data-hero]');
-    const show = (v: boolean) => fab.classList.toggle('is-visible', v);
-    if (hero) {
-      const io = new IntersectionObserver(([entry]) => show(!entry.isIntersecting), {
-        threshold: 0,
-      });
-      io.observe(hero);
-      signal.addEventListener('abort', () => io.disconnect());
-    } else {
-      const check = () => show(window.scrollY > window.innerHeight * 0.6);
+    const blockers = [
+      ...document.querySelectorAll<HTMLElement>('[data-hero], a.btn[href^="/book"]:not([data-fab]), .bbar, .site-footer'),
+    ];
+    const onScreen = new Set<Element>();
+    let pastTop = !!hero; // pages without a hero: wait for 60% of a screen of scroll
+    const update = () => fab.classList.toggle('is-visible', pastTop && onScreen.size === 0);
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) e.isIntersecting ? onScreen.add(e.target) : onScreen.delete(e.target);
+      update();
+    });
+    blockers.forEach((el) => io.observe(el));
+    signal.addEventListener('abort', () => io.disconnect());
+    if (!hero) {
+      const check = () => {
+        pastTop = window.scrollY > window.innerHeight * 0.6;
+        update();
+      };
       check();
       window.addEventListener('scroll', check, { passive: true, signal });
     }

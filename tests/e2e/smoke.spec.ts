@@ -82,3 +82,38 @@ test('reduced motion: hero is a static night, nothing hidden', async ({ browser 
   expect(hidden).toBe(0);
   await ctx.close();
 });
+
+test('FAQ: a native accordion that works from the keyboard', async ({ page }) => {
+  await page.goto('/');
+  const first = page.locator('.r10 details').first();
+  await first.locator('summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(first).toHaveAttribute('open', '');
+  await page.keyboard.press('Space');
+  await expect(first).not.toHaveAttribute('open', '');
+  expect(await page.locator('.r10 details').count()).toBeGreaterThanOrEqual(8);
+});
+
+test('R7: the slider moves with the keyboard and reports its value', async ({ page }) => {
+  await page.goto('/');
+  const handle = page.locator('[data-r7-handle]');
+  await expect(handle).toHaveAttribute('role', 'slider');
+  await handle.focus();
+  await page.keyboard.press('Home');
+  await expect(handle).toHaveAttribute('aria-valuenow', '0');
+  await page.keyboard.press('End');
+  await expect(handle).toHaveAttribute('aria-valuenow', '100');
+  // RTL: the arrow follows the screen, so ArrowRight moves the divider right (less Ramon)
+  await page.keyboard.press('ArrowRight');
+  await expect(handle).toHaveAttribute('aria-valuenow', '95');
+});
+
+test('floating book button never doubles a booking button on screen', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'the floating button is a phone feature');
+  await page.goto('/');
+  const fab = page.locator('[data-fab]');
+  await page.locator('.close .btn').scrollIntoViewIfNeeded();
+  await expect(fab).not.toHaveClass(/is-visible/);
+  await page.locator('.site-footer').scrollIntoViewIfNeeded();
+  await expect(fab).not.toHaveClass(/is-visible/);
+});

@@ -111,7 +111,7 @@ export const addons: Addon[] = [
     pricing: 'perPerson',
     duration: 'כשעתיים',
     summary: 'טלסקופים גדולים, לייזר שמצביע על הכוכבים, והסיפורים שמאחוריהם.',
-    photo: photos.galaxiaRoof,
+    photo: photos.craterStars,
   },
   {
     id: 'photo',
@@ -120,7 +120,7 @@ export const addons: Addon[] = [
     pricing: 'perBooking',
     duration: 'כשלוש שעות',
     summary: 'חצובה, חשיפה ארוכה ושביל החלב. יוצאים עם תמונה אחת שתרצו לתלות.',
-    photo: photos.heroNight,
+    photo: photos.starTrailsMesa,
   },
   {
     id: 'dinner',
@@ -137,8 +137,8 @@ export const addons: Addon[] = [
     price: 220,
     pricing: 'perPerson',
     duration: 'כשלוש שעות',
-    summary: 'יוצאים בחושך, מגיעים לנקודה גבוהה, ורואים את המכתש מתמלא אור.',
-    photo: photos.craterRed,
+    summary: 'יוצאים בחושך, כשעה לפני הזריחה (השעה משתנה לפי העונה), ורואים את המכתש מתמלא אור.',
+    photo: photos.road,
   },
 ];
 

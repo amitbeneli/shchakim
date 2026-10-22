@@ -51,7 +51,7 @@ const stops = [
   },
   {
     icon: ['M10 25 33 12l3 5.5L13 30.5Z', 'M6.5 27.5l3.2-1.8', 'M33 12l4-2.3 3 5.5-4 2.3', 'M22 25l-7 16M22 25l7 16M22 25v16'],
-    photo: photos.kochavRoom,
+    photo: photos.galaxiaLiving,
     title: 'חדרים שנבנו לתצפית',
     text: 'מרפסות פתוחות, תקרות זכוכית וטלסקופים. כל סוויטה מכוונת אל השמיים.',
   },
@@ -64,7 +64,8 @@ const stops = [
 ];
 
 // The night, by the hour: each add-on placed when it happens
-const schedule: Record<string, string> = { dinner: '19:30', astronomer: '21:30', photo: '23:30', jeep: '05:15' };
+// The jeep leaves before sunrise, which moves with the seasons, so it gets no fixed clock time
+const schedule: Record<string, string> = { dinner: '19:30', astronomer: '21:30', photo: '23:30', jeep: 'לפני הזריחה' };
 const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep'].indexOf(a.id) - ['dinner', 'astronomer', 'photo', 'jeep'].indexOf(b.id));
 ---
 
@@ -174,9 +175,11 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
       {
         night.map((a, i) => (
           <li class="night__row" data-reveal style={`--d:${i}`}>
-            <time class="night__time">
-              <bdi dir="ltr">{schedule[a.id]}</bdi>
-            </time>
+            {/^\d/.test(schedule[a.id]) ? (
+              <p class="night__time"><bdi dir="ltr">{schedule[a.id]}</bdi></p>
+            ) : (
+              <p class="night__time night__time--word">{schedule[a.id]}</p>
+            )}
             <div class="night__body">
               <h3>{a.name}</h3>
               <p>{a.summary}</p>
@@ -231,7 +234,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   /* ── The place ── */
   /* An establishing shot, edge to edge, then the words and the facts beneath it */
   .place {
-    padding-block: clamp(4rem, 9vw, 7rem) clamp(1.5rem, 4vw, 5rem);
+    padding-block: clamp(3rem, 9vw, 7rem) clamp(1.5rem, 4vw, 5rem);
   }
   .place__photo {
     aspect-ratio: 4 / 5;
@@ -309,7 +312,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── Why here ── */
   .why {
-    padding-block-start: clamp(4rem, 9vw, 7rem);
+    padding-block-start: clamp(3rem, 9vw, 7rem);
   }
   .why__head {
     margin-block-end: clamp(1.5rem, 4vw, 2.5rem);
@@ -325,6 +328,15 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     min-height: min(92svh, 860px);
     display: grid;
     align-items: end;
+  }
+  /* Phones: three chapters at full height ran to over two screens; two-thirds each still reads as a photo chapter */
+  @media (max-width: 767px) {
+    .why__ch {
+      min-height: min(66svh, 600px);
+    }
+    .place__photo {
+      aspect-ratio: 1;
+    }
   }
   .why__plate {
     position: absolute;
@@ -375,7 +387,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── The night, by the hour ── */
   .night {
-    padding-block: clamp(5rem, 11vw, 9rem);
+    padding-block: clamp(3.5rem, 11vw, 9rem);
   }
   .night__head {
     display: grid;
@@ -426,6 +438,10 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     line-height: 1;
     color: var(--sand);
     font-variant-numeric: tabular-nums lining-nums;
+  }
+  .night__time--word {
+    font-size: clamp(1.1rem, 0.95rem + 0.8vw, 1.6rem);
+    line-height: 1.2;
   }
   .night__body {
     display: grid;

@@ -38,7 +38,7 @@ const year = new Date().getFullYear();
 <style>
   .site-footer {
     border-block-start: 1px solid var(--line);
-    padding-block: clamp(3rem, 8vw, 5rem) calc(2rem + env(safe-area-inset-bottom));
+    padding-block: clamp(2.5rem, 8vw, 5rem) calc(2rem + env(safe-area-inset-bottom));
     background: linear-gradient(to bottom, var(--night), var(--night-2));
     color: var(--muted);
   }
@@ -69,6 +69,19 @@ const year = new Date().getFullYear();
   .site-footer ul {
     display: grid;
     gap: 0.25rem;
+  }
+  /* Phones: the links in two columns, so the footer is short */
+  @media (max-width: 767px) {
+    .site-footer__grid {
+      gap: 2rem;
+    }
+    .site-footer ul {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 1.5rem;
+    }
+    .site-footer__bottom {
+      margin-block-start: 2rem;
+    }
   }
   .site-footer a {
     text-decoration: none;
