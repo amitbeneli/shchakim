@@ -99,6 +99,7 @@ import { photos } from '../data/images';
   /* RTL: Ramon is revealed from the right edge, --pos = its share of the width */
   .r7__sky--city {
     clip-path: inset(0 var(--pos) 0 0);
+    will-change: clip-path;
   }
   .r7__tag {
     position: absolute;
@@ -180,9 +181,14 @@ import { photos } from '../data/images';
 
     // value = Ramon's share of the width, measured from the right edge
     let value = 50;
+    let raf = 0;
     const set = (v: number) => {
       value = Math.max(0, Math.min(100, v));
-      frame.style.setProperty('--pos', `${value}%`);
+      if (!raf)
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          frame.style.setProperty('--pos', `${value}%`);
+        });
       handle.setAttribute('aria-valuenow', String(Math.round(value)));
       handle.setAttribute(
         'aria-valuetext',

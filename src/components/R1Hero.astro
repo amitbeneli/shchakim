@@ -81,7 +81,7 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     {
       (['back', 'mid', 'front'] as const).map((k) => (
         <div class={`r1__ridge r1__ridge--${k}`} data-r1-ridge={k} aria-hidden="true" style={`--mask:${mask(outlines[k])}`}>
-          <div class="r1__rock"><span style={`--rs:url(${src(rocks[k], k === 'back' ? 800 : 480)});--rl:url(${src(rocks[k], 1800)})`}></span></div>
+          <div class="r1__rock"><span style={`--rs:url(${src(rocks[k], k === 'back' ? 800 : 480, true)});--rl:url(${src(rocks[k], 1800, true)})`}></span></div>
           <div class="r1__shade" data-r1-shade></div>
         </div>
       ))

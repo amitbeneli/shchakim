@@ -79,12 +79,12 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   {/* The hero's rock layers are CSS backgrounds (masked); tell the browser about them early */}
   {
     ([['craterDusk', 800], ['craterRed', 480], ['rimCliff', 480]] as const).map(([k, w]) => (
-      <link slot="head" rel="preload" as="image" href={src(photos[k], w)} media="(max-width: 899px)" fetchpriority="high" />
+      <link slot="head" rel="preload" as="image" href={src(photos[k], w, true)} media="(max-width: 899px)" fetchpriority="high" />
     ))
   }
   {
     (['craterDusk', 'craterRed', 'rimCliff'] as const).map((k) => (
-      <link slot="head" rel="preload" as="image" href={src(photos[k], 1800)} media="(min-width: 900px)" />
+      <link slot="head" rel="preload" as="image" href={src(photos[k], 1800, true)} media="(min-width: 900px)" />
     ))
   }
 

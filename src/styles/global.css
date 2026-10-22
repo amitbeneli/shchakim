@@ -337,7 +337,7 @@ button {
 }
 /* Every <Photo> carries the shared grade */
 .graded {
-  filter: url(#ramon-grade);
+  /* the grade is baked into the image files; no live filter (it cost a repaint per frame) */
 }
 /* A low scrim under the caption only (not a full-frame overlay) */
 .plate::after {

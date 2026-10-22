@@ -1,5 +1,5 @@
 // Every photo is a real photograph of Makhtesh Ramon / Mitzpe Ramon (Unsplash licence,
-// credits in NOTES.md). They ship under one duotone grade (#ramon-grade in the layout),
+// credits in NOTES.md). They ship under one duotone grade, baked into the files,
 // so photos from different photographers read as one archive of one place.
 // Two night photos (starTrailsMesa, craterStars) have a camp at their base: they are only
 // used as square plates cropped to sky and rock (focus), never in a gallery or lightbox.
@@ -45,9 +45,11 @@ export const photos = {
 // depend on a third-party image CDN at load time.
 const widths = [480, 800, 1200, 1800] as const;
 
-export function src(p: Photo, w = 1200) {
+/** The grade is baked into the files (design/tools/bake-grade.mjs); raw = the ungraded copy,
+ *  kept only for the hero's rock layers, which carry their own tint. */
+export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
-  return `/photos/${p.id}-${fit}.webp`;
+  return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp`;
 }
 
 export function srcset(p: Photo) {
