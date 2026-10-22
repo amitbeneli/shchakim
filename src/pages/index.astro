@@ -9,7 +9,6 @@ import R7Compare from '../components/R7Compare.astro';
 import R8Reviews from '../components/R8Reviews.astro';
 import R10Faq from '../components/R10Faq.astro';
 import BookingBar from '../components/BookingBar.astro';
-import SuiteGallery from '../components/SuiteGallery.astro';
 import { site } from '../data/site';
 import { addons } from '../data/pricing';
 import { photos, src } from '../data/images';
@@ -133,15 +132,6 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   <R4Suites />
 
-  <!-- THE PLACE IN PHOTOS: the suites and the crater around them -->
-  <section class="album container section" aria-labelledby="album-title">
-    <div class="album__head" data-reveal>
-      <h2 id="album-title">המקום בתמונות</h2>
-      <p>הסוויטות, הגג והנוף מהמרפסות.</p>
-    </div>
-    <SuiteGallery photos={[photos.makhteshRoom, photos.kochavRoom, photos.galaxiaRoof, photos.kochavBath, photos.makhteshDeck, photos.galaxiaLiving, photos.heroNight, photos.lodgeExterior]} name="שחקים" variant="wide" label="תמונות מהמקום" />
-  </section>
-
   <R6Conditions />
 
   <!-- WHY HERE: three chapters, each a full-bleed photograph with its map symbol drawing itself -->
@@ -237,18 +227,6 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     .quick {
       display: none;
     }
-  }
-  .album__head {
-    display: grid;
-    gap: 0.6rem;
-    margin-block-end: clamp(1.5rem, 3vw, 2.25rem);
-  }
-  .album__head h2 {
-    font-size: var(--fs-h2);
-  }
-  .album__head p {
-    color: var(--muted);
-    max-width: 44ch;
   }
   /* ── The place ── */
   /* An establishing shot, edge to edge, then the words and the facts beneath it */

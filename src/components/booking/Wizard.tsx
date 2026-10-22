@@ -378,6 +378,9 @@ export default function Wizard() {
         <li>
           <Check /> נחזור אליכם לאישור תוך יום
         </li>
+        <li class="bk-trust__terms">
+          <a href="/terms">התקנון המלא</a>
+        </li>
       </ul>
     </div>
   );

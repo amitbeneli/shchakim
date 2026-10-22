@@ -814,6 +814,13 @@
   align-items: center;
   gap: 0.5rem;
 }
+/* lines up with the text of the items above (icon 1rem + gap) */
+.bk-trust__terms {
+  padding-inline-start: 1.5rem;
+}
+.bk-trust__terms a {
+  color: var(--sand);
+}
 .bk-ico {
   width: 1rem;
   height: 1rem;

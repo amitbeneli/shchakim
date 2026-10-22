@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const routes = ['/', '/suites', '/suites/makhtesh', '/suites/kochav', '/suites/galaxia', '/experiences', '/story', '/book', '/thanks', '/accessibility'];
+const routes = ['/', '/suites', '/suites/makhtesh', '/suites/kochav', '/suites/galaxia', '/experiences', '/story', '/book', '/thanks', '/accessibility', '/terms'];
 
 for (const route of routes) {
   test(`${route}: RTL, title, no horizontal scroll, no console errors`, async ({ page }) => {
