@@ -42,7 +42,7 @@ export const photos = {
   r7Ramon: { id: 'gen-r7-ramon', alt: 'שביל החלב עולה מעל קרקעית מכתש רמון ומאות כוכבים', caption: 'מעל המכתש' },
   r7City: { id: 'gen-r7-city', alt: 'אותו נוף ואותם שמיים תחת זוהר כתום של עיר, רק כוכבים בודדים נראים', caption: 'אותם שמיים עם אור של עיר' },
   // The experiences, each showing the activity itself
-  xpDinner: { id: 'gen-xp-dinner', alt: 'שולחן נמוך ערוך לשניים על שפת המכתש, פנסים, נרות ומדורה קטנה בשעה כחולה', caption: 'ארוחת ערב במדבר', focus: '45% 75%' },
+  xpDinner: { id: 'gen-xp-dinner', alt: 'שולחן נמוך ערוך על מרפסת אבן מעל המכתש, כריות ישיבה, פנסים, נרות ומדורה בשעה כחולה', caption: 'ארוחת ערב במדבר', focus: '50% 62%' },
   xpAstronomer: { id: 'gen-xp-astronomer', alt: 'מדריך מצביע בלייזר ירוק על כוכב, לידו טלסקופ גדול וזוג שמביט לשמיים', caption: 'תצפית מודרכת', focus: '60% 55%' },
   xpPhoto: { id: 'gen-xp-photo', alt: 'מצלמה על חצובה מול שביל החלב, וצלם כורע לידה עם פנס ראש אדום', caption: 'סדנת צילום כוכבים', focus: '62% 55%' },
   xpJeep: { id: 'gen-xp-jeep', alt: 'זוג עטוף בשמיכות ליד ג׳יפ פתוח על שפת המכתש, רגע לפני הזריחה', caption: 'ג׳יפ לזריחה', focus: '55% 60%' },
@@ -58,7 +58,7 @@ const widths = [480, 800, 1200, 1800] as const;
 export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
   // gen-* files were regenerated under the same names: the query busts browser and CDN caches
-  const v = p.id.startsWith('gen-') ? '?v=2' : '';
+  const v = p.id.startsWith('gen-') ? '?v=3' : '';
   return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp${v}`;
 }
 
