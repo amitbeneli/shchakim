@@ -97,7 +97,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     <BookingBar id="bb-quick" />
   </section>
 
-  <!-- THE PLACE: the lodge on the rim, then the facts told as one sentence -->
+  <!-- THE PLACE: the lodge on the rim, then the words and the facts -->
   <section class="place" aria-labelledby="place-title">
     <figure class="plate place__photo" data-media>
       <Photo photo={photos.lodgeExterior} sizes="100vw" width={1800} height={1012} />
@@ -109,13 +109,24 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
         שחקים נמצא על השפה הצפונית של מכתש רמון, מול נוף פתוח לאורך המכתש כולו. בנינו אותו בשביל דבר אחד: לילות של
         כוכבים.
       </p>
-      <!-- The business facts as one sentence, figures set large inside the words (they still count up) -->
-      <p class="place__facts" data-reveal style="--d:2">
-        <bdi class="fig" data-count={site.stats.suites}>{site.stats.suites}</bdi> סוויטות על שפת המצוק,
-        יותר מ־<bdi class="fig" data-count={site.stats.clearNights}>{site.stats.clearNights}</bdi> לילות צלולים בשנה,
-        ו־<bdi class="fig" data-count={site.stats.guests}>{site.stats.guests.toLocaleString('he-IL')}</bdi> אורחים מאז {site.openedYear},
-        שדירגו אותנו <bdi class="fig" data-count={site.stats.rating} data-decimals="1">{site.stats.rating}</bdi> ב־{site.stats.reviews} ביקורות.
-      </p>
+      <dl class="legend" data-reveal style="--d:2" aria-label="שחקים במספרים">
+        <div>
+          <dt>סוויטות בשלושה סוגים</dt>
+          <dd><bdi data-count={site.stats.suites}>{site.stats.suites}</bdi></dd>
+        </div>
+        <div>
+          <dt>לילות צלולים בשנה</dt>
+          <dd><bdi dir="ltr"><span data-count={site.stats.clearNights}>{site.stats.clearNights}</span>+</bdi></dd>
+        </div>
+        <div>
+          <dt>אורחים מאז {site.openedYear}</dt>
+          <dd><bdi data-count={site.stats.guests}>{site.stats.guests.toLocaleString('he-IL')}</bdi></dd>
+        </div>
+        <div>
+          <dt>דירוג ממוצע, {site.stats.reviews} ביקורות</dt>
+          <dd><bdi data-count={site.stats.rating} data-decimals="1">{site.stats.rating}</bdi></dd>
+        </div>
+      </dl>
       <a href="/story" class="text-link" data-reveal style="--d:3">הסיפור שלנו</a>
     </div>
   </section>
@@ -269,7 +280,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   }
   @media (min-width: 960px) {
     .place__text {
-      grid-template-columns: 0.8fr 1.2fr;
+      grid-template-columns: 1fr 1fr;
       column-gap: clamp(2rem, 6vw, 6rem);
       align-items: start;
     }
@@ -278,7 +289,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     .place__text .text-link {
       grid-column: 1;
     }
-    .place__facts {
+    .place__text .legend {
       grid-column: 2;
       grid-row: 1 / span 3;
     }
@@ -292,19 +303,38 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     max-width: 38ch;
   }
 
-  .place__facts {
-    font-family: var(--font-display);
-    font-size: clamp(1.45rem, 1rem + 1.9vw, 2.35rem);
-    line-height: 1.5;
-    color: var(--muted);
-    max-width: 30ch;
-    text-wrap: pretty;
+  /* The business facts, set as type: large figures, a quiet label, hairlines between */
+  .legend {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-block-start: 1px solid var(--line-strong);
   }
-  .place__facts .fig {
-    font-size: 1.55em;
+  .legend > div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    padding: 1.4rem 0 1.4rem;
+    border-block-end: 1px solid var(--line);
+  }
+  .legend > div:nth-child(odd) {
+    padding-inline-end: 1.25rem;
+  }
+  .legend > div:nth-child(even) {
+    padding-inline-start: 1.25rem;
+    border-inline-start: 1px solid var(--line);
+  }
+  .legend dt {
+    font-size: var(--fs-small);
+    color: var(--muted);
+  }
+  .legend dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.6rem + 1.8vw, 3.25rem);
     line-height: 1;
-    color: var(--starlight);
-    font-variant-numeric: lining-nums;
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
   /* ── Why here ── */
