@@ -1,9 +1,9 @@
 ---
-// R7: Tel Aviv vs Ramon. Both skies are drawn in code from ONE seeded star
-// field (brief bonus): Ramon shows every star + the Milky Way; Tel Aviv shows
-// only the brightest few through an orange light-pollution glow.
-// The divider is a real role="slider": mouse, touch (pointer events) and
-// keyboard (arrows follow the screen in RTL, Home/End, PageUp/PageDown).
+// R7: Tel Aviv vs Ramon, two real night photographs on one frame. The divider is a
+// real role="slider": mouse, touch (pointer events) and keyboard (arrows follow the
+// screen in RTL, Home/End, PageUp/PageDown).
+import Photo from './Photo.astro';
+import { photos } from '../data/images';
 ---
 
 <section class="r7" aria-labelledby="r7-title">
@@ -14,8 +14,12 @@
 
   <div class="container">
     <div class="r7__frame" data-r7 style="--pos: 50%">
-      <canvas class="r7__sky r7__sky--ramon" data-r7-ramon aria-hidden="true"></canvas>
-      <canvas class="r7__sky r7__sky--city" data-r7-city aria-hidden="true"></canvas>
+      <div class="r7__sky r7__sky--ramon" aria-hidden="true">
+        <Photo photo={photos.coupleNight} decorative sizes="(min-width: 768px) 90vw, 100vw" width={1800} height={1012} />
+      </div>
+      <div class="r7__sky r7__sky--city" aria-hidden="true">
+        <Photo photo={photos.telAvivNight} decorative sizes="(min-width: 768px) 90vw, 100vw" width={1800} height={1200} />
+      </div>
       <span class="r7__tag r7__tag--ramon">מכתש רמון</span>
       <span class="r7__tag r7__tag--city">תל אביב</span>
       <div
@@ -76,6 +80,21 @@
     inset: 0;
     width: 100%;
     height: 100%;
+  }
+  .r7__sky :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  /* same horizon height on both sides, so the line reads as one view */
+  .r7__sky--ramon :global(img) {
+    object-position: 70% 30%;
+  }
+  .r7__sky--city :global(img) {
+    object-position: 50% 45%;
   }
   /* RTL: Ramon is revealed from the right edge, --pos = its share of the width */
   .r7__sky--city {
@@ -152,217 +171,12 @@
 </style>
 
 <script>
-  // Deterministic PRNG so both canvases share one star field
-  function mulberry32(seed: number) {
-    return () => {
-      seed |= 0;
-      seed = (seed + 0x6d2b79f5) | 0;
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  interface Star { x: number; y: number; b: number; r: number; hue: number }
-
-  function field(): Star[] {
-    const rnd = mulberry32(42);
-    const stars: Star[] = [];
-    for (let i = 0; i < 2600; i++) {
-      // Milky Way: a diagonal band holds extra stars
-      const inBand = rnd() < 0.45;
-      let x = rnd();
-      let y = rnd();
-      if (inBand) {
-        const t = rnd();
-        x = t;
-        y = 0.75 - t * 0.6 + (rnd() - 0.5) * 0.22 * (0.6 + rnd());
-      }
-      // Brightness: many faint, few bright (roughly a power law)
-      const b = Math.pow(rnd(), 3.2);
-      stars.push({ x, y, b, r: 0.35 + b * 1.6, hue: rnd() });
-    }
-    return stars;
-  }
-
-  // Foregrounds as silhouettes, not drawings. Tel Aviv: a dense skyline with the three
-  // Azrieli towers (round, triangular, square) and lit windows. Ramon: the crater rim,
-  // rough and nearly level, with nine small warm lights where the lodge sits.
-  function cityline(ctx: CanvasRenderingContext2D, w: number, h: number, rnd: () => number) {
-    const base = h * 0.9;
-    type B = { x: number; bw: number; top: number; kind: 'box' | 'round' | 'tri' };
-    const bs: B[] = [];
-    let x = -4;
-    while (x < w) {
-      const bw = w * (0.022 + rnd() * 0.045);
-      const tall = rnd() < 0.16;
-      const top = base - h * (tall ? 0.24 + rnd() * 0.14 : 0.05 + rnd() * 0.16);
-      bs.push({ x, bw, top, kind: 'box' });
-      x += bw - 1; // touching, so the sky never shows as an outline between towers
-    }
-    // Azrieli: three landmark towers, a little left of centre
-    const ax = w * 0.34, aw = w * 0.05;
-    bs.push({ x: ax, bw: aw, top: base - h * 0.5, kind: 'round' });
-    bs.push({ x: ax + aw * 1.25, bw: aw, top: base - h * 0.46, kind: 'tri' });
-    bs.push({ x: ax + aw * 2.5, bw: aw, top: base - h * 0.43, kind: 'box' });
-
-    for (const b of bs) {
-      const body = ctx.createLinearGradient(b.x, 0, b.x + b.bw, 0);
-      body.addColorStop(0, '#0d1020');
-      body.addColorStop(1, '#090b16');
-      ctx.fillStyle = body;
-      ctx.beginPath();
-      if (b.kind === 'tri') {
-        ctx.moveTo(b.x, base);
-        ctx.lineTo(b.x, b.top + h * 0.04);
-        ctx.lineTo(b.x + b.bw, b.top);
-        ctx.lineTo(b.x + b.bw, base);
-      } else if (b.kind === 'round') {
-        const r = b.bw / 2;
-        ctx.moveTo(b.x, base);
-        ctx.lineTo(b.x, b.top + r * 0.35);
-        ctx.quadraticCurveTo(b.x + r, b.top - r * 0.25, b.x + b.bw, b.top + r * 0.35);
-        ctx.lineTo(b.x + b.bw, base);
-      } else ctx.rect(b.x, b.top, b.bw, base - b.top);
-      ctx.fill();
-      // a few tall ones carry an antenna with a red light
-      if (b.kind === 'box' && base - b.top > h * 0.3 && rnd() < 0.6) {
-        const cx = b.x + b.bw / 2;
-        ctx.strokeStyle = '#0d1020';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(cx, b.top);
-        ctx.lineTo(cx, b.top - h * 0.03);
-        ctx.stroke();
-        ctx.fillStyle = 'rgba(255,90,70,0.9)';
-        ctx.fillRect(cx - 1, b.top - h * 0.03 - 1, 2, 2);
-      }
-      // lit windows
-      const step = Math.max(4, h * 0.012);
-      for (let y = b.top + step * 1.4; y < base - step; y += step) {
-        for (let wx = b.x + step * 0.6; wx < b.x + b.bw - step * 0.4; wx += step * 0.8) {
-          if (rnd() < 0.2) {
-            ctx.fillStyle = rnd() < 0.8 ? 'rgba(255,205,150,0.75)' : 'rgba(200,225,255,0.6)';
-            ctx.fillRect(wx, y, step * 0.32, step * 0.42);
-          }
-        }
-      }
-    }
-    // street-level glow and the ground
-    const g = ctx.createLinearGradient(0, base - h * 0.06, 0, base);
-    g.addColorStop(0, 'rgba(255,170,100,0)');
-    g.addColorStop(1, 'rgba(255,170,100,0.18)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, base - h * 0.06, w, h * 0.06);
-    ctx.fillStyle = '#07080f';
-    ctx.fillRect(0, base, w, h - base);
-  }
-
-  function rimline(ctx: CanvasRenderingContext2D, w: number, h: number, rnd: () => number) {
-    const pts = Array.from({ length: 40 }, () => rnd() * 2 - 1);
-    const n = (t: number) => {
-      const p = t * 39, k = Math.floor(p), u = p - k, sm = u * u * (3 - 2 * u);
-      return pts[k] * (1 - sm) + pts[Math.min(39, k + 1)] * sm;
-    };
-    const yAt = (x: number) => h * (0.83 + n(x / w) * 0.012 + Math.sin(x / w * 7) * 0.004) - (x < w * 0.42 ? (w * 0.42 - x) / w * h * 0.08 : 0);
-    const rock = ctx.createLinearGradient(0, h * 0.75, 0, h);
-    rock.addColorStop(0, '#0c0f1c');
-    rock.addColorStop(1, '#05070d');
-    ctx.fillStyle = rock;
-    ctx.beginPath();
-    ctx.moveTo(0, h);
-    for (let x = 0; x <= w; x += 3) ctx.lineTo(x, yAt(x));
-    ctx.lineTo(w, h);
-    ctx.closePath();
-    ctx.fill();
-    // the lodge: nine small warm windows on the rim
-    let lx = w * 0.64;
-    for (let i = 0; i < 9; i++) {
-      lx += w * (0.014 + rnd() * 0.016);
-      const ly = yAt(lx) + h * 0.014;
-      ctx.fillStyle = 'rgba(255,200,140,0.8)';
-      ctx.fillRect(lx, ly, Math.max(1.5, w * 0.0035), Math.max(1.5, h * 0.006));
-    }
-  }
-
-  function draw(canvas: HTMLCanvasElement, stars: Star[], city: boolean) {
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    const ctx = canvas.getContext('2d')!;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    // Sky
-    const sky = ctx.createLinearGradient(0, 0, 0, h);
-    if (city) {
-      sky.addColorStop(0, '#1d1a2a');
-      sky.addColorStop(0.55, '#4a3a3e');
-      sky.addColorStop(1, '#b0704a'); // sodium-lamp glow
-    } else {
-      sky.addColorStop(0, '#04060d');
-      sky.addColorStop(1, '#0d1226');
-    }
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, w, h);
-
-    // Milky Way glow (invisible under city light)
-    if (!city) {
-      ctx.save();
-      ctx.translate(w * 0.5, h * 0.45);
-      ctx.rotate(-Math.atan2(h * 0.6, w));
-      const g = ctx.createLinearGradient(0, -h * 0.16, 0, h * 0.16);
-      g.addColorStop(0, 'rgba(180,170,210,0)');
-      g.addColorStop(0.5, 'rgba(200,190,225,0.16)');
-      g.addColorStop(1, 'rgba(180,170,210,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(-w, -h * 0.16, w * 2, h * 0.32);
-      ctx.restore();
-    }
-
-    // Stars: the city only lets the brightest ~2% through (b = u^3.2 ≥ 0.92 ⇔ u ≥ 0.974)
-    for (const s of stars) {
-      if (city && s.b < 0.92) continue;
-      const a = city ? 0.55 + s.b * 0.4 : 0.25 + s.b * 0.75;
-      ctx.globalAlpha = a;
-      ctx.fillStyle = s.hue < 0.15 ? '#ffd9b0' : s.hue > 0.88 ? '#cfe0ff' : '#f4f1e8';
-      ctx.beginPath();
-      ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-
-    if (city) cityline(ctx, w, h, mulberry32(7));
-    else rimline(ctx, w, h, mulberry32(19));
-  }
-
   document.addEventListener('astro:page-load', () => {
     const frame = document.querySelector<HTMLElement>('[data-r7]');
     if (!frame) return;
-    const ramon = frame.querySelector<HTMLCanvasElement>('[data-r7-ramon]')!;
-    const city = frame.querySelector<HTMLCanvasElement>('[data-r7-city]')!;
     const handle = frame.querySelector<HTMLElement>('[data-r7-handle]')!;
-    const stars = field();
     const ac = new AbortController();
     const { signal } = ac;
-
-    // Draw lazily when it first scrolls near, and again on size changes
-    let drawn = false;
-    const paint = () => {
-      draw(ramon, stars, false);
-      draw(city, stars, true);
-      drawn = true;
-    };
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && !drawn && paint(), { rootMargin: '300px' });
-    io.observe(frame);
-    let rt = 0;
-    const ro = new ResizeObserver(() => {
-      if (!drawn) return;
-      clearTimeout(rt);
-      rt = window.setTimeout(paint, 120);
-    });
-    ro.observe(frame);
 
     // value = Ramon's share of the width, measured from the right edge
     let value = 50;
@@ -424,8 +238,6 @@
       'astro:before-swap',
       () => {
         ac.abort();
-        io.disconnect();
-        ro.disconnect();
       },
       { once: true },
     );

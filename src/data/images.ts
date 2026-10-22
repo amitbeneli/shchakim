@@ -36,6 +36,8 @@ export const photos = {
   lodgeExterior: { id: 'gen-lodge-exterior', alt: 'שורת הסוויטות של שחקים על שפת המצוק, חלונות מוארים ושביל החלב מעל', caption: 'שחקים על שפת המצוק, שעה כחולה' },
   coupleNight: { id: 'gen-couple-night', alt: 'זוג עטוף בשמיכה על מעקה המרפסת, מתחת לקשת שביל החלב מעל המכתש', caption: 'מרפסת סוויטה, אחרי חצות' },
   galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם אח אבן וחלון רחב אל המכתש', caption: 'הסלון בווילה' },
+  // R7: the city side of the comparison (a real Tel Aviv night, Unsplash)
+  telAvivNight: { id: '1670702389707-e20984fab9f6', alt: 'מגדלי תל אביב בלילה, שמיים כתומים וריקים מכוכבים', caption: 'תל אביב, 23:00' },
   ibex: { id: '1604080566273-928a568303fc', alt: 'יעל על סלע בשפת המכתש', caption: 'יעל על השפה' },
 } satisfies Record<string, Photo>;
 
