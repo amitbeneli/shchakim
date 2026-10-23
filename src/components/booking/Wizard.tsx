@@ -404,6 +404,9 @@ export default function Wizard() {
         }}
       />
       <div class="bk-msgs" aria-live="polite">
+        {/* what the next tap does, until both dates are set */}
+        {!s.checkIn && <p class="bk-msg">בחרו את לילה ההגעה.</p>}
+        {s.checkIn && !s.checkOut && <p class="bk-msg">עכשיו בחרו את יום העזיבה.</p>}
         {calNote && <p class="bk-msg">{calNote}</p>}
         {s.checkIn && s.checkOut && !dateErr && (
           <p class="bk-msg bk-msg--ok">
@@ -413,6 +416,9 @@ export default function Wizard() {
         {(tried[0] || (s.checkIn && s.checkOut)) && (dateErr || dateAvailErr) && <p class="bk-msg bk-msg--err">{dateErr || dateAvailErr}</p>}
       </div>
       <p class="bk-hint">לילות חמישי ושישי בתוספת 20%, והזמנה שכוללת אותם היא לפחות שני לילות. עד 7 לילות בהזמנה.</p>
+      {!s.suite && (
+        <p class="bk-hint">עוד לא בחרתם סוויטה, ולכן פתוח כל לילה שיש בו סוויטה פנויה אחת לפחות. בשלב הבא תראו אילו סוויטות פנויות בתאריכים שבחרתם.</p>
+      )}
     </div>,
 
     // 2. Guests + suite
