@@ -5,6 +5,9 @@
 // - A small dot tracks the pointer exactly; a ring follows with a lerp (lag).
 // - Over anything clickable the ring grows and fills; over text fields it hides
 //   (the native I-beam is clearer); over the sky map the map's flashlight takes over.
+// - Over an element with data-cursor-label the ring opens into a pill with a word in it
+//   ("גרירה" on the R7 slider, "הגדלה" on gallery photos). The ring never takes pointer
+//   events, so it can't get in the way of a drag or a click.
 // - Buttons (.btn) lean toward the pointer, then spring back on leave.
 
 const INTERACTIVE = 'a, button, [role="slider"], summary, label, [data-cursor]';
@@ -21,6 +24,9 @@ export function initCursor() {
   ring.className = 'cur-ring';
   dot.setAttribute('aria-hidden', 'true');
   ring.setAttribute('aria-hidden', 'true');
+  const label = document.createElement('span');
+  label.className = 'cur-label';
+  ring.append(label);
   document.body.append(ring, dot);
   document.documentElement.classList.add('has-cursor');
 
@@ -52,6 +58,10 @@ export function initCursor() {
       }
       const t = e.target as Element;
       ring.classList.toggle('is-hover', !!t.closest?.(INTERACTIVE));
+      const word = t.closest?.('[data-cursor-label]')?.getAttribute('data-cursor-label') ?? '';
+      if (label.textContent !== word) label.textContent = word;
+      ring.classList.toggle('has-label', !!word);
+      dot.classList.toggle('is-off', !!word); // the word sits where the dot would
       document.documentElement.classList.toggle('cur-hidden', !!t.closest?.(HIDE));
       if (!raf) raf = requestAnimationFrame(loop);
     },

@@ -21,7 +21,7 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     {
       photos.map((p, i) => (
         <li class={`gal__item gal__item--${i}`}>
-          <button type="button" class="gal__open" data-gal-open={i} aria-label={`הגדלת תמונה ${i + 1} מתוך ${photos.length}: ${p.alt}`}>
+          <button type="button" class="gal__open" data-gal-open={i} data-cursor-label="הגדלה" aria-label={`הגדלת תמונה ${i + 1} מתוך ${photos.length}: ${p.alt}`}>
             <Photo photo={p} sizes="(min-width: 900px) 50vw, 88vw" width={1400} height={1000} />
           </button>
         </li>

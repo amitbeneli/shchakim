@@ -461,6 +461,18 @@ button {
     background-color 0.3s ease,
     border-color 0.3s ease;
 }
+.cur-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  font: 600 0.72rem/1 var(--font-body);
+  letter-spacing: 0.04em;
+  color: var(--night);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
 .cur-ring.is-hover::before {
   transform: scale(1.75);
   background: rgb(217 168 108 / 0.14);
@@ -471,4 +483,20 @@ button {
 }
 .cur-ring.is-hover.is-down::before {
   transform: scale(1.5);
+}
+/* with a word: a solid starlight disc, the word in night ink (after the hover rules, so it wins
+   over the slider handle, which is also interactive) */
+.cur-ring.has-label::before {
+  transform: scale(2.1);
+  background: var(--starlight);
+  border-color: var(--starlight);
+}
+.cur-ring.has-label.is-down::before {
+  transform: scale(1.85);
+}
+.cur-ring.has-label .cur-label {
+  opacity: 1;
+}
+.cur-on .cur-dot.is-off {
+  opacity: 0;
 }
