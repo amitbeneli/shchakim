@@ -74,7 +74,10 @@ body {
   caret-color: var(--sand);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
-  background: var(--night);
+  /* a faint film grain (~3%) so the night ground reads as a surface, not flat black */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.96 0 0 0 0 0.94 0 0 0 0 0.9 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--night);
 }
 ::-webkit-scrollbar {
   width: 10px;
@@ -109,8 +112,17 @@ h4 {
   font-family: var(--font-display);
   font-weight: 500;
   line-height: 1.12;
+  letter-spacing: 0.006em;
   margin: 0;
   text-wrap: balance;
+}
+/* Eyebrow: a small, widely spaced line above a section heading */
+.eyebrow {
+  display: block;
+  margin-block-end: 0.85rem;
+  font: 600 0.8rem / 1.2 var(--font-body);
+  letter-spacing: 0.08em; /* Hebrew letters don't take wide tracking well; this is the most that reads */
+  color: var(--sand);
 }
 p {
   margin: 0;
@@ -216,7 +228,7 @@ button {
 }
 
 .section {
-  padding-block: clamp(2.75rem, 9vw, 7rem);
+  padding-block: clamp(2.75rem, 9vw, 9rem);
 }
 .section-head {
   display: grid;

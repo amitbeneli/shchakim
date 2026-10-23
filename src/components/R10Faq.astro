@@ -6,7 +6,10 @@ import { faq } from '../data/faq';
 ---
 
 <section class="r10 container" aria-labelledby="faq-title">
-  <h2 id="faq-title" data-reveal>שאלות נפוצות</h2>
+  <div data-reveal>
+    <span class="eyebrow">לפני שמגיעים</span>
+    <h2 id="faq-title">שאלות נפוצות</h2>
+  </div>
   <div class="r10__list" data-r10>
     {
       faq.map((item, i) => (
@@ -28,7 +31,7 @@ import { faq } from '../data/faq';
   .r10 {
     display: grid;
     gap: 2rem;
-    padding-block: clamp(3rem, 10vw, 7rem);
+    padding-block: clamp(3rem, 10vw, 9rem);
   }
   @media (min-width: 900px) {
     .r10 {

@@ -9,6 +9,7 @@ import { site } from '../data/site';
 
 <section class="r8" aria-labelledby="r8-title">
   <div class="container r8__head" data-reveal>
+    <span class="eyebrow">{site.stats.rating} מתוך {site.stats.reviews} ביקורות</span>
     <h2 id="r8-title">מהאורחים שלנו</h2>
     <p><bdi>{site.stats.rating}</bdi> מתוך 5, לפי <bdi>{site.stats.reviews}</bdi> ביקורות</p>
   </div>
@@ -46,7 +47,7 @@ import { site } from '../data/site';
 
 <style>
   .r8 {
-    padding-block: clamp(3.5rem, 12vw, 9rem);
+    padding-block: clamp(3.5rem, 12vw, 10rem);
     overflow: hidden;
   }
   .r8__head {

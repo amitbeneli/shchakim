@@ -104,7 +104,10 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
       <figcaption>{photos.lodgeExterior.caption}</figcaption>
     </figure>
     <div class="container place__text">
-      <h2 id="place-title" data-reveal>על שפת מכתש רמון</h2>
+      <div class="place__head" data-reveal>
+        <span class="eyebrow">דרך בראשית, מצפה רמון</span>
+        <h2 id="place-title">על שפת מכתש רמון</h2>
+      </div>
       <p class="place__lead" data-reveal style="--d:1">
         שחקים נמצא על השפה הצפונית של מכתש רמון, מול נוף פתוח לאורך המכתש כולו. בנינו אותו בשביל דבר אחד: לילות של
         כוכבים.
@@ -138,6 +141,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <!-- WHY HERE: three chapters, each a full-bleed photograph with its map symbol drawing itself -->
   <section class="why" aria-labelledby="why-title">
     <div class="container why__head">
+      <span class="eyebrow" data-reveal>המקום</span>
       <h2 id="why-title" data-reveal>למה מכתש רמון</h2>
     </div>
     <ol role="list" class="why__list">
@@ -168,6 +172,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   <!-- THE NIGHT, BY THE HOUR: the add-ons as a schedule, each at the time it happens -->
   <section class="night container" aria-labelledby="night-title">
     <div class="night__head" data-reveal>
+      <span class="eyebrow">ארבע חוויות</span>
       <h2 id="night-title">חוויות הלילה</h2>
       <p>אפשר להוסיף כל אחת מהן להזמנה, בשלב התוספות.</p>
     </div>
@@ -207,6 +212,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     </figure>
     <div class="close__shade" aria-hidden="true"></div>
     <div class="container close__inner">
+      <span class="eyebrow">הזמנה</span>
       <h2 id="close-title">הלילה הבא שלכם במכתש רמון</h2>
       <p>בוחרים תאריך וסוויטה, ואנחנו דואגים לכל השאר.</p>
       <a href="/book" class="btn">להזמין לילה</a>
@@ -234,7 +240,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   /* ── The place ── */
   /* An establishing shot, edge to edge, then the words and the facts beneath it */
   .place {
-    padding-block: clamp(3rem, 9vw, 7rem) clamp(1.5rem, 4vw, 5rem);
+    padding-block: clamp(3rem, 9vw, 9rem) clamp(1.5rem, 4vw, 5rem);
   }
   .place__photo {
     aspect-ratio: 4 / 5;
@@ -265,7 +271,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
       column-gap: clamp(2rem, 6vw, 6rem);
       align-items: start;
     }
-    .place__text h2,
+    .place__head,
     .place__lead,
     .place__text .text-link {
       grid-column: 1;
@@ -312,7 +318,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── Why here ── */
   .why {
-    padding-block-start: clamp(3rem, 9vw, 7rem);
+    padding-block-start: clamp(3rem, 9vw, 9rem);
   }
   .why__head {
     margin-block-end: clamp(1.5rem, 4vw, 2.5rem);
@@ -383,7 +389,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── The night, by the hour ── */
   .night {
-    padding-block: clamp(3.5rem, 11vw, 9rem);
+    padding-block: clamp(3.5rem, 11vw, 10rem);
   }
   .night__head {
     display: grid;
