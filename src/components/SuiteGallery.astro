@@ -112,6 +112,17 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     .gal--suite .gal__item--1 {
       grid-column: span 2;
     }
+    /* Any number of photos: rows past the first two keep the same height. A fifth photo
+       on its own takes the whole row; a fifth and sixth share it (2fr + the two 1fr columns). */
+    .gal--suite .gal__strip {
+      grid-auto-rows: clamp(200px, 17vw, 280px);
+    }
+    .gal--suite .gal__item--4:last-child {
+      grid-column: 1 / -1;
+    }
+    .gal--suite .gal__item--5 {
+      grid-column: span 2;
+    }
     /* Home: eight photos on four columns, the first large, the last wide */
     .gal--wide .gal__strip {
       grid-template-columns: repeat(4, 1fr);

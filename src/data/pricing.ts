@@ -40,8 +40,9 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 4,
-    photo: photos.makhteshRoom,
-    gallery: [photos.makhteshRoom, photos.makhteshView, photos.makhteshBath, photos.makhteshDeck],
+    photo: photos.makhteshView,
+    // the suite first, then the crater it looks at
+    gallery: [photos.makhteshView, photos.makhteshRoom, photos.makhteshBath, photos.makhteshDeck, photos.craterDusk, photos.rimDeck],
   },
   {
     slug: 'kochav',
@@ -63,8 +64,8 @@ export const suites: Suite[] = [
       'פינת קפה ותה',
     ],
     units: 3,
-    photo: photos.kochavRoom,
-    gallery: [photos.kochavRoom, photos.kochavCeiling, photos.kochavBath, photos.heroNight],
+    photo: photos.kochavCeiling,
+    gallery: [photos.kochavCeiling, photos.kochavRoom, photos.kochavBath, photos.heroNight, photos.craterRed],
   },
   {
     slug: 'galaxia',
@@ -87,7 +88,7 @@ export const suites: Suite[] = [
     ],
     units: 2,
     photo: photos.galaxiaRoof,
-    gallery: [photos.galaxiaRoof, photos.galaxiaLiving, photos.galaxiaBedrooms, photos.galaxiaRoofDusk],
+    gallery: [photos.galaxiaRoof, photos.galaxiaLiving, photos.galaxiaBedrooms, photos.galaxiaRoofDusk, photos.rimCliff, photos.canyon],
   },
 ];
 
