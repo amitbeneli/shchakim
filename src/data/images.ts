@@ -31,12 +31,16 @@ export const photos = {
   makhteshRoom: { id: 'gen-makhtesh-room', alt: 'מיטה זוגית מול קיר זכוכית אל המכתש בשעת דמדומים', caption: 'סוויטת מכתש, דמדומים' },
   makhteshDeck: { id: 'gen-makhtesh-deck', alt: 'מרפסת אבן עם מיטת יום על שפת המצוק', caption: 'המרפסת מעל המצוק' },
   kochavRoom: { id: 'gen-kochav-room', alt: 'חדר עם תקרת זכוכית ומיטה מתחת לשביל החלב', caption: 'סוויטת כוכב, תקרת הזכוכית' },
-  kochavBath: { id: 'gen-kochav-bath', alt: 'אמבטיה עומדת מאבן מול חלון אל המכתש', caption: 'האמבטיה מול המכתש' },
+  kochavBath: { id: 'gen-kochav-bath', alt: 'אמבטיית אבן כהה עומדת מול חלון אל המכתש, נרות וחלוק על שולחן עץ', caption: 'האמבטיה מול המכתש' },
+  kochavCeiling: { id: 'gen-kochav-ceiling', alt: 'מבט מהמיטה אל תקרת הזכוכית: קורות פלדה, השתקפות של מנורות החדר, וכוכבים מעליה', caption: 'סוויטת כוכב, התקרה מבפנים' },
+  makhteshBath: { id: 'gen-makhtesh-bath', alt: 'חדר רחצה מאבן גיר: מקלחת מאחורי זכוכית, כיור אבן על מדף עץ וחלון אל המכתש', caption: 'סוויטת מכתש, חדר הרחצה' },
+  makhteshView: { id: 'gen-makhtesh-view', alt: 'מבט מהמיטה דרך דלת הזכוכית הפתוחה אל המרפסת, מיטת היום והמכתש בשעה כחולה', caption: 'מהמיטה אל המרפסת' },
+  galaxiaBedrooms: { id: 'gen-galaxia-bedrooms', alt: 'חדר השינה השני בווילה: שתי מיטות, חלונות פינתיים אל המכתש, ומבעד לדלת הסלון והאח', caption: 'וילת גלקסיה, חדר השינה השני' },
+  galaxiaRoofDusk: { id: 'gen-galaxia-roof-dusk', alt: 'הגג של הווילה בדמדומים: ג׳קוזי מאבן, ספסל עץ, טלסקופ, ופס כתום באופק', caption: 'הגג בדמדומים' },
   galaxiaRoof: { id: 'gen-galaxia-roof', alt: 'גג עם טלסקופ וג׳קוזי חם תחת שביל החלב', caption: 'וילת גלקסיה, הגג' },
   lodgeExterior: { id: 'gen-lodge-exterior', alt: 'שורת הסוויטות של שחקים על שפת המצוק, חלונות מוארים ושביל החלב מעל', caption: 'שחקים על שפת המצוק, שעה כחולה' },
   coupleNight: { id: 'gen-couple-night', alt: 'זוג עטוף בשמיכה על מעקה המרפסת, מתחת לקשת שביל החלב מעל המכתש', caption: 'מרפסת סוויטה, אחרי חצות' },
   galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם ספה שקועה, אח טיח וחלונות רחבים אל המכתש', caption: 'הסלון בווילה' },
-  // R7: the city side of the comparison (a real Tel Aviv night, Unsplash)
   // R7: one night sky over two places. Ramon is the frame as it is; the city side is a real
   // Tel Aviv photo (Unsplash 1670702389707) whose sky is replaced by the same frame under city
   // skyglow (tools/r7-city-sky.py + tools/r7-tel-aviv.py), so the surviving stars line up.
@@ -59,7 +63,7 @@ const widths = [480, 800, 1200, 1800] as const;
 export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
   // gen-* files were regenerated under the same names: the query busts browser and CDN caches
-  const v = p.id.startsWith('gen-') ? '?v=5' : '';
+  const v = p.id.startsWith('gen-') ? '?v=6' : '';
   return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp${v}`;
 }
 

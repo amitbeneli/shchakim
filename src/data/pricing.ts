@@ -41,7 +41,7 @@ export const suites: Suite[] = [
     ],
     units: 4,
     photo: photos.makhteshRoom,
-    gallery: [photos.makhteshRoom, photos.makhteshDeck, photos.craterDusk, photos.rimDeck],
+    gallery: [photos.makhteshRoom, photos.makhteshView, photos.makhteshBath, photos.makhteshDeck],
   },
   {
     slug: 'kochav',
@@ -64,7 +64,7 @@ export const suites: Suite[] = [
     ],
     units: 3,
     photo: photos.kochavRoom,
-    gallery: [photos.kochavRoom, photos.kochavBath, photos.heroNight, photos.craterRed],
+    gallery: [photos.kochavRoom, photos.kochavCeiling, photos.kochavBath, photos.heroNight],
   },
   {
     slug: 'galaxia',
@@ -87,7 +87,7 @@ export const suites: Suite[] = [
     ],
     units: 2,
     photo: photos.galaxiaRoof,
-    gallery: [photos.galaxiaRoof, photos.galaxiaLiving, photos.rimCliff, photos.canyon],
+    gallery: [photos.galaxiaRoof, photos.galaxiaLiving, photos.galaxiaBedrooms, photos.galaxiaRoofDusk],
   },
 ];
 
