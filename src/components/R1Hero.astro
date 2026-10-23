@@ -174,27 +174,32 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
   @media (max-width: 767px) {
     .r1__sun {
       inset-inline-start: 66%;
-      top: 61%;
+      top: 67%; /* clear of the buttons, still above the far rim */
     }
   }
+  /* a small soft disc with a tight, low halo: light in a photograph, not a lens effect */
   .r1__sun span {
     position: absolute;
-    inset: -60%;
+    inset: -35%;
     border-radius: 50%;
     background: radial-gradient(
       circle,
-      #fffaf0 0 17%,
-      rgb(255 236 200 / 0.95) 24%,
-      rgb(255 196 130 / 0.55) 34%,
-      rgb(240 140 80 / 0.22) 50%,
+      #fff6e6 0 18%,
+      rgb(255 228 190 / 0.8) 26%,
+      rgb(250 190 130 / 0.32) 38%,
+      rgb(235 140 85 / 0.1) 54%,
       transparent 70%
     );
+  }
+  /* set by r1.ts on screens too short for the disc (the span, not the element GSAP animates) */
+  .r1__stage[data-no-sun] .r1__sun span {
+    opacity: 0;
   }
   .r1__glow {
     inset-inline: -20%;
     top: 40%;
     height: 34%;
-    background: radial-gradient(50% 50% at 62% 60%, rgb(242 168 104 / 0.55), rgb(199 90 60 / 0.18) 55%, transparent 75%);
+    background: radial-gradient(50% 50% at 62% 60%, rgb(242 168 104 / 0.4), rgb(199 90 60 / 0.14) 55%, transparent 75%);
     will-change: opacity;
   }
   @media (max-width: 767px) {

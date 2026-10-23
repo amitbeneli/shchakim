@@ -98,11 +98,33 @@ export function initR1() {
     // (back crest) sits ~22% down the ridge layer.
     const sun = q('[data-r1-sun]');
     const stage = q('.r1__stage');
-    const sunDrop = () => {
+    // Phones: the headline wraps to 2–4 lines depending on the width, so a fixed `top` lands the
+    // sun on the buttons on small screens. Start it just under the buttons instead; when the screen
+    // is too short for that, it starts low, already touching the far rim (a sun near the horizon).
+    const actions = q('.r1__actions');
+    const ridgeLine = () => {
       const rh = parseFloat(getComputedStyle(stage).getPropertyValue('--ridge-h')) || 0.42;
-      const ridgeLine = stage.clientHeight * (1 - rh + rh * 0.22);
-      return ridgeLine - sun.offsetTop + sun.offsetHeight * 0.2; // the hot core just below the far rim
+      return stage.clientHeight * (1 - rh + rh * 0.22);
     };
+    const placeSun = () => {
+      sun.style.top = '';
+      stage.removeAttribute('data-no-sun');
+      if (!matchMedia('(max-width: 767px)').matches) return;
+      const r = sun.offsetHeight / 2;
+      // measured against the stage (the buttons sit inside the copy block, so offsetTop won't do);
+      // the sun's top is its centre (negative margin), and the halo reaches ~1.7r around it
+      const btnBottom = actions.getBoundingClientRect().bottom - stage.getBoundingClientRect().top;
+      const below = btnBottom + r * 1.8;
+      const cap = ridgeLine() - r * 0.6; // never start under the rim: at most, the core sits right on it
+      // too short a screen (iPhone SE): no sky left between the buttons and the rim, so no disc;
+      // the sky still goes gold → purple → night
+      stage.toggleAttribute('data-no-sun', below > cap);
+      sun.style.top = `${Math.min(Math.max(below, sun.offsetTop), cap)}px`;
+    };
+    placeSun();
+    ScrollTrigger.addEventListener('refreshInit', placeSun);
+    // the hot core just below the far rim (never upward, even when the sun starts low)
+    const sunDrop = () => Math.max(0, ridgeLine() - sun.offsetTop + sun.offsetHeight * 0.2);
 
     // Night arrives by ~55% of the scroll and then holds
     tl.to(sun, { y: sunDrop, duration: 0.45, ease: 'power1.in' }, 0)
@@ -119,6 +141,12 @@ export function initR1() {
       // the rock darkens with the sky
       .to('[data-r1-shade]', { opacity: 0.55, duration: 0.45 }, 0.2)
       ;
+    // runs on ctx.revert()
+    return () => {
+      ScrollTrigger.removeEventListener('refreshInit', placeSun);
+      sun.style.top = '';
+      stage.removeAttribute('data-no-sun');
+    };
   }, hero);
 
   document.addEventListener(

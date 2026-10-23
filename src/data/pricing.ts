@@ -42,7 +42,8 @@ export const suites: Suite[] = [
     units: 4,
     photo: photos.makhteshView,
     // the suite first, then the crater it looks at
-    gallery: [photos.makhteshView, photos.makhteshRoom, photos.makhteshBath, photos.makhteshDeck, photos.craterDusk, photos.rimDeck],
+    // makhteshDeck (rounded parapet) shows a different terrace than makhteshView, so it stays out
+    gallery: [photos.makhteshView, photos.makhteshRoom, photos.makhteshBath, photos.craterDusk, photos.rimDeck],
   },
   {
     slug: 'kochav',
@@ -65,7 +66,8 @@ export const suites: Suite[] = [
     ],
     units: 3,
     photo: photos.kochavCeiling,
-    gallery: [photos.kochavCeiling, photos.kochavRoom, photos.kochavBath, photos.heroNight, photos.craterRed],
+    // kochavRoom (an undivided glass roof) doesn't match the steel grid of kochavCeiling, so it stays out
+    gallery: [photos.kochavCeiling, photos.kochavBath, photos.heroNight, photos.craterRed],
   },
   {
     slug: 'galaxia',

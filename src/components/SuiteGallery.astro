@@ -9,7 +9,7 @@ import { src, type Photo as P } from '../data/images';
 interface Props {
   photos: P[];
   name: string;
-  /** 'wide': the eight-photo home mosaic; default: a suite's four photos */
+  /** 'wide': the eight-photo home mosaic; default: a suite (four in the mosaic, any number in the lightbox) */
   variant?: 'suite' | 'wide';
   label?: string;
 }
@@ -29,6 +29,11 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     }
   </ul>
   <p class="gal__count" aria-hidden="true"><span data-gal-pos>1</span> מתוך {photos.length}</p>
+  {variant === 'suite' && photos.length > 4 && (
+    <button type="button" class="gal__all" data-gal-all>
+      לכל {photos.length} התמונות
+    </button>
+  )}
 
   <dialog class="lb" data-lb aria-label={`גלריית ${name}`}>
     <figure class="lb__fig">
@@ -46,7 +51,7 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     </button>
   </dialog>
 
-  <script type="application/json" data-gal-data set:html={JSON.stringify(photos.map((p) => ({ src: src(p, 2000), alt: p.alt })))} />
+  <script type="application/json" data-gal-data set:html={JSON.stringify(photos.map((p) => ({ src: src(p, 2000), alt: p.alt, cap: p.caption })))} />
 </div>
 
 <style>
@@ -87,6 +92,9 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     object-fit: cover;
     transition: transform 0.8s var(--ease-out);
   }
+.gal__all {
+    display: none;
+  }
   .gal__count {
     text-align: center;
     color: var(--muted);
@@ -112,16 +120,10 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     .gal--suite .gal__item--1 {
       grid-column: span 2;
     }
-    /* Any number of photos: rows past the first two keep the same height. A fifth photo
-       on its own takes the whole row; a fifth and sixth share it (2fr + the two 1fr columns). */
-    .gal--suite .gal__strip {
-      grid-auto-rows: clamp(200px, 17vw, 280px);
-    }
-    .gal--suite .gal__item--4:last-child {
-      grid-column: 1 / -1;
-    }
-    .gal--suite .gal__item--5 {
-      grid-column: span 2;
+    /* Desktop shows the first four as a mosaic; the rest open from "all photos" in the lightbox
+       (phones swipe through all of them) */
+    .gal--suite .gal__item:nth-child(n + 5) {
+      display: none;
     }
     /* Home: eight photos on four columns, the first large, the last wide */
     .gal--wide .gal__strip {
@@ -137,6 +139,23 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
     }
     .gal__item {
       min-height: 0;
+    }
+    .gal__all {
+      display: inline-flex;
+      justify-self: start;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0;
+      border: 0;
+      border-block-end: 1px solid var(--sand);
+      background: none;
+      color: var(--sand);
+      font: 600 var(--step--1) / 1.2 var(--font-body);
+      cursor: pointer;
+    }
+    .gal__all:focus-visible {
+      outline: 2px solid var(--sand);
+      outline-offset: 4px;
     }
     .gal__open {
       height: 100%;
@@ -249,7 +268,7 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
   document.addEventListener('astro:page-load', () => {
     const gal = document.querySelector<HTMLElement>('[data-gal]');
     if (!gal) return;
-    const data: { src: string; alt: string }[] = JSON.parse(gal.querySelector('[data-gal-data]')!.textContent!);
+    const data: { src: string; alt: string; cap: string }[] = JSON.parse(gal.querySelector('[data-gal-data]')!.textContent!);
     const strip = gal.querySelector<HTMLElement>('[data-gal-strip]')!;
     const pos = gal.querySelector<HTMLElement>('[data-gal-pos]')!;
     const lb = gal.querySelector<HTMLDialogElement>('[data-lb]')!;
@@ -271,7 +290,7 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
       i = (n + data.length) % data.length;
       img.src = data[i].src;
       img.alt = data[i].alt;
-      cap.textContent = `${data[i].alt} · ${i + 1} מתוך ${data.length}`;
+      cap.textContent = `${data[i].cap} · ${i + 1} מתוך ${data.length}`;
     };
 
     gal.querySelectorAll<HTMLButtonElement>('[data-gal-open]').forEach((b) =>
@@ -282,6 +301,11 @@ const { photos, name, variant = 'suite', label = `תמונות מ${name}` } = As
         lb.showModal();
       }),
     );
+    gal.querySelector<HTMLButtonElement>('[data-gal-all]')?.addEventListener('click', (e) => {
+      opener = e.currentTarget as HTMLElement;
+      show(4); // straight to the photos the mosaic doesn't show
+      lb.showModal();
+    });
     lb.querySelector('[data-lb-close]')!.addEventListener('click', () => lb.close());
     lb.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(i - 1));
     lb.querySelector('[data-lb-next]')!.addEventListener('click', () => show(i + 1));
