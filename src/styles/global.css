@@ -15,7 +15,7 @@
   /* In-between shades, all derived from the five */
   --night-2: #10142a; /* raised surface */
   --night-3: #181c33; /* field / input */
-  --muted: #b9b2a4; /* starlight dimmed toward sand, about 9:1 on night */
+  --muted: #c6c0b3; /* starlight dimmed toward sand, about 10.4:1 on night (still clearly below the headings) */
   --line: rgb(217 168 108 / 0.2);
   --line-strong: rgb(217 168 108 / 0.42);
 

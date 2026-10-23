@@ -117,3 +117,19 @@ test('floating book button never doubles a booking button on screen', async ({ p
   await page.locator('.site-footer').scrollIntoViewIfNeeded();
   await expect(fab).not.toHaveClass(/is-visible/);
 });
+
+test('R6: when the forecast API fails, a designed message and a retry, not a broken widget', async ({ page }) => {
+  await page.route('**/api.open-meteo.com/**', (r) => r.abort());
+  await page.addInitScript(() => sessionStorage.clear());
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(String(e)));
+  await page.goto('/');
+  const card = page.locator('[data-r6]');
+  await card.scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-r6-error]')).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator('[data-r6-error]')).toContainText('התחזית לא זמינה כרגע');
+  await expect(page.locator('[data-r6-moon-only]')).toHaveText(/\d+%/);
+  await expect(page.locator('[data-r6-retry]')).toBeVisible();
+  await expect(card).toHaveAttribute('aria-busy', 'false');
+  expect(errors).toEqual([]);
+});
