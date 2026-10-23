@@ -489,12 +489,16 @@
   flex-wrap: wrap;
   gap: 0.15rem 0;
   margin-block: 0.15rem 0.35rem;
+  margin-inline-start: -1.2em; /* the dot opening each line is clipped (see .room__chips) */
+  clip-path: inset(0 1.2em 0 0);
   font-size: var(--fs-label);
   color: var(--muted);
 }
-.bk-suite__chips > span:not(:last-child)::after {
+.bk-suite__chips > span::before {
   content: '·';
-  margin-inline: 0.5em;
+  display: inline-block;
+  width: 1.2em;
+  text-align: center;
   color: var(--sand);
 }
 .bk-suite__meta {

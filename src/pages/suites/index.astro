@@ -6,7 +6,7 @@ import { suites } from '../../data/pricing';
 import { photos } from '../../data/images';
 import { formatPrice } from '../../lib/format';
 
-// One editorial row per suite (large photo, a second view inset, the facts and two
+// One editorial row per suite (a large photo, the facts and two
 // actions), then a side-by-side comparison, the way hotel room pages are read.
 const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוויטות');
 ---
@@ -30,9 +30,6 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
           <div class="room__media">
             <figure class="plate room__main" data-media transition:name={`suite-media-${s.slug}`}>
               <Photo photo={s.photo} sizes="(min-width: 960px) 58vw, 100vw" width={1500} height={1000} />
-            </figure>
-            <figure class="plate room__inset" aria-hidden="true">
-              <Photo photo={s.gallery[2]} decorative sizes="(min-width: 960px) 20vw, 40vw" width={800} height={800} />
             </figure>
           </div>
           <div class="room__body">
@@ -98,32 +95,9 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
   }
   .room__media {
     position: relative;
-    padding-block-end: clamp(2rem, 6vw, 4rem);
   }
   .room__main {
     aspect-ratio: 3 / 2;
-  }
-  /* A second view, overlapping the corner like a print laid on a print */
-  .room__inset {
-    position: absolute;
-    inset-block-end: 0;
-    inset-inline-end: clamp(-1rem, -2vw, -0.5rem);
-    width: 34%;
-    aspect-ratio: 1;
-    border: 4px solid var(--night);
-    box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.7);
-  }
-  .room--flip .room__inset {
-    inset-inline-end: auto;
-    inset-inline-start: clamp(-1rem, -2vw, -0.5rem);
-  }
-  @media (max-width: 959px) {
-    .room__inset,
-    .room--flip .room__inset {
-      inset-inline-end: 0.75rem;
-      inset-inline-start: auto;
-      width: 36%;
-    }
   }
   .room__body {
     display: grid;
@@ -143,16 +117,23 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
     max-width: 40ch;
   }
   /* amenities as one quiet line of text with dots between, not a row of framed tags */
+  /* Every item carries its dot in front; the list is pulled one dot-width past its start (right)
+     edge and that strip is clipped, so the dot opening each line is cut off and a wrapped line
+     never starts or ends with a stray dot */
   .room__chips {
     display: flex;
     flex-wrap: wrap;
     gap: 0.2rem 0;
+    margin-inline-start: -1.3em;
+    clip-path: inset(0 1.3em 0 0); /* RTL: the start edge is the right */
     color: var(--muted);
     font-size: var(--fs-small);
   }
-  .room__chips li:not(:last-child)::after {
+  .room__chips li::before {
     content: '·';
-    margin-inline: 0.55em;
+    display: inline-block;
+    width: 1.3em;
+    text-align: center;
     color: var(--sand);
   }
   .room__facts {
