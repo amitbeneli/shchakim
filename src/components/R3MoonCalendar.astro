@@ -60,7 +60,7 @@
     justify-items: center;
     gap: 0.35rem;
     padding: 0.8rem 0.4rem 0.7rem;
-    border: 1px solid var(--line);
+    border: 1px solid transparent; /* a frame only on hover and focus */
     border-radius: var(--radius);
     background: var(--night-2);
     text-decoration: none;
@@ -76,7 +76,6 @@
     }
   }
   .r3__grid :global(.is-dark) {
-    border-color: rgb(217 168 108 / 0.55);
     background: linear-gradient(to bottom, rgb(217 168 108 / 0.1), var(--night-2));
   }
   .r3__grid :global(.is-dark)::after {

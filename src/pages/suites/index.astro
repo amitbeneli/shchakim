@@ -142,16 +142,18 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
     color: var(--muted);
     max-width: 40ch;
   }
+  /* amenities as one quiet line of text with dots between, not a row of framed tags */
   .room__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .room__chips li {
-    padding: 0.25rem 0.65rem;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
+    gap: 0.2rem 0;
+    color: var(--muted);
     font-size: var(--fs-small);
+  }
+  .room__chips li:not(:last-child)::after {
+    content: '·';
+    margin-inline: 0.55em;
+    color: var(--sand);
   }
   .room__facts {
     display: grid;
