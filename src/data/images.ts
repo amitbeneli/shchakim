@@ -49,6 +49,9 @@ export const photos = {
   hKochavBedBath: { id: 'gen-h-kochav-bedbath', alt: 'המיטה והאמבטיה באותו חלל, מול חלון רחב אל המכתש בשעה כחולה', caption: 'המיטה והאמבטיה' },
   hMakhteshRoom: { id: 'gen-h-makhtesh-room', alt: 'מהמיטה דרך דלתות זכוכית אל המרפסת: בריכת טבילה, מיטת יום, ומעקה אבן עם פס אור מול המכתש', caption: 'סוויטת מכתש' },
   hMakhteshTerrace: { id: 'gen-h-makhtesh-terrace', alt: 'מרפסת אבן עם מיטת יום ומעקה מואר מול צוקי המכתש בשעה כחולה', caption: 'המרפסת מול המכתש' },
+  hMakhteshTerraceOut: { id: 'gen-h-makhtesh-terrace-out', alt: 'המרפסת של סוויטת מכתש מבחוץ: מעקה אבן מואר, מיטת יום, בריכת טבילה וקיר זכוכית אל החדר, מול צוקי המכתש', caption: 'המרפסת' },
+  hMakhteshBath: { id: 'gen-h-makhtesh-bath', alt: 'חדר רחצה מאבן גיר: מקלחת מאחורי זכוכית, כיור אבן על מדף עץ, וחלון גדול אל המכתש', caption: 'חדר הרחצה' },
+  hCoupleNight: { id: 'gen-h-couple-night', alt: 'זוג עטוף בשמיכה על מיטת יום במרפסת מוארת, מול שביל החלב מעל המכתש', caption: 'מרפסת סוויטה, אחרי חצות' },
   // R7: one night sky over two places. Ramon is the frame as it is; the city side is a real
   // Tel Aviv photo (Unsplash 1670702389707) whose sky is replaced by the same frame under city
   // skyglow (tools/r7-city-sky.py + tools/r7-tel-aviv.py), so the surviving stars line up.
@@ -71,7 +74,7 @@ const widths = [480, 800, 1200, 1800] as const;
 export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
   // gen-* files were regenerated under the same names: the query busts browser and CDN caches
-  const v = p.id.startsWith('gen-') ? '?v=7' : '';
+  const v = p.id.startsWith('gen-') ? '?v=9' : '';
   return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp${v}`;
 }
 

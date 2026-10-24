@@ -42,7 +42,7 @@ export const suites: Suite[] = [
     units: 4,
     photo: photos.hMakhteshRoom,
     // one set: the room, its terrace and its bathroom first, then the crater it looks at
-    gallery: [photos.hMakhteshRoom, photos.hMakhteshTerrace, photos.makhteshBath, photos.craterDusk, photos.rimDeck],
+    gallery: [photos.hMakhteshRoom, photos.hMakhteshTerraceOut, photos.hMakhteshBath, photos.hMakhteshTerrace, photos.craterDusk],
   },
   {
     slug: 'kochav',
