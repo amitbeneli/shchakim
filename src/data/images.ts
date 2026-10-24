@@ -41,6 +41,14 @@ export const photos = {
   lodgeExterior: { id: 'gen-lodge-exterior', alt: 'שורת הסוויטות של שחקים על שפת המצוק, חלונות מוארים ושביל החלב מעל', caption: 'שחקים על שפת המצוק, שעה כחולה' },
   coupleNight: { id: 'gen-couple-night', alt: 'זוג עטוף בשמיכה על מעקה המרפסת, מתחת לקשת שביל החלב מעל המכתש', caption: 'מרפסת סוויטה, אחרי חצות' },
   galaxiaLiving: { id: 'gen-galaxia-living', alt: 'סלון עם ספה שקועה, אח טיח וחלונות רחבים אל המכתש', caption: 'הסלון בווילה' },
+  // Kochav and Makhtesh as one consistent set each (Higgsfield, text only, the same building described
+  // word for word in every prompt), cropped to 3:2 and graded like the rest
+  hKochavRoom: { id: 'gen-h-kochav-room', alt: 'חדר סוויטת כוכב: מיטה זוגית תחת תקרת זכוכית בחלוקת פלדה, קירות אדמה, ובקצה אמבטיית אבן מול חלון אל המכתש', caption: 'סוויטת כוכב' },
+  hKochavCeiling: { id: 'gen-h-kochav-ceiling', alt: 'מבט מהמיטה: תקרת זכוכית בחלוקת קורות פלדה, שביל החלב מעליה, ודלת זכוכית אל המכתש', caption: 'מהמיטה אל התקרה' },
+  hKochavBath: { id: 'gen-h-kochav-bath', alt: 'אמבטיית אבן כהה מול חלון גבוה אל צוקי המכתש, נרות על שרפרפי עץ ווילונות פשתן', caption: 'האמבטיה מול המכתש' },
+  hKochavBedBath: { id: 'gen-h-kochav-bedbath', alt: 'המיטה והאמבטיה באותו חלל, מול חלון רחב אל המכתש בשעה כחולה', caption: 'המיטה והאמבטיה' },
+  hMakhteshRoom: { id: 'gen-h-makhtesh-room', alt: 'מהמיטה דרך דלתות זכוכית אל המרפסת: בריכת טבילה, מיטת יום, ומעקה אבן עם פס אור מול המכתש', caption: 'סוויטת מכתש' },
+  hMakhteshTerrace: { id: 'gen-h-makhtesh-terrace', alt: 'מרפסת אבן עם מיטת יום ומעקה מואר מול צוקי המכתש בשעה כחולה', caption: 'המרפסת מול המכתש' },
   // R7: one night sky over two places. Ramon is the frame as it is; the city side is a real
   // Tel Aviv photo (Unsplash 1670702389707) whose sky is replaced by the same frame under city
   // skyglow (tools/r7-city-sky.py + tools/r7-tel-aviv.py), so the surviving stars line up.
@@ -63,7 +71,7 @@ const widths = [480, 800, 1200, 1800] as const;
 export function src(p: Photo, w = 1200, raw = false) {
   const fit = widths.find((x) => x >= w) ?? 1800;
   // gen-* files were regenerated under the same names: the query busts browser and CDN caches
-  const v = p.id.startsWith('gen-') ? '?v=6' : '';
+  const v = p.id.startsWith('gen-') ? '?v=7' : '';
   return `/photos/${p.id}-${fit}${raw ? '-raw' : ''}.webp${v}`;
 }
 
