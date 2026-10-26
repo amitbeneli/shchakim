@@ -553,6 +553,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 </style>
 
 <script>
-  import { initHome } from '../scripts/home';
-  document.addEventListener('astro:page-load', initHome);
+  import { afterLoad } from '../scripts/after-load';
+  // the scroll scenes (GSAP) load after the hero has painted
+  document.addEventListener('astro:page-load', () => afterLoad(() => import('../scripts/home'), (m) => m.initHome()));
 </script>

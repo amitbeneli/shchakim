@@ -286,9 +286,7 @@ import { formatPrice } from '../lib/format';
 </style>
 
 <script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  gsap.registerPlugin(ScrollTrigger);
+  import { afterLoad } from '../scripts/after-load';
 
   document.addEventListener('astro:page-load', () => {
     const section = document.querySelector<HTMLElement>('[data-r4]');
@@ -307,35 +305,9 @@ import { formatPrice } from '../lib/format';
     onScroll();
     track.addEventListener('scroll', onScroll, { passive: true, signal: ac.signal });
     window.addEventListener('resize', onScroll, { passive: true, signal: ac.signal });
+    document.addEventListener('astro:before-swap', () => ac.abort(), { once: true });
 
-    const mm = gsap.matchMedia();
-    // Pinning only where it feels good: a real mouse/trackpad, wide screen, motion allowed
-    mm.add('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
-      section.classList.add('is-pinned');
-      // RTL: the track overflows to the LEFT, so we move it RIGHT (positive x)
-      const distance = () => Math.max(0, track.scrollWidth - innerWidth);
-      gsap.to(track, {
-        x: distance,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${distance()}`,
-          pin: true,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-        },
-      });
-      return () => section.classList.remove('is-pinned');
-    });
-
-    document.addEventListener(
-      'astro:before-swap',
-      () => {
-        mm.revert();
-        ac.abort();
-      },
-      { once: true },
-    );
+    // Desktop pinning needs GSAP, which loads after the hero has painted
+    afterLoad(() => import('../scripts/r4'), (m) => m.initR4Pin(section, track));
   });
 </script>

@@ -1,6 +1,8 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import { placeSun, ridgeLine } from './r1-sun';
+
 gsap.registerPlugin(ScrollTrigger);
 
 /* ───────── Twinkling star field (Canvas 2D) ─────────
@@ -94,37 +96,13 @@ export function initR1() {
 
     // Drop the sun until its bright core is hidden behind the back ridge. Measured
     // from layout (offsetTop ignores transforms) so a refresh mid-scroll stays correct.
-    // The ridges cover the bottom --ridge-h of the stage (42%, 30% on phones); the far rim
-    // (back crest) sits ~22% down the ridge layer.
     const sun = q('[data-r1-sun]');
     const stage = q('.r1__stage');
-    // Phones: the headline wraps to 2–4 lines depending on the width, so a fixed `top` lands the
-    // sun on the buttons on small screens. Start it just under the buttons instead; when the screen
-    // is too short for that, it starts low, already touching the far rim (a sun near the horizon).
-    const actions = q('.r1__actions');
-    const ridgeLine = () => {
-      const rh = parseFloat(getComputedStyle(stage).getPropertyValue('--ridge-h')) || 0.42;
-      return stage.clientHeight * (1 - rh + rh * 0.22);
-    };
-    const placeSun = () => {
-      sun.style.top = '';
-      stage.removeAttribute('data-no-sun');
-      if (!matchMedia('(max-width: 767px)').matches) return;
-      const r = sun.offsetHeight / 2;
-      // measured against the stage (the buttons sit inside the copy block, so offsetTop won't do);
-      // the sun's top is its centre (negative margin), and the halo reaches ~1.7r around it
-      const btnBottom = actions.getBoundingClientRect().bottom - stage.getBoundingClientRect().top;
-      const below = btnBottom + r * 1.8;
-      const cap = ridgeLine() - r * 0.6; // never start under the rim: at most, the core sits right on it
-      // too short a screen (iPhone SE): no sky left between the buttons and the rim, so no disc;
-      // the sky still goes gold → purple → night
-      stage.toggleAttribute('data-no-sun', below > cap);
-      sun.style.top = `${Math.min(Math.max(below, sun.offsetTop), cap)}px`;
-    };
-    placeSun();
-    ScrollTrigger.addEventListener('refreshInit', placeSun);
+    const place = () => placeSun(hero);
+    place();
+    ScrollTrigger.addEventListener('refreshInit', place);
     // the hot core just below the far rim (never upward, even when the sun starts low)
-    const sunDrop = () => Math.max(0, ridgeLine() - sun.offsetTop + sun.offsetHeight * 0.2);
+    const sunDrop = () => Math.max(0, ridgeLine(stage) - sun.offsetTop + sun.offsetHeight * 0.2);
 
     // Night arrives by ~55% of the scroll and then holds
     tl.to(sun, { y: sunDrop, duration: 0.45, ease: 'power1.in' }, 0)
@@ -145,7 +123,7 @@ export function initR1() {
       ;
     // runs on ctx.revert()
     return () => {
-      ScrollTrigger.removeEventListener('refreshInit', placeSun);
+      ScrollTrigger.removeEventListener('refreshInit', place);
       sun.style.top = '';
       stage.removeAttribute('data-no-sun');
     };

@@ -11,5 +11,7 @@ export default defineConfig({
   // 'class' makes the parent's scope class flow through the `class` prop into child components (Photo)
   scopedStyleStrategy: 'class',
   integrations: [sitemap({ filter: (page) => !page.includes('/thanks') }), preact()],
+  // CSS inlined into each page: no render-blocking stylesheet requests before the hero paints
+  build: { inlineStylesheets: 'always' },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
 });

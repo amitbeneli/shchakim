@@ -411,6 +411,13 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
 </style>
 
 <script>
-  import { initR1 } from '../scripts/r1';
-  document.addEventListener('astro:page-load', initR1);
+  import { placeSun } from '../scripts/r1-sun';
+  import { afterLoad } from '../scripts/after-load';
+  document.addEventListener('astro:page-load', () => {
+    const hero = document.querySelector<HTMLElement>('[data-r1]');
+    if (!hero) return;
+    // the sun's start position now, so it doesn't jump; the scroll scene (GSAP) after the page loads
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) placeSun(hero);
+    afterLoad(() => import('../scripts/r1'), (m) => m.initR1());
+  });
 </script>
