@@ -124,15 +124,15 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
     display: flex;
     flex-wrap: wrap;
     gap: 0.2rem 0;
-    margin-inline-start: -1.3em;
-    clip-path: inset(0 1.3em 0 0); /* RTL: the start edge is the right */
+    margin-inline-start: -1em; /* narrower than the 16px page gutter, so it never pokes past the screen */
+    clip-path: inset(0 1em 0 0); /* RTL: the start edge is the right */
     color: var(--muted);
     font-size: var(--fs-small);
   }
   .room__chips li::before {
     content: '·';
     display: inline-block;
-    width: 1.3em;
+    width: 1em;
     text-align: center;
     color: var(--sand);
   }

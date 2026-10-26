@@ -78,6 +78,9 @@ test('reduced motion: hero is a static night, nothing hidden', async ({ browser 
   const page = await ctx.newPage();
   await page.goto('/');
   await expect(page.locator('[data-moonpath]')).toBeHidden();
+  // nothing waits on an animation delay either: the headline is fully there right away
+  const waiting = await page.evaluate(() => [...document.querySelectorAll('.r1__word, .r1__lead, .r1__actions')].filter((e) => +getComputedStyle(e).opacity < 0.99).length);
+  expect(waiting).toBe(0);
   const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-reveal]')].filter((e) => getComputedStyle(e).opacity === '0').length);
   expect(hidden).toBe(0);
   await ctx.close();
