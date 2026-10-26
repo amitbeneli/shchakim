@@ -45,7 +45,7 @@ import { photos } from '../data/images';
 
 <style>
   .r7 {
-    padding-block: clamp(3rem, 10vw, 9rem);
+    padding-block: calc(clamp(3rem, 10vw, 9rem) * var(--air, 1));
   }
   .r7__head {
     display: grid;

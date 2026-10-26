@@ -140,6 +140,8 @@ export function initR1() {
       .to('[data-r1-ridge="front"]', { yPercent: 11, duration: 1 }, 0)
       // the rock darkens with the sky
       .to('[data-r1-shade]', { opacity: 0.55, duration: 0.45 }, 0.2)
+      // the haze thins as the light goes, leaving a faint violet veil at night
+      .to('[data-r1-haze]', { opacity: 0.5, duration: 0.6 }, 0.25)
       ;
     // runs on ctx.revert()
     return () => {

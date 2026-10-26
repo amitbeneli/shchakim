@@ -31,7 +31,7 @@ import { faq } from '../data/faq';
   .r10 {
     display: grid;
     gap: 2rem;
-    padding-block: clamp(3rem, 10vw, 9rem);
+    padding-block: calc(clamp(3rem, 10vw, 9rem) * var(--air, 1));
   }
   @media (min-width: 900px) {
     .r10 {

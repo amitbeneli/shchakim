@@ -57,19 +57,22 @@ import { formatPrice } from '../lib/format';
         ))
       }
     </ul>
+    <!-- carousel mode: how far along the swipe is -->
+    <div class="r4__progress" aria-hidden="true"><span data-r4-bar></span></div>
   </div>
 </section>
 
 <style>
   .r4 {
-    padding-block: clamp(2.5rem, 7vw, 7rem) clamp(3rem, 10vw, 7rem);
+    padding-block: calc(clamp(2.5rem, 7vw, 7rem) * var(--air, 1)) calc(clamp(3rem, 10vw, 7rem) * var(--air, 1));
   }
 
   /* ── Carousel (default) ── */
   .r4__track {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 80%;
+    /* 84vw: the next card always peeks in from the left, a hint to swipe */
+    grid-auto-columns: 84vw;
     gap: 1rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -90,6 +93,27 @@ import { formatPrice } from '../lib/format';
   }
   .r4__track > li {
     scroll-snap-align: start;
+  }
+  .r4__progress {
+    height: 2px;
+    margin-block-start: 1.25rem;
+    margin-inline: var(--gutter);
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .r4__progress span {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: var(--sand);
+    /* RTL: the bar fills from the right, the way the cards move */
+    transform-origin: right;
+    transform: scaleX(var(--p, 0.34));
+    transition: transform 0.2s linear;
+  }
+  .r4.is-pinned .r4__progress {
+    display: none;
   }
   .r4__intro {
     display: grid;
@@ -271,6 +295,19 @@ import { formatPrice } from '../lib/format';
     if (!section) return;
     const track = section.querySelector<HTMLElement>('[data-r4-track]')!;
 
+    // Carousel progress: share of the track scrolled (RTL scrollLeft runs 0 → negative)
+    const bar = section.querySelector<HTMLElement>('[data-r4-bar]')!;
+    const ac = new AbortController();
+    const onScroll = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const seen = max > 0 ? Math.abs(track.scrollLeft) / max : 1;
+      const share = track.clientWidth / track.scrollWidth;
+      bar.style.setProperty('--p', String(share + (1 - share) * seen));
+    };
+    onScroll();
+    track.addEventListener('scroll', onScroll, { passive: true, signal: ac.signal });
+    window.addEventListener('resize', onScroll, { passive: true, signal: ac.signal });
+
     const mm = gsap.matchMedia();
     // Pinning only where it feels good: a real mouse/trackpad, wide screen, motion allowed
     mm.add('(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
@@ -292,6 +329,13 @@ import { formatPrice } from '../lib/format';
       return () => section.classList.remove('is-pinned');
     });
 
-    document.addEventListener('astro:before-swap', () => mm.revert(), { once: true });
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        mm.revert();
+        ac.abort();
+      },
+      { once: true },
+    );
   });
 </script>

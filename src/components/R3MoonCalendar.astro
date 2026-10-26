@@ -7,6 +7,7 @@
 
 <section class="r3" aria-labelledby="r3-title">
   <div class="r3__head" data-reveal>
+    <span class="eyebrow">60 הלילות הקרובים</span>
     <h2 id="r3-title">לוח הירח</h2>
     <p>
       ככל שהירח דק יותר, השמיים כהים יותר ורואים יותר כוכבים. הלילות המסומנים הם הלילות סביב המולד, הטובים ביותר
@@ -87,6 +88,10 @@
     height: 6px;
     border-radius: 50%;
     background: var(--sand);
+  }
+  /* the moons glow softly, like the real thing on a dark night */
+  .r3__grid :global(.moon-ico) {
+    filter: drop-shadow(0 0 8px rgb(244 241 232 / 0.35));
   }
   .r3__grid :global(.r3__wd) {
     font-size: 0.75rem;

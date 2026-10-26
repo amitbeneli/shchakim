@@ -84,7 +84,7 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
           <div class="r1__rock"><span style={`--rs:url(${src(rocks[k], k === 'back' ? 800 : 480, true)});--rl:url(${src(rocks[k], 1800, true)})`}></span></div>
           <div class="r1__shade" data-r1-shade></div>
         </div>
-      ))
+      )).flatMap((ridge, i) => (i < 2 ? [ridge, <div class={`r1__haze r1__haze--${i}`} data-r1-haze aria-hidden="true"></div>] : [ridge]))
     }
 
     <div class="container r1__copy">
@@ -219,6 +219,27 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     .r1__stage {
       --ridge-h: 0.3;
     }
+  }
+  /* Desert haze between the ridge planes: a soft dusk-and-sand bank resting on the next
+     crest, so each plane reads further away than the one in front (aerial perspective) */
+  .r1__haze {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  .r1__haze--0 {
+    height: calc(var(--ridge-h) * 82%);
+    background:
+      radial-gradient(60% 34% at 30% 62%, rgb(217 168 108 / 0.16), transparent 70%),
+      radial-gradient(75% 40% at 72% 58%, rgb(42 30 63 / 0.42), transparent 72%);
+  }
+  .r1__haze--1 {
+    height: calc(var(--ridge-h) * 58%);
+    background:
+      radial-gradient(55% 32% at 68% 54%, rgb(217 168 108 / 0.12), transparent 70%),
+      radial-gradient(80% 42% at 25% 50%, rgb(42 30 63 / 0.38), transparent 72%);
   }
   .r1__ridge {
     inset-inline: 0;

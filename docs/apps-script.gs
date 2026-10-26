@@ -154,7 +154,19 @@ function setup() {
   availSheet_();
 }
 
+// Always answers with JSON, even on failure. An uncaught exception makes Apps Script return its
+// own HTML error page, which carries no CORS header: the browser then reports a CORS error
+// instead of the real one. Caught here, the site gets { ok: false } and shows "try again".
 function doPost(e) {
+  try {
+    return savePost_(e);
+  } catch (err) {
+    console.error(err);
+    return json_({ ok: false, error: String(err && err.message || err) });
+  }
+}
+
+function savePost_(e) {
   const d = JSON.parse(e.postData.contents);
   const addonsText = (d.addons || []).map(function (a) { return a.name + ' ×' + a.qty + ' (' + money_(a.total) + ')'; }).join(', ');
   leadsSheet_().appendRow([

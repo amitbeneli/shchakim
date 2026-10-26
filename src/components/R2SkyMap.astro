@@ -7,6 +7,7 @@ import { constellations } from '../data/constellations';
 
 <section class="r2" data-r2 aria-labelledby="r2-title">
   <div class="r2__head" data-reveal>
+    <span class="eyebrow">שמיים מעל המכתש</span>
     <h2 id="r2-title">מפת השמיים</h2>
     <p>
       <span class="r2__fine">העבירו את הסמן מעל קבוצת כוכבים, והפנס יחשוף כוכבים חלשים יותר.</span>{' '}
@@ -82,7 +83,7 @@ import { constellations } from '../data/constellations';
     overflow: hidden;
     background:
       radial-gradient(circle at 50% 50%, #141a33 0%, #0b0e1a 55%, #070912 100%);
-    border: 1px solid var(--line);
+    border: 1px solid rgb(217 168 108 / 0.16);
   }
   @media (min-width: 900px) {
     .r2__frame {
@@ -116,10 +117,11 @@ import { constellations } from '../data/constellations';
     gap: 0.4rem;
     padding: 1rem 1.15rem;
     border-radius: var(--radius);
-    background: rgb(11 14 26 / 0.82);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgb(217 168 108 / 0.45);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.015)), rgb(11 14 26 / 0.72);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgb(217 168 108 / 0.4);
+    box-shadow: 0 18px 40px rgb(0 0 0 / 0.4);
     pointer-events: none;
     animation: r2-card 0.45s var(--ease-out);
     transition:

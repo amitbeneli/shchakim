@@ -47,7 +47,7 @@ import { site } from '../data/site';
 
 <style>
   .r8 {
-    padding-block: clamp(3.5rem, 12vw, 10rem);
+    padding-block: calc(clamp(3.5rem, 12vw, 10rem) * var(--air, 1));
     overflow: hidden;
   }
   .r8__head {

@@ -13,7 +13,7 @@ import { RULE_TEXT } from '../lib/conditions';
     <p>תחזית העננות במצפה רמון בין 21:00 ל־03:00 ותאורת הירח הלילה, בזמן אמת.</p>
   </div>
 
-  <div class="r6__card" data-r6 aria-live="polite" aria-busy="true">
+  <div class="r6__card lit-frame" data-r6 aria-live="polite" aria-busy="true">
     <!-- Tonight's real moon phase, drawn large: the visual anchor of the section -->
     <div class="r6__moon" data-r6-moon-big aria-hidden="true"></div>
     <!-- Loading skeleton: same shape as the result, so nothing jumps -->
@@ -56,7 +56,7 @@ import { RULE_TEXT } from '../lib/conditions';
   .r6 {
     display: grid;
     gap: 2rem;
-    padding-block: clamp(3rem, 10vw, 9rem);
+    padding-block: calc(clamp(3rem, 10vw, 9rem) * var(--air, 1));
     align-items: center;
   }
   @media (min-width: 900px) {
@@ -78,9 +78,10 @@ import { RULE_TEXT } from '../lib/conditions';
     max-width: 34ch;
     font-size: var(--step-1);
   }
-  /* No card: the moon, the verdict, one sentence of numbers, one action */
+  /* A lit frame around the moon, the verdict, one sentence of numbers and one action */
   .r6__card {
     position: relative;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;

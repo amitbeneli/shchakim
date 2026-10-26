@@ -220,6 +220,10 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 </Base>
 
 <style>
+  /* home: 25% more air between sections than the inner pages */
+  :global(main) {
+    --air: 1.25;
+  }
   /* Phones only: the quick availability search under the hero */
   .quick {
     display: grid;
@@ -237,7 +241,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   /* ── The place ── */
   /* An establishing shot, edge to edge, then the words and the facts beneath it */
   .place {
-    padding-block: clamp(3rem, 9vw, 9rem) clamp(1.5rem, 4vw, 5rem);
+    padding-block: calc(clamp(3rem, 9vw, 9rem) * var(--air, 1)) calc(clamp(1.5rem, 4vw, 5rem) * var(--air, 1));
   }
   .place__photo {
     aspect-ratio: 4 / 5;
@@ -315,7 +319,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── Why here ── */
   .why {
-    padding-block-start: clamp(3rem, 9vw, 9rem);
+    padding-block-start: calc(clamp(3rem, 9vw, 9rem) * var(--air, 1));
   }
   .why__head {
     margin-block-end: clamp(1.5rem, 4vw, 2.5rem);
@@ -386,7 +390,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
 
   /* ── The night, by the hour ── */
   .night {
-    padding-block: clamp(3.5rem, 11vw, 10rem);
+    padding-block: calc(clamp(3.5rem, 11vw, 10rem) * var(--air, 1));
   }
   .night__head {
     display: grid;

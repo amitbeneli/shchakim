@@ -121,7 +121,7 @@ export function initHeader() {
   if (fab) {
     const hero = document.querySelector('[data-hero]');
     const blockers = [
-      ...document.querySelectorAll<HTMLElement>('[data-hero], a.btn[href^="/book"]:not([data-fab]), .bbar, .site-footer'),
+      ...document.querySelectorAll<HTMLElement>('[data-hero], a.btn[href^="/book"]:not(.fab__btn), .bbar, .site-footer'),
     ];
     const onScreen = new Set<Element>();
     let pastTop = !!hero; // pages without a hero: wait for 60% of a screen of scroll

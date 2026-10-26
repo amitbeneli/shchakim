@@ -690,7 +690,7 @@ export default function Wizard() {
               <button type="button" class="btn bk-nav__next" onClick={submit} disabled={sending === 'sending' || !q} aria-busy={sending === 'sending'}>
                 {sending === 'sending' ? (
                   <>
-                    <span class="bk-spinner" aria-hidden="true" /> שולחים…
+                    <span class="bk-spinner" aria-hidden="true" /> שולחים את פרטי ההזמנה…
                   </>
                 ) : sending === 'error' ? (
                   'לנסות שוב'

@@ -11,6 +11,8 @@ import '@fontsource/assistant/latin-400.css';
 import '@fontsource/assistant/hebrew-600.css';
 import '@fontsource/assistant/latin-600.css';
 import '../styles/global.css';
+import { suites } from '../data/pricing';
+import { formatPrice } from '../lib/format';
 
 interface Props {
   title: string;
@@ -24,6 +26,7 @@ interface Props {
 
 const { title, description, hideFab = false, noindex = false, overlayHeader = false } = Astro.props;
 const fullTitle = title.startsWith('שחקים') ? title : `${title} · שחקים`;
+const minNightly = Math.min(...suites.map((s) => s.nightly));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -68,9 +71,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
     {
       !hideFab && (
-        <a href="/book" class="fab btn" data-fab>
-          להזמין לילה
-        </a>
+        <div class="fab" data-fab>
+          <p class="fab__price">
+            החל מ־<bdi>{formatPrice(minNightly)}</bdi> ללילה
+          </p>
+          <a href="/book" class="btn fab__btn">להזמין לילה</a>
+        </div>
       )
     }
     <script>
@@ -90,18 +96,52 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     display: none;
   }
   @media (max-width: 767px) {
+    /* a glass pill: the price on the start side, the booking button on the end side */
     .fab {
-      display: inline-flex;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
       position: fixed;
-      z-index: 40;
+      z-index: 45;
       inset-inline: 1rem;
       inset-block-end: max(1rem, env(safe-area-inset-bottom));
-      box-shadow: 0 10px 30px rgb(0 0 0 / 0.45);
-      transform: translateY(calc(100% + 2rem));
-      transition: transform 0.4s var(--ease-out);
+      padding: 0.4rem;
+      padding-inline-start: 1.1rem;
+      border-radius: 999px;
+      border: 1px solid rgb(217 168 108 / 0.35);
+      background: rgb(11 14 26 / 0.82);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(calc(100% + 1.5rem));
+      transition:
+        transform 0.45s var(--ease-out),
+        opacity 0.35s var(--ease-out),
+        visibility 0s linear 0.45s;
     }
     .fab.is-visible {
+      opacity: 1;
+      visibility: visible;
       transform: none;
+      transition:
+        transform 0.45s var(--ease-out),
+        opacity 0.35s var(--ease-out);
+    }
+    .fab__price {
+      font-size: var(--fs-small);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .fab__price bdi {
+      color: var(--starlight);
+      font-weight: 600;
+    }
+    .fab__btn {
+      border-radius: 999px;
+      white-space: nowrap;
     }
   }
 </style>
