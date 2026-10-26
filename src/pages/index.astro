@@ -2,7 +2,6 @@
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import R1Hero from '../components/R1Hero.astro';
-import Preloader from '../components/Preloader.astro';
 import R4Suites from '../components/R4Suites.astro';
 import R6Conditions from '../components/R6Conditions.astro';
 import R7Compare from '../components/R7Compare.astro';
@@ -73,7 +72,6 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   title="שחקים · סוויטות לתצפית כוכבים במכתש רמון"
   description="לודג׳ בוטיק לתצפית כוכבים על שפת מכתש רמון. תשע סוויטות עם מרפסות פתוחות, תקרות זכוכית וטלסקופים, ויותר מ־300 לילות צלולים בשנה."
   overlayHeader
-  preloader
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
   {/* The hero's rock layers are CSS backgrounds (masked); tell the browser about them early */}
@@ -88,7 +86,6 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     ))
   }
 
-  <Preloader />
   <R1Hero />
 
   <!-- Phones: the availability search, right under the hero (desktop has it inside the hero) -->

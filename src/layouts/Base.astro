@@ -18,13 +18,11 @@ interface Props {
   /** Hide the mobile floating "book" button (e.g. on /book itself) */
   hideFab?: boolean;
   noindex?: boolean;
-  /** Home page: enables the first-visit preloader */
-  preloader?: boolean;
   /** Transparent header over a full-bleed hero until the user scrolls */
   overlayHeader?: boolean;
 }
 
-const { title, description, hideFab = false, noindex = false, overlayHeader = false, preloader = false } = Astro.props;
+const { title, description, hideFab = false, noindex = false, overlayHeader = false } = Astro.props;
 const fullTitle = title.startsWith('שחקים') ? title : `${title} · שחקים`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -56,17 +54,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image:alt" content="שחקים: סוויטות לתצפית כוכבים על שפת מכתש רמון" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    {
-      preloader && (
-        <script is:inline>
-          // Decide before first paint, so returning visitors never see the preloader flash
-          try {
-            if (!sessionStorage.getItem('shchakim-seen') && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-              document.documentElement.classList.add('pl-on');
-          } catch (e) {}
-        </script>
-      )
-    }
     <slot name="head" />
     <ClientRouter fallback="animate" />
   </head>
