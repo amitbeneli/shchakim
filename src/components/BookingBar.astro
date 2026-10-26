@@ -15,7 +15,13 @@ const { id, class: cls } = Astro.props;
 <form class:list={['bbar', cls]} action="/book" method="get" data-bbar aria-label="בדיקת זמינות">
   <div class="bbar__field bbar__field--date">
     <label for={`${id}-date`}>תאריך הגעה</label>
-    <input id={`${id}-date`} name="date" type="date" required data-bbar-date />
+    <!-- The native picker stays (it is the best one on phones), but the browser formats the date in
+         its own locale (10/26/2026 in an English Chrome). A Hebrew-formatted copy sits on top of it;
+         the native text shows again only while the field is being typed into. -->
+    <div class="bbar__date">
+      <input id={`${id}-date`} name="date" type="date" required data-bbar-date />
+      <span class="bbar__date-text" aria-hidden="true" data-bbar-date-text></span>
+    </div>
   </div>
   <div class="bbar__field">
     <label for={`${id}-nights`}>לילות</label>
@@ -73,6 +79,36 @@ const { id, class: cls } = Astro.props;
     color-scheme: dark;
     cursor: pointer;
   }
+  .bbar__date {
+    position: relative;
+  }
+  .bbar__date-text {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    display: flex;
+    align-items: center;
+    font-size: var(--fs-body);
+    color: var(--starlight);
+    pointer-events: none;
+  }
+  /* hide the browser's own (locale-formatted) text */
+  .bbar__date input:not(:focus)::-webkit-datetime-edit {
+    color: transparent;
+  }
+  /* the calendar trigger is stretched over the whole field, invisible: tapping anywhere opens
+     the picker, and no icon sits on top of the Hebrew date */
+  .bbar__date input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .bbar__date:focus-within .bbar__date-text {
+    visibility: hidden;
+  }
   .bbar select option {
     background: var(--night-2);
   }
@@ -108,6 +144,15 @@ const { id, class: cls } = Astro.props;
     document.querySelectorAll<HTMLInputElement>('[data-bbar-date]').forEach((el) => {
       el.min = today;
       if (!el.value) el.value = today;
+      const text = el.parentElement!.querySelector<HTMLElement>('[data-bbar-date-text]')!;
+      // Israeli format, d.m.yyyy, whatever the browser's language
+      const show = () => {
+        const [y, m, d] = el.value.split('-');
+        text.textContent = el.value ? `${Number(d)}.${Number(m)}.${y}` : '';
+      };
+      show();
+      el.addEventListener('input', show);
+      el.addEventListener('change', show);
     });
   });
 </script>

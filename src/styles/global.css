@@ -101,6 +101,10 @@ canvas {
 [hidden] {
   display: none !important;
 }
+/* in-page links (#r3-title etc.) land below the fixed header, not under it */
+[id] {
+  scroll-margin-top: calc(var(--header-h, 4rem) + 3rem);
+}
 /* width/height attributes reserve space (no CLS); CSS aspect-ratio decides the final shape */
 img {
   height: auto;
@@ -358,7 +362,7 @@ button {
   inset: auto 0 0;
   height: 38%;
   max-height: 9rem;
-  background: linear-gradient(to bottom, transparent, rgb(11 14 26 / 0.7));
+  background: linear-gradient(to bottom, transparent, rgb(11 14 26 / 0.5));
   pointer-events: none;
 }
 .plate figcaption {
@@ -459,9 +463,9 @@ button {
   background: var(--sand);
 }
 .cur-ring {
-  width: 36px;
-  height: 36px;
-  margin: -18px 0 0 -18px;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
 }
 /* The ring's look lives on a pseudo-element so its scale never fights the JS transform */
 .cur-ring::before {
@@ -488,8 +492,8 @@ button {
   transition: opacity 0.2s ease;
 }
 .cur-ring.is-hover::before {
-  transform: scale(1.75);
-  background: rgb(217 168 108 / 0.14);
+  transform: scale(1.5);
+  background: rgb(217 168 108 / 0.1);
   border-color: var(--sand);
 }
 .cur-ring.is-down::before {
@@ -501,12 +505,12 @@ button {
 /* with a word: a solid starlight disc, the word in night ink (after the hover rules, so it wins
    over the slider handle, which is also interactive) */
 .cur-ring.has-label::before {
-  transform: scale(2.1);
+  transform: scale(2.5);
   background: var(--starlight);
   border-color: var(--starlight);
 }
 .cur-ring.has-label.is-down::before {
-  transform: scale(1.85);
+  transform: scale(2.25);
 }
 .cur-ring.has-label .cur-label {
   opacity: 1;

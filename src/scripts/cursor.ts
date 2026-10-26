@@ -37,8 +37,8 @@ export function initCursor() {
   let visible = false;
 
   const loop = () => {
-    rx += (x - rx) * 0.18;
-    ry += (y - ry) * 0.18;
+    rx += (x - rx) * 0.3;
+    ry += (y - ry) * 0.3;
     dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
     raf = Math.abs(x - rx) + Math.abs(y - ry) > 0.1 ? requestAnimationFrame(loop) : 0;

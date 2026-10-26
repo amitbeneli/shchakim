@@ -32,7 +32,11 @@ import { RULE_TEXT } from '../lib/conditions';
         <span class="r6__dot" aria-hidden="true"></span>
         הירח מואר <bdi class="r6__num" dir="ltr" data-r6-moon></bdi>
       </p>
-      <a class="btn r6__cta" data-r6-cta href="/book">להזמין את הלילה הזה</a>
+      <!-- weak nights: the dark nights in the moon calendar come first, booking tonight stays possible -->
+      <div class="r6__actions">
+        <a class="btn r6__alt" data-r6-alt href="/experiences#r3-title" hidden>למצוא לילה חשוך בלוח הירח</a>
+        <a class="btn r6__cta" data-r6-cta href="/book">להזמין את הלילה הזה</a>
+      </div>
     </div>
 
     <div class="r6__state" data-r6-error hidden>
@@ -162,8 +166,10 @@ import { RULE_TEXT } from '../lib/conditions';
     align-self: center;
     margin-inline: 0.4rem;
   }
-  .r6__cta {
-    justify-self: start;
+  .r6__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     margin-block-start: 0.4rem;
   }
   .r6__err-title {
@@ -278,7 +284,13 @@ import { RULE_TEXT } from '../lib/conditions';
       $('[data-r6-cloud]').textContent = `${Math.round(cloud)}%`;
       $('[data-r6-moon]').textContent = `${moonPct}%`;
 
-      $<HTMLAnchorElement>('[data-r6-cta]').href = `/book?date=${today}`;
+      const cta = $<HTMLAnchorElement>('[data-r6-cta]');
+      cta.href = `/book?date=${today}`;
+      // a weak night: the moon calendar becomes the main way forward, booking tonight stays possible
+      const weak = r === 'weak';
+      cta.textContent = weak ? 'להזמין בכל זאת' : 'להזמין את הלילה הזה';
+      cta.classList.toggle('btn--ghost', weak);
+      $('[data-r6-alt]').hidden = !weak;
       show('result');
     } catch {
       $('[data-r6-moon-only]').textContent = `${moonPct}%`;

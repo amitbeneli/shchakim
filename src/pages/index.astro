@@ -191,7 +191,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
               </p>
             </div>
             <figure class="plate night__plate" data-media>
-              <Photo photo={a.photo} sizes="(min-width: 900px) 220px, 30vw" width={600} height={600} />
+              <Photo photo={a.photo} sizes="(min-width: 900px) 320px, 40vw" width={600} height={400} />
             </figure>
           </li>
         ))
@@ -328,7 +328,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: min(92svh, 860px);
+    min-height: min(78svh, 760px);
     display: grid;
     align-items: end;
   }
@@ -405,7 +405,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   /* Phones: time and photo share a narrow column, the text gets the rest */
   .night__row {
     display: grid;
-    grid-template-columns: 5.5rem 1fr;
+    grid-template-columns: 7.5rem 1fr;
     grid-template-areas: 'time body' 'plate body';
     grid-template-rows: auto 1fr;
     gap: 0.75rem 1.25rem;
@@ -424,7 +424,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   }
   @media (min-width: 900px) {
     .night__row {
-      grid-template-columns: 9rem 1fr 13rem;
+      grid-template-columns: 7rem 1fr 19rem;
       grid-template-areas: 'time body plate';
       grid-template-rows: auto;
       gap: 2.5rem;
@@ -433,7 +433,7 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   }
   .night__time {
     font-family: var(--font-display);
-    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.75rem);
+    font-size: clamp(1.3rem, 1.05rem + 1vw, 2rem);
     line-height: 1;
     color: var(--sand);
     font-variant-numeric: tabular-nums lining-nums;
@@ -455,6 +455,11 @@ const night = [...addons].sort((a, b) => ['dinner', 'astronomer', 'photo', 'jeep
   }
   .night__plate {
     aspect-ratio: 1;
+  }
+  @media (min-width: 900px) {
+    .night__plate {
+      aspect-ratio: 3 / 2;
+    }
   }
   .night__plate :global(img) {
     height: 100%;

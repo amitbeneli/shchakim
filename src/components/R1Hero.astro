@@ -112,13 +112,14 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
 </section>
 
 <style>
+  /* scroll distance for the sunset: enough to feel it, short enough to reach the content */
   .r1 {
     position: relative;
-    height: 210svh;
+    height: 170svh;
   }
   @media (max-width: 767px) {
     .r1 {
-      height: 175svh;
+      height: 150svh;
     }
   }
   .r1__stage {
@@ -320,7 +321,7 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     gap: 1.25rem;
   }
   .r1__title {
-    font-size: clamp(2.6rem, 1.4rem + 4.6vw, 5rem);
+    font-size: clamp(2.4rem, 1.35rem + 3.9vw, 4.25rem);
     line-height: 1.06;
     letter-spacing: -0.01em;
     display: grid;
