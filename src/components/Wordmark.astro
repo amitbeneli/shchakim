@@ -1,53 +1,108 @@
 ---
+// The wordmark: שחקים with a falling star. A long sand-gold trail arcs in from the far side and
+// the star comes to rest where the shin dot would sit, over the ש's right-hand head.
+// SHCHAKIM runs underneath between two hairlines. Sized in em, so one font-size scales it all.
 interface Props {
   size?: 'sm' | 'lg';
 }
 const { size = 'sm' } = Astro.props;
+// unique gradient ids: the mark appears more than once on a page (header, menu, footer)
+const uid = Math.random().toString(36).slice(2, 8);
 ---
 
 <span class:list={['wordmark', `wordmark--${size}`]}>
-  <svg class="wordmark__star" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M12 1.5 13.6 10.4 22.5 12 13.6 13.6 12 22.5 10.4 13.6 1.5 12 10.4 10.4Z" fill="currentColor"></path>
-  </svg>
-  <span class="wordmark__he">שחקים</span>
+  <span class="wordmark__he">
+    שחקים
+    <svg class="wordmark__meteor" viewBox="0 0 84 88" aria-hidden="true">
+      <defs>
+        <linearGradient id={`wm-trail-${uid}`} x1="0" y1="0" x2="1" y2=".55">
+          <stop offset="0" stop-color="#D9A86C" stop-opacity="0"></stop>
+          <stop offset="1" stop-color="#E9C89A"></stop>
+        </linearGradient>
+        <radialGradient id={`wm-halo-${uid}`}>
+          <stop offset="0" stop-color="#FFF6E6" stop-opacity=".55"></stop>
+          <stop offset=".45" stop-color="#E9C89A" stop-opacity=".18"></stop>
+          <stop offset="1" stop-color="#E9C89A" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+      <path d="M-60 10 Q20 22 65.5 72 L68 69.5 Q22 17 -60 10Z" fill={`url(#wm-trail-${uid})`}></path>
+      <circle cx="66" cy="73" r="15" fill={`url(#wm-halo-${uid})`}></circle>
+      <g transform="translate(66 73)">
+        <path d="M0-13 L1-1 L13 0 L1 1 L0 13 L-1 1 L-13 0 L-1-1Z" fill="#E9C89A"></path>
+        <circle r="1.5" fill="#FFF8EC"></circle>
+      </g>
+    </svg>
+  </span>
   <span class="wordmark__en" lang="en" dir="ltr" aria-hidden="true">SHCHAKIM</span>
 </span>
 
 <style>
   .wordmark {
     display: inline-grid;
-    grid-template-columns: auto auto;
-    grid-template-rows: auto auto;
-    column-gap: 0.45em;
-    align-items: center;
+    justify-items: center;
+    row-gap: 0;
     line-height: 1;
     color: var(--starlight);
-  }
-  .wordmark__star {
-    grid-row: 1 / span 2;
-    inline-size: 0.9em;
-    block-size: 0.9em;
-    color: var(--sand);
+    /* room above for the trail, so it never touches the header edge */
+    padding-block-start: 0.55em;
   }
   .wordmark__he {
+    position: relative;
     font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.5em;
-    letter-spacing: 0.01em;
+    font-weight: 400;
+    font-size: 1.55em;
+    letter-spacing: 0.06em;
+    padding-inline-start: 0.06em;
+    /* fixed rows: the display face's tall line box otherwise pushes the Latin line far down */
+    height: 1.1em;
+    line-height: 1.1;
+  }
+  .wordmark__meteor {
+    position: absolute;
+    top: -1.3em;
+    right: -0.1em;
+    width: 2.4em;
+    height: 1.3em;
+    overflow: visible;
+    pointer-events: none;
   }
   .wordmark__en {
+    display: flex;
+    align-items: center;
+    gap: 0.9em;
     font-family: var(--font-body);
-    font-size: 0.5em;
-    font-weight: 600;
-    letter-spacing: 0.42em;
+    font-size: 0.42em;
+    font-weight: 400;
+    letter-spacing: 0.85em;
+    padding-inline-start: 0.85em;
+    height: 1.2em;
+    margin-block-start: 0.55em; /* clears the ק's descender */
     color: var(--sand);
-    margin-block-start: 0.35em;
-    justify-self: start;
+  }
+  .wordmark__en::before,
+  .wordmark__en::after {
+    content: '';
+    width: 2.4em;
+    height: 1px;
+    background: rgb(217 168 108 / 0.45);
   }
   .wordmark--sm {
-    font-size: 1rem;
+    font-size: 0.95rem;
+  }
+  /* the header bar is short: the Latin line goes, the Hebrew name and its star carry the mark */
+  .wordmark--sm .wordmark__en {
+    display: none;
+  }
+  /* in the short header bar the trail is shorter, so its tail stays inside the bar */
+  .wordmark--sm {
+    padding-block-start: 0.75em;
+  }
+  .wordmark--sm .wordmark__meteor {
+    top: -0.95em;
+    width: 1.8em;
+    height: 0.98em;
   }
   .wordmark--lg {
-    font-size: clamp(1.6rem, 1rem + 3vw, 2.6rem);
+    font-size: clamp(1.5rem, 1rem + 2.4vw, 2.2rem);
   }
 </style>

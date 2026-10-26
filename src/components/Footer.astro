@@ -54,6 +54,7 @@ const year = new Date().getFullYear();
   }
   .site-footer__brand {
     display: grid;
+    align-content: start; /* the column is as tall as the link lists; extra height must not stretch the logo */
     justify-items: start;
     gap: 1rem;
     max-width: 28rem;
