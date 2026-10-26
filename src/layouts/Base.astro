@@ -84,6 +84,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       import { initCursor } from '../scripts/cursor';
       document.addEventListener('astro:page-load', initReveal);
       document.addEventListener('astro:page-load', initCursor);
+      // visit log (see scripts/visit.ts), sent once the page has loaded so it never slows it down
+      import { afterLoad } from '../scripts/after-load';
+      document.addEventListener('astro:page-load', () => afterLoad(() => import('../scripts/visit'), (m) => m.logVisit()));
     </script>
   </body>
 </html>
