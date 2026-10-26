@@ -100,11 +100,8 @@ import { constellations } from '../data/constellations';
   :global(.r2.is-dragging) .r2__frame canvas {
     cursor: grabbing;
   }
-  /* Desktop flashlight: hide the arrow so the light reads as the cursor */
+  /* Desktop: the system cursor stays visible over the map; a hand over a constellation */
   @media (hover: hover) and (pointer: fine) {
-    .r2__frame canvas {
-      cursor: none;
-    }
     :global(.r2.is-over) .r2__frame canvas {
       cursor: pointer;
     }
