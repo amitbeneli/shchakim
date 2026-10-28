@@ -168,7 +168,8 @@ function doPost(e) {
 
 function savePost_(e) {
   const d = JSON.parse(e.postData.contents);
-  if (d.type === 'visit') return saveVisit_(d);
+  // only a real booking is saved and mailed: anything without a name and phone is ignored
+  if (!d || d.type || !d.name || !d.phone) return json_({ ok: false, error: 'not-a-booking' });
   const addonsText = (d.addons || []).map(function (a) { return a.name + ' ×' + a.qty + ' (' + money_(a.total) + ')'; }).join(', ');
   leadsSheet_().appendRow([
     new Date(), d.name, "'" + d.phone, d.email,
@@ -201,47 +202,6 @@ function savePost_(e) {
   } catch (err) {}
 
   return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-}
-
-/* ───────── visits: a row per page view, an email when a new visit starts ───────── */
-
-const VISIT_HEADERS = ['זמן', 'ביקור', 'עמוד', 'הגיע מ', 'מכשיר', 'מסך'];
-
-function visitsSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sh = ss.getSheetByName('ביקורים');
-  if (!sh) {
-    sh = ss.insertSheet('ביקורים');
-    sh.appendRow(VISIT_HEADERS);
-    sh.setFrozenRows(1);
-    sh.getRange(1, 1, 1, VISIT_HEADERS.length).setFontWeight('bold');
-    sh.setRightToLeft(true);
-  }
-  return sh;
-}
-
-function saveVisit_(d) {
-  const clip = function (v, n) { return String(v || '').slice(0, n); };
-  const now = new Date();
-  visitsSheet_().appendRow([now, clip(d.session, 12), clip(d.page, 200), clip(d.referrer, 100), clip(d.device, 40), clip(d.screen, 20)]);
-  if (d.first) {
-    const when = Utilities.formatDate(now, 'Asia/Jerusalem', 'dd.MM.yyyy, HH:mm');
-    try {
-      MailApp.sendEmail({
-        to: Session.getEffectiveUser().getEmail(),
-        name: 'שחקים · ביקורים',
-        subject: 'כניסה לאתר שחקים · ' + when,
-        htmlBody: '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7">' +
-          '<b>מישהו נכנס לאתר</b><br>' +
-          'שעה: ' + when + '<br>' +
-          'עמוד: ' + esc_(d.page) + '<br>' +
-          'מכשיר: ' + esc_(d.device) + ' (' + esc_(d.screen) + ')<br>' +
-          'הגיע מ: ' + (d.referrer ? esc_(d.referrer) : 'כניסה ישירה או קישור מהודעה') + '<br>' +
-          '<a href="' + SpreadsheetApp.getActiveSpreadsheet().getUrl() + '">כל הביקורים בגיליון</a></div>',
-      });
-    } catch (err) {}
-  }
-  return json_({ ok: true });
 }
 
 /* ───────── helpers ───────── */
