@@ -120,7 +120,7 @@ export default function Wizard() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [couponInput, setCouponInput] = useState('');
   const [couponMsg, setCouponMsg] = useState<{ ok: boolean; text: string } | null>(null);
-  const [sending, setSending] = useState<'idle' | 'sending' | 'error'>('idle');
+  const [sending, setSending] = useState<'idle' | 'sending' | 'error' | 'taken'>('idle');
   const [sheet, setSheet] = useState(false);
   const headRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
@@ -136,6 +136,12 @@ export default function Wizard() {
     const q = fromQuery(today);
     const merged = { ...initial, ...saved, ...q };
     if (merged.checkIn && merged.checkIn < today) Object.assign(merged, { checkIn: null, checkOut: null, step: 0 });
+    // Arriving from a suite's "book" button with saved dates that suite can't take: don't carry
+    // the dates (and a price) into it. Back to the calendar, which now shows that suite's free nights.
+    if (q.suite && merged.checkIn && merged.checkOut && !isStayFree(q.suite, merged.checkIn, diffDays(merged.checkIn, merged.checkOut))) {
+      Object.assign(merged, { checkIn: null, checkOut: null, step: 0 });
+      setCalNote(`${getSuite(q.suite)!.name} תפוסה בתאריכים שבחרתם קודם. בלוח מסומנים הלילות הפנויים שלה.`);
+    }
     setS(merged);
     setCouponInput(merged.coupon);
     // URL params are a one-time pre-fill: drop them so a reload resumes saved progress
@@ -161,10 +167,14 @@ export default function Wizard() {
   const nights = s.checkIn && s.checkOut ? diffDays(s.checkIn, s.checkOut) : 0;
 
   // Per-person add-ons follow the guest count until the guest edits them
+  // (edited or not, a per-person add-on never counts more people than the stay has)
   useEffect(() => {
-    if (s.addonsTouched) return;
     const next: Record<string, number> = {};
-    for (const a of ADDONS) if (s.addons[a.id]) next[a.id] = a.pricing === 'perPerson' ? s.guests : 1;
+    for (const a of ADDONS) {
+      const qty = s.addons[a.id];
+      if (!qty) continue;
+      next[a.id] = a.pricing !== 'perPerson' ? 1 : s.addonsTouched ? Math.min(qty, s.guests) : s.guests;
+    }
     set({ addons: next });
   }, [s.guests]);
 
@@ -290,8 +300,10 @@ export default function Wizard() {
         /* ignore */
       }
       navigate('/thanks');
-    } catch {
-      setSending('error');
+    } catch (err) {
+      // the owner's sheet says one of the nights is closed (checked again on the server, so a
+      // night closed after the calendar loaded can't be booked)
+      setSending(err instanceof Error && err.message === 'taken' ? 'taken' : 'error');
     }
   };
 
@@ -505,7 +517,7 @@ export default function Wizard() {
               </div>
               {perPerson ? (
                 <div class="bk-stepper bk-stepper--sm" role="group" aria-labelledby={`bk-a-${a.id}`}>
-                  <button type="button" onClick={() => setQty(qty === 0 ? s.guests : qty + 1)} disabled={qty >= 8} aria-label={`הוספת משתתף ל${a.name}`}>
+                  <button type="button" onClick={() => setQty(qty === 0 ? s.guests : qty + 1)} disabled={qty >= s.guests} aria-label={`הוספת משתתף ל${a.name}`}>
                     +
                   </button>
                   <output aria-live="polite">{qty}</output>
@@ -635,6 +647,21 @@ export default function Wizard() {
         {sending === 'error' && (
           <p class="bk-msg bk-msg--err">
             לא הצלחנו לשלוח את ההזמנה. הפרטים שלכם שמורים, אפשר לנסות שוב, או להתקשר אלינו ל־<bdi dir="ltr">08-0000000</bdi>.
+          </p>
+        )}
+        {sending === 'taken' && (
+          <p class="bk-msg bk-msg--err">
+            אחד הלילות שבחרתם נתפס בינתיים בסוויטה הזו. הפרטים שלכם שמורים.{' '}
+            <button
+              type="button"
+              class="text-link"
+              onClick={() => {
+                setSending('idle');
+                set({ checkIn: null, checkOut: null, step: 0 });
+              }}
+            >
+              לבחירת תאריכים אחרים
+            </button>
           </p>
         )}
       </div>

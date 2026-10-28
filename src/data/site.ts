@@ -6,6 +6,8 @@ export const site = {
   address: 'דרך בראשית, מצפה רמון',
   phone: '08-0000000',
   phoneHref: 'tel:+97280000000',
+  // dummy, like the phone: the business is fictional
+  accessibilityEmail: 'access@shchakim.co.il',
   geo: { lat: 30.61, lng: 34.8 },
   openedYear: 2022,
   stats: {

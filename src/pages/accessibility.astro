@@ -40,10 +40,25 @@ import { site } from '../data/site';
 
       <h2>נתקלתם בבעיה</h2>
       <p>
-        אם משהו באתר או במתחם לא נגיש מספיק, נשמח לשמוע ולתקן. אפשר להתקשר אלינו בטלפון
-        <a href={site.phoneHref}><bdi dir="ltr">{site.phone}</bdi></a>, או לכתוב בבקשות המיוחדות בטופס
-        ההזמנה. נחזור אליכם תוך שלושה ימי עסקים.
+        אם משהו באתר או במתחם לא נגיש מספיק, נשמח לשמוע ולתקן. אפשר לפנות לרכז הנגישות, או לכתוב בבקשות
+        המיוחדות בטופס ההזמנה. נחזור אליכם תוך שלושה ימי עסקים.
       </p>
+
+      <h2>רכז הנגישות</h2>
+      <dl class="contact">
+        <div>
+          <dt>טלפון</dt>
+          <dd><a href={site.phoneHref}><bdi dir="ltr">{site.phone}</bdi></a></dd>
+        </div>
+        <div>
+          <dt>דוא״ל</dt>
+          <dd><a href={`mailto:${site.accessibilityEmail}`}><bdi dir="ltr">{site.accessibilityEmail}</bdi></a></dd>
+        </div>
+        <div>
+          <dt>כתובת</dt>
+          <dd>שחקים, דרך בראשית, מצפה רמון</dd>
+        </div>
+      </dl>
       <p class="updated">ההצהרה עודכנה באוקטובר 2026.</p>
     </div>
   </article>
@@ -52,6 +67,22 @@ import { site } from '../data/site';
 <style>
   .prose a {
     color: var(--sand);
+  }
+  .contact {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  .contact div {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .contact dt {
+    min-width: 4.5rem;
+    color: var(--muted);
+  }
+  .contact dd {
+    margin: 0;
   }
   .updated {
     color: var(--muted);

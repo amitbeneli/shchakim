@@ -322,7 +322,6 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     inset-inline: 0;
     bottom: clamp(1.25rem, 4vh, 2.5rem);
     z-index: 2;
-    animation: r1-fade 0.9s var(--ease-out) 0.95s both;
   }
   .r1__book :global(.bbar) {
     max-width: 860px;
@@ -352,27 +351,17 @@ const rocks = { back: photos.craterDusk, mid: photos.craterRed, front: photos.ri
     flex-wrap: wrap;
     column-gap: 0.24em;
   }
-  /* Word-by-word reveal on load (time-based, so the headline is never hidden for long) */
+  /* Word-by-word reveal on load, as movement only: the words, the lead and the button are
+     visible from the very first frame. (A fade-in from opacity 0 starts late on a busy phone,
+     and visitors from Instagram decide in that first second.) */
   .r1__word {
     display: inline-block;
-    animation: r1-word 0.9s var(--ease-out) both;
-    animation-delay: calc(0.15s + var(--i) * 0.11s);
+    animation: r1-word 0.7s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 0.06s);
   }
   @keyframes r1-word {
     from {
-      opacity: 0;
-      transform: translateY(0.4em);
-      filter: blur(6px);
-    }
-  }
-  .r1__lead,
-  .r1__actions {
-    animation: r1-fade 0.9s var(--ease-out) 0.75s both;
-  }
-  @keyframes r1-fade {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(0.18em);
     }
   }
   .r1__lead {

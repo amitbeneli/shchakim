@@ -118,17 +118,22 @@ export function initSkyMap() {
     const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1)));
     return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
   };
+  // Generous: near a line, anywhere inside the constellation's area, or on its name
   const hit = (p: Pt): Constellation | null => {
     let best: Constellation | null = null;
-    let bestD = fine ? 22 : 34; // bigger target for fingers
+    let bestD = fine ? 36 : 44; // bigger target for fingers
     for (const c of constellations) {
       const pts = screenStars(c);
-      for (const [i, j] of c.lines) {
-        const d = segDist(p, pts[i], pts[j]);
-        if (d < bestD) {
-          bestD = d;
-          best = c;
-        }
+      let d = Infinity;
+      for (const [i, j] of c.lines) d = Math.min(d, segDist(p, pts[i], pts[j]));
+      const xs = pts.map((q) => q.x), ys = pts.map((q) => q.y);
+      const pad = 18;
+      if (p.x > Math.min(...xs) - pad && p.x < Math.max(...xs) + pad && p.y > Math.min(...ys) - pad && p.y < Math.max(...ys) + pad) d = Math.min(d, 24);
+      const m = centroid(pts);
+      if (Math.abs(p.x - m.x) < 48 && Math.abs(p.y - (m.y + 26)) < 14) d = 0; // the label
+      if (d < bestD) {
+        bestD = d;
+        best = c;
       }
     }
     return best;
@@ -237,13 +242,25 @@ export function initSkyMap() {
     }
 
     // Constellations
-    ctx.font = '600 13px Assistant, sans-serif';
+    ctx.font = '600 15px Assistant, sans-serif';
     ctx.direction = 'rtl';
     ctx.textAlign = 'center';
     for (const c of constellations) {
       const pts = screenStars(c);
       const isOn = c === active;
 
+      if (!isOn) {
+        // every figure faintly drawn, so the eye knows where to point
+        ctx.globalAlpha = 0.2;
+        ctx.strokeStyle = '#d9a86c';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (const [i, j] of c.lines) {
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+        }
+        ctx.stroke();
+      }
       if (isOn) {
         // Lines draw in order, segment by segment
         const total = c.lines.length;
@@ -280,11 +297,15 @@ export function initSkyMap() {
         }
       });
 
-      // Faint labels so visitors know where to point
+      // Labels so visitors know where to point: readable over the Milky Way (dark halo)
       if (!isOn) {
         const m = centroid(pts);
-        ctx.globalAlpha = 0.38;
-        ctx.fillStyle = '#d9a86c';
+        ctx.globalAlpha = 0.9;
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = 'rgba(11,14,26,0.85)';
+        ctx.strokeText(c.name, m.x, m.y + 26);
+        ctx.fillStyle = '#e2bd8c';
         ctx.fillText(c.name, m.x, m.y + 26);
       }
     }

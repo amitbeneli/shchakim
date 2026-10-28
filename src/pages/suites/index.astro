@@ -30,7 +30,10 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
         <li class:list={['room', { 'room--flip': i % 2 === 1 }]}>
           <div class="room__media">
             <figure class="plate room__main" data-media transition:name={`suite-media-${s.slug}`}>
-              <Photo photo={s.photo} sizes="(min-width: 960px) 58vw, 100vw" width={1500} height={1000} />
+              {/* the photo opens the suite too; the visible "לפרטים ולתמונות" button is the keyboard path */}
+              <a href={`/suites/${s.slug}`} class="room__photo-link" tabindex="-1" aria-hidden="true">
+                <Photo photo={s.photo} sizes="(min-width: 960px) 58vw, 100vw" width={1500} height={1000} />
+              </a>
             </figure>
           </div>
           <div class="room__body">
@@ -38,7 +41,7 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
             <p class="room__hl">{s.highlight}</p>
             <p class="room__sum">{s.summary}</p>
             <ul role="list" class="room__chips">
-              {s.amenities.slice(0, 4).map((a) => <li>{a}</li>)}
+              {s.amenities.filter((a) => a !== s.highlight).slice(0, 4).map((a) => <li>{a}</li>)}
             </ul>
             <dl class="room__facts">
               <div>
@@ -76,6 +79,11 @@ const unitWord = (slug: string) => (slug === 'galaxia' ? 'וילות' : 'סוו�
 </Base>
 
 <style>
+  .room__photo-link {
+    display: block;
+    height: 100%;
+  }
+
   .rooms {
     display: grid;
     gap: clamp(4.5rem, 10vw, 8rem);

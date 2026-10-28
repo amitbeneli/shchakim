@@ -82,7 +82,13 @@ function doGet(e) {
     if (!isOwner_()) return HtmlService.createHtmlOutput('<p dir="rtl" style="font-family:Arial;padding:2rem">אין גישה. ממשק הניהול פתוח רק לבעל המקום.</p>');
     return HtmlService.createHtmlOutput(ADMIN_HTML).setTitle('שחקים · ניהול').addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
-  return json_({ ok: true, blocked: blockedNights_() });
+  // always JSON, even on an error: an HTML error page has no CORS header, so the browser would
+  // only report a CORS error and the site would fall back to demo availability
+  try {
+    return json_({ ok: true, blocked: blockedNights_() });
+  } catch (err) {
+    return json_({ ok: false, error: String((err && err.message) || err) });
+  }
 }
 
 /* ───────── admin (called from admin.html via google.script.run) ───────── */
@@ -170,6 +176,13 @@ function savePost_(e) {
   const d = JSON.parse(e.postData.contents);
   // only a real booking is saved and mailed: anything without a name and phone is ignored
   if (!d || d.type || !d.name || !d.phone) return json_({ ok: false, error: 'not-a-booking' });
+  // the nights are checked against the availability tab here too: a night closed in the sheet
+  // can't be booked even if the site couldn't load the live calendar
+  const slug = SLUGS[d.suite];
+  const closed = (slug && blockedNights_()[slug]) || [];
+  for (let i = 0; i < (Number(d.nights) || 0); i++) {
+    if (closed.indexOf(addDays_(isoDate_(d.checkIn), i)) !== -1) return json_({ ok: false, error: 'taken' });
+  }
   const addonsText = (d.addons || []).map(function (a) { return a.name + ' ×' + a.qty + ' (' + money_(a.total) + ')'; }).join(', ');
   leadsSheet_().appendRow([
     new Date(), d.name, "'" + d.phone, d.email,

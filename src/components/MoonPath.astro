@@ -30,23 +30,10 @@
   .moonpath.is-visible {
     opacity: 1;
   }
-  /* Phones and tablets: the content reaches the page gutter (no side margin below ~1280px),
-     so the moon shrinks to fit inside the gutter and never sits over text or buttons */
+  /* Below ~1280px the content reaches the page gutter: there is no room for a moon you can read
+     (shrunk to the gutter it looked like a stuck dot), so it only appears on wide screens */
   @media (max-width: 1279px) {
     .moonpath {
-      --moon: 14px;
-      inset-inline-end: 4px;
-      inset-block-start: calc(var(--header-h) + 12px);
-    }
-  }
-  @media (max-width: 767px) {
-    .moonpath {
-      --moon: 13px;
-      inset-inline-end: 2px;
-      inset-block-end: 96px; /* clear of the floating book button */
-    }
-    /* Phones: just the moon. The rail and stops would cross drawings and photos at the edge. */
-    .moonpath__stops {
       display: none;
     }
   }

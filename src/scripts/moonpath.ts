@@ -11,7 +11,8 @@ const LERP = 0.14;
 
 export function initMoonPath() {
   const root = document.querySelector<HTMLElement>('[data-moonpath]');
-  if (!root || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // hidden below 1280px (MoonPath.astro) or under reduced motion: no scroll work at all
+  if (!root || matchMedia('(prefers-reduced-motion: reduce)').matches || getComputedStyle(root).display === 'none') return;
 
   const moon = root.querySelector<HTMLElement>('[data-moon]')!;
   const lit = root.querySelector<SVGPathElement>('[data-moon-lit]')!;

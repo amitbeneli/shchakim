@@ -71,7 +71,7 @@ export async function sendLead(payload: LeadPayload, timeoutMs = 25000): Promise
     });
     if (!res.ok) throw new Error(`http-${res.status}`);
     const data = await res.json().catch(() => ({ ok: true }));
-    if (data && data.ok === false) throw new Error('rejected');
+    if (data && data.ok === false) throw new Error(data.error === 'taken' ? 'taken' : 'rejected');
   } finally {
     clearTimeout(timer);
   }

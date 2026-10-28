@@ -2,7 +2,7 @@
 // credits in NOTES.md). They ship under one duotone grade, baked into the files,
 // so photos from different photographers read as one archive of one place.
 // Two night photos (starTrailsMesa, craterStars) have a camp at their base: they are only
-// used as square plates cropped to sky and rock (focus), never in a gallery or lightbox.
+// used cropped to sky and rock (focus): the story header only, never in a gallery or lightbox.
 // The suite interiors and the lodge (gen-*) are generated images of our own fictional
 // place, never borrowed from other hotels.
 

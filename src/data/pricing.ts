@@ -51,7 +51,7 @@ export const suites: Suite[] = [
     maxGuests: 2,
     nightly: 1890,
     highlight: 'תקרת זכוכית מעל המיטה',
-    summary: 'תקרת זכוכית שלמה מעל המיטה. נרדמים מול שביל החלב.',
+    summary: 'נרדמים מול שביל החלב, ובבוקר וילון חשמלי סוגר את השמיים.',
     description: [
       'מעל המיטה פתוחה תקרת זכוכית. כשמכבים את האור, החדר נעלם והשמיים נשארים.',
       'וילון חשמלי סוגר את התקרה בבוקר, כך שהשמש לא מעירה לפני שאתם רוצים.',
@@ -66,7 +66,7 @@ export const suites: Suite[] = [
     ],
     units: 3,
     photo: photos.hKochavRoom,
-    gallery: [photos.hKochavRoom, photos.hKochavCeiling, photos.hKochavBath, photos.heroNight, photos.hKochavBedBath],
+    gallery: [photos.hKochavRoom, photos.hKochavCeiling, photos.hKochavBath, photos.hKochavBedBath],
   },
   {
     slug: 'galaxia',
